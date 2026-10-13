@@ -1,0 +1,295 @@
+{
+  "": {
+    "title": "Chess Playbook — Play, Solve and Understand Chess",
+    "description": "Play chess online or the computer, train on puzzles matched to your level with a weekly plan, and understand any position in plain English.",
+    "ogTitle": "Chess Playbook — Play, Solve and Understand Chess",
+    "ogDescription": "Play, solve puzzles, challenge a World Champion's position, and understand any position in plain English. Free, no account required.",
+    "keywords": "chess, play chess online, chess puzzles, chess position explained, chess analysis, chess training, world chess champions, learn chess",
+    "heading": "Play, Solve and Understand Chess",
+    "body": "Pick where to start — explain a position, solve a puzzle, play a game, or study the champions."
+  },
+  "analysis": {
+    "title": "Free Chess Game Analysis with Stockfish | Chess Playbook",
+    "description": "Analyze any chess game for free with Stockfish: accuracy scores, move classifications, and plain-English position explanations.",
+    "ogTitle": "Free Chess Game Analysis",
+    "ogDescription": "Analyze any chess game for free with Stockfish: accuracy scores, move classifications, and position explanations.",
+    "keywords": "free chess analysis, chess game report, stockfish analysis, chess accuracy",
+    "heading": "Free Chess Game Analysis",
+    "body": "Analyze any chess game for free with Stockfish. Accuracy scores, move classifications, and a plain-English position explainer."
+  },
+  "candidates-2026": {
+    "title": "FIDE Candidates 2026: Results and Coverage | Chess Playbook",
+    "description": "The FIDE Candidates Tournament 2026 in Paphos, Cyprus: results, games and the road to the World Championship title match.",
+    "ogTitle": "FIDE Candidates Tournament 2026 - Results and Coverage",
+    "ogDescription": "Results and games from the FIDE Candidates Tournament 2026 in Paphos, Cyprus.",
+    "keywords": "FIDE Candidates 2026, candidates tournament, Paphos, world championship challenger",
+    "heading": "FIDE Candidates Tournament 2026",
+    "body": "Coverage of the FIDE Candidates Tournament 2026 in Paphos, Cyprus, won by Javokhir Sindarov."
+  },
+  "champion-challenge": {
+    "title": "Champion Challenge — Play Like a World Champion | Chess Playbook",
+    "description": "Play real positions from World Champion games — not tactics puzzles. Choose your move, then see what the champion played and why.",
+    "ogTitle": "Champion Challenge — Play Like a World Champion",
+    "ogDescription": "Play real positions from World Champion games. Choose your move, then see what the champion played and why.",
+    "keywords": "chess training, champion challenge, play like a world champion, chess positions",
+    "heading": "Champion Challenge",
+    "body": "Play real positions from World Champion games. Choose your move, then see what the champion played and why."
+  },
+  "champions": {
+    "title": "World Chess Champions - All 18 Champions | Chess Playbook",
+    "description": "Explore all 18 World Chess Champions from Steinitz (1886) to Gukesh (2024). Study their greatest games and strategies.",
+    "ogTitle": "World Chess Champions - All 18 Champions",
+    "ogDescription": "Explore all 18 World Chess Champions from Steinitz (1886) to Gukesh (2024).",
+    "keywords": "world chess champions, chess champions list, Steinitz, Gukesh, chess history",
+    "heading": "World Chess Champions",
+    "body": "All 18 World Chess Champions from Wilhelm Steinitz (1886) to Gukesh (2024), with their games available to replay move by move."
+  },
+  "champions/list": {
+    "title": "World Chess Champions List | Complete History 1886-Present",
+    "description": "Complete list of all World Chess Champions from Wilhelm Steinitz (1886) to Gukesh (2024), with reign years in chronological order.",
+    "ogTitle": "World Chess Champions List | Complete History 1886-Present",
+    "ogDescription": "Complete chronological list of all World Chess Champions with reign years.",
+    "keywords": "chess champions list, world chess champion history, chess champions chronology",
+    "heading": "World Chess Champions List",
+    "body": "Complete chronological list of World Chess Champions from Wilhelm Steinitz (1886) to Gukesh (2024)."
+  },
+  "contact": {
+    "title": "Contact Us | Chess Playbook",
+    "description": "Get in touch with The Chess Playbook Team. We'd love to hear from you.",
+    "ogTitle": "Contact Us | Chess Playbook",
+    "ogDescription": "Get in touch with The Chess Playbook Team.",
+    "keywords": "contact, chess playbook",
+    "heading": "Contact Us",
+    "body": "Get in touch with the Chess Playbook team."
+  },
+  "credits": {
+    "title": "Credits & Attribution - Chess Playbook",
+    "description": "Credits and attributions for technologies, data sources, and organizations that power Chess Playbook.",
+    "ogTitle": "Credits & Attribution - Chess Playbook",
+    "ogDescription": "Credits and attributions for technologies and data sources powering Chess Playbook.",
+    "keywords": "credits, attribution, chess playbook",
+    "heading": "Credits & Attribution",
+    "body": "Credits and attributions for the technologies, data sources, and organizations that power Chess Playbook."
+  },
+  "explain": {
+    "title": "Explain Any Chess Position — Chess Playbook",
+    "description": "Stop staring at engine numbers. Get a real explanation of any chess position — what's happening, why it matters, what to play next.",
+    "ogTitle": "Explain Any Chess Position",
+    "ogDescription": "Get a real explanation of any chess position — what's happening, why it matters, what to play next.",
+    "keywords": "chess position explained, chess analysis in plain english, chess position evaluation",
+    "heading": "Explain Any Chess Position",
+    "body": "Paste any chess position and get a plain-English explanation: what is happening, why it matters, and what to play next."
+  },
+  "leaderboard": {
+    "title": "Leaderboard - Chess Playbook",
+    "description": "Top chess players on Chess Playbook ranked by rating across bullet, blitz, rapid, classical, and puzzle categories.",
+    "ogTitle": "Leaderboard - Chess Playbook",
+    "ogDescription": "Top chess players on Chess Playbook ranked by rating.",
+    "keywords": "chess leaderboard, chess ratings, online chess rankings",
+    "heading": "Leaderboard",
+    "body": "Top chess players on Chess Playbook ranked by rating across bullet, blitz, rapid, classical, and puzzle categories."
+  },
+  "live-events": {
+    "title": "Live Chess Coverage - Tournaments & Events | Chess Playbook",
+    "description": "Follow major chess tournaments with live boards, round-by-round coverage and game replays from the World Cup, Candidates and world title matches.",
+    "ogTitle": "Live Chess Coverage - Tournaments & Events",
+    "ogDescription": "Live boards, round-by-round coverage and game replays from major chess tournaments.",
+    "keywords": "live chess, chess tournament coverage, live chess boards, chess events",
+    "heading": "Live Chess Coverage",
+    "body": "Follow major chess tournaments with live boards, round-by-round coverage and game replays."
+  },
+  "news": {
+    "title": "News & Articles | Chess Playbook",
+    "description": "Latest chess news, tournament previews, game analysis, and training articles from Chess Playbook.",
+    "ogTitle": "News & Articles | Chess Playbook",
+    "ogDescription": "Latest chess news, tournament previews, game analysis, and training articles from Chess Playbook.",
+    "keywords": "chess news, chess articles, chess tournaments, world chess championship",
+    "heading": "Chess News & Articles",
+    "body": "Latest chess news, tournament previews, game analysis, and training articles from Chess Playbook."
+  },
+  "news/candidates-2026": {
+    "ogImage": "https://www.chessplaybook.com/assets/og-candidates-2026.jpg",
+    "title": "FIDE Candidates 2026 — The Road to the Crown",
+    "description": "Preview of the 2026 FIDE Candidates in Paphos, Cyprus: eight elite grandmasters compete for the right to challenge World Champion Gukesh.",
+    "ogTitle": "FIDE Candidates Tournament 2026 — The Road to the Crown",
+    "ogDescription": "Eight elite grandmasters, fourteen rounds, one dream: to challenge for the World Chess Championship.",
+    "keywords": "FIDE Candidates 2026, Paphos, chess tournament, world championship challenger",
+    "heading": "FIDE Candidates Tournament 2026",
+    "body": "Complete preview of the 2026 FIDE Candidates Tournament in Paphos, Cyprus. Eight elite grandmasters compete for the right to challenge World Champion Gukesh.",
+    "articleType": "Article",
+    "datePublished": "2026-03-24",
+    "dateModified": "2026-03-25"
+  },
+  "news/candidates-2026-conclusion": {
+    "title": "Candidates 2026: Sindarov’s Record, Vaishali’s Upset",
+    "description": "How the 2026 Candidates was won: Sindarov’s record 10/14 unbeaten run, Vaishali’s win as the lowest-rated player, and the tournaments that got away.",
+    "ogTitle": "Candidates 2026 Conclusions: Sindarov's Record, Vaishali's Upset",
+    "ogDescription": "A record score, an unbeaten champion, and the lowest-rated player in the women’s field taking the whole thing. The full story of Paphos.",
+    "ogImage": "https://www.chessplaybook.com/assets/news/candidates-2026-conclusion/sindarov-champion.webp",
+    "keywords": "Candidates 2026, Sindarov, Vaishali, Paphos, chess tournament results",
+    "heading": "Candidates 2026 Conclusions",
+    "body": "Sindarov's record 10/14 unbeaten run in the Open, and Vaishali winning the Women's section as the lowest-rated player in the field. How both Candidates tournaments were won.",
+    "articleType": "NewsArticle",
+    "datePublished": "2026-07-25",
+    "dateModified": "2026-07-25"
+  },
+  "news/candidates-2026-round-1": {
+    "ogImage": "https://www.chessplaybook.com/assets/news/candidates-2026-r1/caruana-nakamura.webp",
+    "title": "Candidates 2026 Round 1: Three Decisive Games",
+    "description": "Caruana stuns Nakamura in an 83-move epic, Praggnanandhaa dismantles Giri, and Sindarov’s tactics down Esipenko. A sensational Round 1 in Paphos.",
+    "ogTitle": "Candidates 2026 Round 1: Three Decisive Games Ignite the Race",
+    "ogDescription": "Caruana stuns Nakamura in an 83-move epic, Praggnanandhaa dismantles Giri, and Sindarov downs Esipenko. A sensational Round 1 in Paphos.",
+    "keywords": "Candidates 2026 round 1, Caruana Nakamura, Praggnanandhaa, Sindarov, chess recap",
+    "heading": "Candidates 2026 Round 1",
+    "body": "Caruana stuns Nakamura in an 83-move epic, Praggnanandhaa dismantles Giri with flawless precision, and Sindarov's tactical fireworks down Esipenko. Round 1 in Paphos, recapped.",
+    "articleType": "Article",
+    "datePublished": "2026-03-29",
+    "dateModified": "2026-03-29"
+  },
+  "news/candidates-2026-round-3": {
+    "ogImage": "https://www.chessplaybook.com/assets/news/candidates-2026-r3/sindarov.webp",
+    "title": "Candidates 2026 Round 3: A Star Is Born | Chess Playbook",
+    "description": "Sindarov demolishes Praggnanandhaa with a sacrifice in the QGD and Caruana crushes Wei Yi in 19 moves. The two co-leaders surge clear in Paphos.",
+    "ogTitle": "Candidates 2026 Round 3: A Star Is Born",
+    "ogDescription": "Sindarov demolishes Praggnanandhaa with a masterpiece sacrifice, Caruana crushes Wei Yi in 19 moves. The co-leaders surge clear in Paphos.",
+    "keywords": "Candidates 2026 round 3, Sindarov Praggnanandhaa, Caruana Wei Yi, chess recap",
+    "heading": "Candidates 2026 Round 3",
+    "body": "Sindarov demolishes Praggnanandhaa with a masterpiece sacrifice in the QGD, Caruana crushes Wei Yi in just 19 moves. The two co-leaders surge clear in Paphos.",
+    "articleType": "Article",
+    "datePublished": "2026-03-31",
+    "dateModified": "2026-03-31"
+  },
+  "news/candidates-2026-women": {
+    "ogImage": "https://www.chessplaybook.com/assets/og-candidates-2026-women.jpg",
+    "title": "Women’s Candidates 2026 — Eight Queens, One Crown",
+    "description": "Preview of the 2026 FIDE Women’s Candidates in Paphos, Cyprus: eight grandmasters compete to challenge Women’s World Champion Ju Wenjun.",
+    "ogTitle": "Women's Candidates 2026 — Eight Queens, One Crown",
+    "ogDescription": "Eight elite grandmasters, fourteen rounds, one dream: to challenge for the Women’s World Chess Championship.",
+    "keywords": "Women's Candidates 2026, Paphos, Ju Wenjun, women's world chess championship",
+    "heading": "Women's Candidates Tournament 2026",
+    "body": "Complete preview of the 2026 FIDE Women's Candidates Tournament in Paphos, Cyprus. Eight elite grandmasters compete for the right to challenge Women's World Champion Ju Wenjun.",
+    "articleType": "Article",
+    "datePublished": "2026-03-29",
+    "dateModified": "2026-03-29"
+  },
+  "news/sindarov-gukesh-head-to-head": {
+    "title": "Sindarov vs Gukesh: The Champion Is Ranked 26th",
+    "description": "Sindarov is the world number 4. Gukesh, the champion he must beat, is ranked 26th and 91 points below his peak. Their head-to-head record, and what it hides.",
+    "ogTitle": "Sindarov vs Gukesh: The Champion Is Ranked 26th",
+    "ogDescription": "The challenger is ranked 4th. The champion is ranked 26th and just finished last, winless, at home. Every game they have played, and what the numbers actually say.",
+    "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/gukesh-tata-steel.webp",
+    "keywords": "Sindarov vs Gukesh, head to head, world chess championship 2026, Gukesh rating, Sindarov challenger",
+    "heading": "Sindarov vs Gukesh: The Champion Is Ranked 26th",
+    "body": "Javokhir Sindarov, world number 4, challenges World Champion Gukesh Dommaraju, ranked 26th. Both are twenty years old. In classical chess Sindarov leads two wins to none with one draw. The full head-to-head record and both players’ trajectories, examined.",
+    "articleType": "NewsArticle",
+    "datePublished": "2026-07-27",
+    "dateModified": "2026-07-27"
+  },
+  "news/vaishali-ju-wenjun-title-match": {
+    "title": "Vaishali vs Ju Wenjun: The Reign and the Underdog",
+    "description": "Ju Wenjun has not lost a Women’s World Championship match in eight years. Vaishali has never beaten her in classical, and won the Candidates as the lowest seed.",
+    "ogTitle": "Vaishali vs Ju Wenjun: The Reign and the Underdog",
+    "ogDescription": "Eight years, five titles, and a challenger who has never beaten her in classical. The women’s title match is the exact mirror of the men’s.",
+    "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/vaishali-ju-wenjun.webp",
+    "keywords": "Vaishali vs Ju Wenjun, women’s world chess championship 2026, Ju Wenjun title defense, Vaishali challenger",
+    "heading": "Vaishali vs Ju Wenjun: The Reign and the Underdog",
+    "body": "Ju Wenjun, Women’s World Champion since 2018 with five title wins, faces Vaishali Rameshbabu, who won the 2026 Candidates as the lowest-rated player in the field. Their head-to-head record and both careers, previewed.",
+    "articleType": "NewsArticle",
+    "datePublished": "2026-07-27",
+    "dateModified": "2026-07-27"
+  },
+  "news/world-championship-2026-geneva": {
+    "title": "World Chess Championship 2026: Geneva, 25 Nov – 15 Dec",
+    "description": "FIDE has confirmed it: Gukesh vs Sindarov in Geneva, 25 November to 15 December 2026. Dates, venue, format, time control, and what is still unannounced.",
+    "ogTitle": "Geneva, 25 November: The World Championship Has a Date",
+    "ogDescription": "Gukesh vs Sindarov, Geneva, 25 November to 15 December. Fourteen classical games, and the youngest title match ever played.",
+    "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/geneva-jet-deau.webp",
+    "keywords": "world chess championship 2026, Gukesh vs Sindarov dates, world championship 2026 venue, Geneva chess championship, when is the Gukesh Sindarov match",
+    "heading": "World Chess Championship 2026: Geneva, 25 November – 15 December",
+    "body": "FIDE has confirmed Geneva, Switzerland as the host of the 2026 World Chess Championship between Gukesh Dommaraju and Javokhir Sindarov, running 25 November to 15 December over 14 classical games. The dates, the format, the time control, and the details still to be announced.",
+    "articleType": "NewsArticle",
+    "datePublished": "2026-07-29",
+    "dateModified": "2026-07-29"
+  },
+  "play": {
+    "title": "Play vs Computer - Chess Playbook",
+    "description": "Play chess against Stockfish at 8 difficulty levels, from beginner to grandmaster strength. Free, in your browser, no sign-up.",
+    "ogTitle": "Play vs Computer - Chess Playbook",
+    "ogDescription": "Play chess against Stockfish at 8 difficulty levels.",
+    "keywords": "play chess vs computer, chess against stockfish, free chess game",
+    "heading": "Play vs Computer",
+    "body": "Play chess against Stockfish at 8 difficulty levels, from beginner to grandmaster strength."
+  },
+  "play-online": {
+    "title": "Play Online - Chess Playbook",
+    "description": "Play chess online against other players in real time. Bullet, blitz, rapid and classical time controls, no account required.",
+    "ogTitle": "Play Online - Chess Playbook",
+    "ogDescription": "Play chess online in real time. Bullet, blitz, rapid and classical, no account required.",
+    "keywords": "play chess online, online chess game, chess multiplayer",
+    "heading": "Play Chess Online",
+    "body": "Play chess online against other players on Chess Playbook."
+  },
+  "privacy": {
+    "title": "Privacy Policy | Chess Playbook",
+    "description": "Privacy Policy for Chess Playbook. Learn how we collect and use data.",
+    "ogTitle": "Privacy Policy | Chess Playbook",
+    "ogDescription": "Privacy Policy for Chess Playbook.",
+    "keywords": "privacy policy, chess playbook",
+    "heading": "Privacy Policy",
+    "body": "Privacy Policy for Chess Playbook: how we collect and use data."
+  },
+  "puzzles": {
+    "title": "Chess Puzzle Trainer — Adaptive Tactics | Chess Playbook",
+    "description": "Train with chess puzzles matched to your level. Run focused sessions, follow a weekly plan, and track progress in tactics, middlegames and endgames.",
+    "ogTitle": "Chess Puzzle Trainer",
+    "ogDescription": "Puzzles matched to your level, a plan built around the time you have, and a record of where you stand.",
+    "keywords": "chess puzzles, chess tactics training, chess training plan, chess improvement, daily chess puzzle",
+    "heading": "Chess Puzzle Trainer",
+    "body": "Solve puzzles matched to your level, run a bounded training session, or follow a plan built around the time you actually have — and track how you are doing in tactics, middlegames and endgames."
+  },
+  "puzzles/progress": {
+    "title": "Your Training Record | Chess Playbook",
+    "description": "Your chess training record: how you are doing in tactics, middlegames and endgames, and which areas you have not trained yet.",
+    "ogTitle": "Your Training Record",
+    "ogDescription": "How you are doing in tactics, middlegames and endgames — and what you have not trained yet.",
+    "keywords": "chess training progress, chess puzzle rating, chess tactics progress",
+    "heading": "Your Training Record",
+    "body": "Track where you stand in tactics, middlegames and endgames, and see which areas you have not trained yet."
+  },
+  "puzzles/plan": {
+    "title": "Your Training Plan | Chess Playbook",
+    "description": "Your chess training plan: how often you train, how long each session is, and what each one works on — built around the time you actually have.",
+    "ogTitle": "Your Training Plan",
+    "ogDescription": "What to train and when, built around the time you actually have.",
+    "keywords": "chess training plan, chess study plan, chess improvement schedule",
+    "heading": "Your Training Plan",
+    "body": "Tell us how often you can train and for how long. We work out what to train and when, weighted towards what your results say you need."
+  },
+  "terms": {
+    "title": "Terms of Service | Chess Playbook",
+    "description": "Terms of Service for Chess Playbook. Read our terms and conditions.",
+    "ogTitle": "Terms of Service | Chess Playbook",
+    "ogDescription": "Terms of Service for Chess Playbook.",
+    "keywords": "terms of service, chess playbook",
+    "heading": "Terms of Service",
+    "body": "Terms of Service for Chess Playbook."
+  },
+  "world-championship-cycle": {
+    "title": "World Championship Cycle — How to Become World Champion",
+    "description": "The complete FIDE World Championship cycle: how players qualify through the World Cup, Grand Swiss and Candidates to the title match.",
+    "ogTitle": "World Championship Cycle",
+    "ogDescription": "How players qualify through the World Cup, Grand Swiss and Candidates to the title match.",
+    "keywords": "world championship cycle, chess qualification, candidates tournament, FIDE cycle",
+    "heading": "The World Championship Cycle",
+    "body": "How the FIDE World Championship cycle works: qualification through the World Cup, Grand Swiss and Candidates to the title match."
+  },
+  "world-cup-2025": {
+    "title": "FIDE World Cup 2025 - Results and Coverage | Chess Playbook",
+    "description": "The FIDE World Cup 2025 in Goa, India: results, decisive games and qualifiers from the knockout that shaped the 2026 Candidates.",
+    "ogTitle": "FIDE World Cup 2025 - Results and Coverage",
+    "ogDescription": "Results, decisive games and qualifiers from the FIDE World Cup 2025 in Goa.",
+    "keywords": "FIDE World Cup 2025, chess world cup results, Goa chess tournament",
+    "heading": "FIDE World Cup 2025",
+    "body": "Results and coverage of the FIDE World Cup 2025 in Goa, India — the knockout that fed the 2026 Candidates."
+  }
+}

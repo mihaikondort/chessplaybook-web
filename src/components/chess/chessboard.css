@@ -1,0 +1,131 @@
+/*
+ * Custom theme integration for chessground.
+ * Overrides the default brown theme with CSS custom properties
+ * set by the ChessBoard component from our boardThemes config.
+ */
+
+.chess-board-wrapper {
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  max-width: 100%;
+}
+
+.chess-board-wrapper cg-container {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Override chessground board with our theme colors.
+   We set background-color to light square color (shows through transparent SVG squares)
+   and background-image to our themed SVG (dark squares use actual color, light are transparent).
+
+   The fallbacks are the DEFAULT theme's colours (Blue), pinned to `boardThemes.ts`
+   by `boardThemeFallbacks.test.ts`. They used to be classic brown while the app's
+   default was Blue (B4). `ChessBoard` always sets the variables, so they only
+   show if that ever stops. */
+.chess-board-wrapper cg-board {
+  background-color: var(--cg-light, #dee3e6) !important;
+  background-image: var(--cg-board-pattern) !important;
+}
+
+/* Override chessground square colors for highlights (last-move, selected, etc.) */
+
+/* Last move highlight */
+.chess-board-wrapper cg-board square.last-move {
+  background-color: var(--cg-lastmove, rgba(155, 199, 240, 0.5));
+}
+
+/* Selected square */
+.chess-board-wrapper cg-board square.selected {
+  background-color: var(--cg-selected, rgba(20, 85, 166, 0.6));
+}
+
+/* Move destination dots */
+.chess-board-wrapper cg-board square.move-dest {
+  background: radial-gradient(
+    rgba(20, 85, 30, 0.5) 22%,
+    transparent 22%
+  );
+}
+
+.chess-board-wrapper cg-board square.move-dest.oc {
+  background: radial-gradient(
+    transparent 0%,
+    transparent 80%,
+    rgba(20, 85, 30, 0.3) 80%
+  );
+}
+
+/* Check highlight */
+.chess-board-wrapper cg-board square.check {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 0, 0, 1) 0%,
+    rgba(231, 0, 0, 1) 25%,
+    rgba(169, 0, 0, 0) 89%,
+    rgba(158, 0, 0, 0) 100%
+  );
+}
+
+/*
+  COORDINATES (owner, 2026-10-08, plan defect D26). Each label takes the ink
+  `coordinateInk` chose for the square it sits on, at full opacity: the old
+  white at 70% under chessground's 0.8 was 1.0-3.0:1 on every board.
+
+  WHICH SQUARE A LABEL SITS ON. Chessground keeps the labels in the same DOM
+  order whatever the orientation (ranks 1..8, files a..h) and adds `.black`
+  when Black is at the bottom. With White at the bottom the ranks sit on the
+  a-file and the files on rank 1, where a1, a3, ... and a, c, e, g are dark: the
+  ODD children. With Black at the bottom they sit on the h-file and rank 8,
+  where the EVEN children are dark.
+
+  `.cg-wrap` in the selector: chessground's own `.cg-wrap coords` carries the
+  0.8 opacity at the same specificity, and this must win wherever it loads.
+*/
+.chess-board-wrapper .cg-wrap coords {
+  color: var(--cg-coord-on-light);
+  opacity: 1;
+  font-size: 10px;
+  font-weight: 600;
+  text-shadow: none;
+}
+.chess-board-wrapper .cg-wrap coords:not(.black) coord:nth-child(odd),
+.chess-board-wrapper .cg-wrap coords.black coord:nth-child(even) {
+  color: var(--cg-coord-on-dark);
+}
+/* The light-square labels need their own rule at the same specificity: the
+   brown theme's `.orientation-white .ranks :nth-child(even)` (0,3,0) colours
+   them faded white or grey and beat the plain default above. Measured: 8 of 16
+   labels kept the old colour until this rule existed. */
+.chess-board-wrapper .cg-wrap coords:not(.black) coord:nth-child(even),
+.chess-board-wrapper .cg-wrap coords.black coord:nth-child(odd) {
+  color: var(--cg-coord-on-light);
+}
+
+/*
+ * Cursor management.
+ * Chessground sets pointer-events:none on pieces, so every mouse event lands
+ * on cg-board. JS (ChessBoard.tsx) calculates the square from mouse coords and
+ * toggles 'cursor-piece' / 'cursor-empty' on the .chess-board-wrapper div
+ * (which chessground never touches).  These rules load AFTER chessground's CSS,
+ * so with equal specificity the !important here wins by source order.
+ */
+/* Piece square → system hand cursor. Empty square → default arrow. */
+.chess-board-wrapper.cursor-piece cg-board {
+  cursor: pointer !important;
+}
+.chess-board-wrapper.cursor-empty cg-board {
+  cursor: default !important;
+}
+
+/* Ghost piece while dragging */
+.chess-board-wrapper cg-board piece.ghost {
+  opacity: 0.3;
+}
+
+/* Premove highlight */
+.chess-board-wrapper cg-board square.current-premove {
+  background-color: rgba(20, 30, 85, 0.5);
+}

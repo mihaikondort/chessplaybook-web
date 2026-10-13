@@ -1,0 +1,411 @@
+/*
+  THE WORKSPACE (LAYOUT_SPEC.md §3-§6, layout redesign C2).
+
+  One CSS-only layout for every board page: the board, its toolbar, and two
+  lanes of cards, sized from the window with no JavaScript measurement. Every
+  constant comes from `layout.tokens.ts` (as `:root` custom properties and,
+  for the container-query literals, `theme('workspace.*')`). Pages cannot
+  change any of this: `Workspace` and `WorkspaceCard` take no class or style.
+*/
+
+/* The card's rhythm, registered so each computes to pixels on
+   `.workspace-card-content` and inherits that value (C5a). Correct without
+   registration wherever the reader shares the card's type. */
+@property --card-type { syntax: '<length>'; inherits: true; initial-value: 14px; }
+@property --card-h { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --card-w { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --card-pad-y { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --card-unit { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --card-air { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --card-title-gap { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --card-lead-gap { syntax: '<length>'; inherits: true; initial-value: 0px; }
+
+/* Registered so `getComputedStyle` returns pixels, not the expression: it is
+   READ by `Workspace` (see `--workspace-focus-slack` on the canvas). */
+@property --workspace-focus-slack { syntax: '<length>'; inherits: false; initial-value: 0px; }
+
+/* Derived lengths, registered (spec §3). Read only by the canvas, the centre
+   and the lanes, never inside a card. */
+@property --board {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+@property --lane-ctx {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+@property --lane-act {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+/* Registered so it computes to pixels on the canvas and a foot, which is a
+   size container, inherits the number rather than re-resolving `cqh` against
+   itself. The toolbar's height is also the bar's `--strip-h` (C5b, below). */
+@property --toolbar {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 56px;
+}
+/* Registered so the columns curve below computes to pixels ON THE CANVAS (its
+   `100cqh` is the workspace's) and the lanes inherit the number. A browser
+   without `tan()`/`atan2()` (Chrome and Edge 105-110, inside the baseline)
+   finds the declaration invalid and inherits `:root`'s fixed 12px: today's
+   gap, nothing broken. */
+@property --gap-card {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 12px;
+}
+
+/* The container. Separate from the canvas because container units and
+   container queries resolve against an ANCESTOR container, never the element
+   that establishes it. */
+.workspace-viewport {
+  container-type: size;
+  container-name: workspace;
+  inline-size: 100%;
+  block-size: 100%;
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+/*
+  THE CANVAS. Every fluid length is composed here, from the tokens and the
+  workspace's size. `--pad` is per side and includes the safe-area insets.
+
+  STACKED MODE IS THE DEFAULT; columns mode is the container query below.
+*/
+.workspace-canvas {
+  /* Which mode the query below chose, for `Workspace`'s `onModeChange` to READ.
+     0 stacked, 1 columns. Never consumed by CSS; it only reports. */
+  --workspace-columns: 0;
+  /*
+    WOULD FOCUS MODE STILL BE COLUMNS? Focus removes the nav, so the workspace
+    grows by `--nav-block` in height and nothing in width. Of the three columns
+    conditions only "at least as wide as tall" can flip that way, so focus holds
+    columns exactly when this is >= 0. Without it a near-square window offered
+    Focus, stacked on entering, and left it at once: the button did nothing
+    (1000x1024, found by the contract guard). Read by `Workspace`, never by CSS.
+  */
+  --workspace-focus-slack: calc(100cqw - 100cqh - var(--nav-block, 0px));
+  --pad-l: max(var(--pad-base), env(safe-area-inset-left, 0px));
+  --pad-r: max(var(--pad-base), env(safe-area-inset-right, 0px));
+  --pad-t: max(var(--pad-base), env(safe-area-inset-top, 0px));
+  --pad-b: max(var(--pad-base), env(safe-area-inset-bottom, 0px));
+  --gap-col: clamp(var(--gap-col-min), calc(var(--gap-col-share) * 1cqw), var(--gap-col-max));
+  --toolbar: clamp(var(--toolbar-min), calc(var(--toolbar-share) * 1cqh), var(--toolbar-max));
+  /* `BoardControls` and the analysis band size their marks from `--strip-h`,
+     which v3 set from JavaScript; on the Workspace the toolbar IS the strip. */
+  --strip-h: var(--toolbar);
+  /* Two lanes, the context one narrower (owner, 2026-10-06; spec §3). */
+  --lane-ctx: clamp(var(--lane-ctx-min), calc(var(--lane-ctx-share) * 1cqw), var(--lane-ctx-max));
+  --lane-act: clamp(var(--lane-act-min), calc(var(--lane-act-share) * 1cqw), var(--lane-act-max));
+  /* 1 while the context lane takes a track, 0 in focus mode. */
+  --context-on: 1;
+
+  /* Stacked (spec §3, Stacked mode). The height term is required here too: a
+     phone held sideways stacks, and without it the board would be taller
+     than the page region. */
+  --board: max(0px, min(
+    var(--board-max),
+    calc(100cqw - var(--pad-l) - var(--pad-r)),
+    calc(100cqh - var(--pad-t) - var(--pad-b) - var(--toolbar) - var(--gap-toolbar))
+  ));
+
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding: var(--pad-t) var(--pad-r) var(--pad-b) var(--pad-l);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  align-content: start;
+  justify-content: center;
+  row-gap: var(--gap-card);
+}
+
+/* In focus the nav is already gone: the workspace IS the focused size. */
+.workspace-canvas[data-focus] {
+  --workspace-focus-slack: calc(100cqw - 100cqh);
+}
+
+/* Columns mode (spec §3, §6): only when the workspace is wide AND tall enough,
+   AND at least as wide as it is tall (D19: a portrait tablet's width fits three
+   columns only at the board floor). The literals are generated from the token
+   source (spec §6). */
+@container workspace (min-width: theme('workspace.columnsMinInline')) and (min-height: theme('workspace.columnsMinBlock')) and (min-aspect-ratio: theme('workspace.columnsMinAspect')) {
+  .workspace-canvas {
+    --workspace-columns: 1;
+    /*
+      v3's spacing in columns mode (owner, 2026-10-06, D23): its `p-2` and its
+      page air, `clamp(4px, 12px x (h / 661px)^2, 12px)`. At 12px fixed the
+      /puzzles record cards overflowed at 800x600 and 788x467, where today's page
+      fits. `tan(atan2(a, b))` is a / b as a plain number: CSS cannot divide one
+      length by another directly.
+
+      `h` IS THE LANE (D25, 2026-10-07): board + toolbar gap + toolbar, which is
+      every lane's height in columns mode. v3 used the page region, which only
+      stands in for the lane while height binds the board; 780-800 wide on a tall
+      window the lane is short and the gap stayed near 12. 661 is v3's 677 less
+      this mode's two 8px paddings, so where height binds nothing moves.
+    */
+    --pad-base: var(--pad-columns);
+    --gap-card: clamp(
+      var(--gap-card-min),
+      calc(var(--gap-card-max) * tan(atan2(var(--board) + var(--gap-toolbar) + var(--toolbar), var(--gap-card-anchor))) * tan(atan2(var(--board) + var(--gap-toolbar) + var(--toolbar), var(--gap-card-anchor)))),
+      var(--gap-card-max)
+    );
+    --board: max(0px, min(
+      var(--board-max),
+      calc(100cqh - var(--pad-t) - var(--pad-b) - var(--toolbar) - var(--gap-toolbar)),
+      calc(100cqw - var(--pad-l) - var(--pad-r) - var(--lane-act) - var(--gap-col) - var(--context-on) * (var(--lane-ctx) + var(--gap-col)))
+    ));
+    grid-template-columns: var(--lane-ctx) var(--board) var(--lane-act);
+    grid-template-rows: calc(var(--board) + var(--gap-toolbar) + var(--toolbar));
+    column-gap: var(--gap-col);
+    row-gap: 0;
+    align-content: center;
+  }
+  /* Explicit placement, not auto-placement (spec §4). */
+  .workspace-canvas > .workspace-centre { grid-column: 2; grid-row: 1; }
+  .workspace-canvas > .workspace-lane[data-lane="context"] { grid-column: 1; grid-row: 1; }
+  .workspace-canvas > .workspace-lane[data-lane="activity"] { grid-column: 3; grid-row: 1; }
+  /* More specific than the stacked share rules below, which it must beat. */
+  .workspace-canvas > .workspace-lane[data-lane] { block-size: 100%; }
+  /* Columns: the activity lane's foot back beside the toolbar (stacked puts it first). */
+  .workspace-canvas > .workspace-lane[data-lane="activity"][data-has-foot] { grid-template-rows: minmax(0, 1fr) var(--toolbar); }
+  .workspace-canvas > .workspace-lane[data-lane="activity"] > .workspace-foot { order: 0; }
+
+  /* Focus mode (spec §3): one lane track fewer, the centre first. */
+  .workspace-canvas[data-focus] {
+    --context-on: 0;
+    grid-template-columns: var(--board) var(--lane-act);
+  }
+  .workspace-canvas[data-focus] > .workspace-centre { grid-column: 1; }
+  .workspace-canvas[data-focus] > .workspace-lane[data-lane="activity"] { grid-column: 2; }
+}
+
+/* The centre: board then toolbar. `overflow: clip` absorbs chessground's
+   coordinate overhang without creating a scroll container (spec §3). */
+.workspace-centre {
+  display: grid;
+  /* `minmax(0, 1fr)`, NOT the implicit `auto`: an auto column is as wide as
+     its widest content, and `/puzzles`' five-button bar (min-content ~300px)
+     widened it past `--board` at 844x390, taking the board 50px past its slot
+     and over the toolbar. Nothing in the centre sizes the centre (C5b). */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: var(--board) var(--toolbar);
+  row-gap: var(--gap-toolbar);
+  inline-size: var(--board);
+  justify-self: center;
+  overflow: clip;
+}
+.workspace-board {
+  inline-size: 100%;
+  aspect-ratio: 1;
+  min-block-size: 0;
+}
+/* The toolbar fills its row, so it is the same height as the lanes' feet
+   (owner, 2026-10-06). `BoardControls` carries its pre-Workspace placement,
+   a top margin and a content height (52px), which pushed it 8px down the row
+   and past its bottom; a grid stretches it instead, and the margin goes. */
+.workspace-toolbar {
+  inline-size: 100%;
+  min-block-size: 0;
+  display: grid;
+}
+.workspace-toolbar > * {
+  margin: 0;
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+/* The bar's buttons may shrink to the board's width. They share the bar
+   equally (`flex: 1 1 auto` over identical content), so with room to spare
+   this changes nothing; without it a five-button bar overflowed a 259px board
+   (C5b, 844x390). */
+.workspace-toolbar .board-controls__fbt {
+  min-inline-size: 0;
+  padding-inline: 0;
+}
+
+/* A lane (spec §3, §5): a labelled landmark, a stack of cards and an optional
+   foot the toolbar's height. The base card type is the lane's inherited
+   font size (spec §5, Card typography). */
+.workspace-lane {
+  /*
+    POSITIONED, so the lane's visually hidden heading (absolutely positioned,
+    `sr-only`) is contained here. Without it the heading's containing block is
+    the page itself, and in stacked mode a heading far down the region
+    stretched the DOCUMENT: measured 193px of document scroll at 390x844 on a
+    page that must never scroll the document.
+  */
+  position: relative;
+  display: grid;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: hidden;
+  row-gap: var(--gap-toolbar);
+  grid-template-rows: minmax(0, 1fr);
+  font-size: clamp(12px, 2.07cqh, 18px);
+}
+.workspace-lane[data-has-foot] {
+  grid-template-rows: minmax(0, 1fr) var(--toolbar);
+  --foot-block: calc(var(--toolbar) + var(--gap-toolbar));
+}
+/*
+  STACKED, THE ACTIVITY LANE'S FOOT COMES FIRST, directly under the toolbar
+  (owner, 2026-10-08, confirming the 2026-08-10 rule for /puzzles' analysis
+  band). In columns mode that foot sits beside the toolbar because it belongs
+  to the board; stacked, "beside" becomes "under". At the end of its lane it was
+  640px below the board on a 390x844 phone, off the first screen. The context
+  lane's foot still follows its cards. Columns mode restores the order (below).
+*/
+.workspace-lane[data-lane="activity"][data-has-foot] {
+  grid-template-rows: var(--toolbar) minmax(0, 1fr);
+}
+.workspace-lane[data-lane="activity"] > .workspace-foot {
+  order: -1;
+}
+/*
+  STACKED: a declared share of the page region PLUS the lane's foot, never a
+  content size (spec §3, D20, owner 2026-10-05). The share is for the cards; the
+  foot is added on top, as v3 does, or a lane with a foot gives its cards less
+  than its share (390x844: the live card 184px, against 209 now and v3's 221).
+
+  AND NEVER SHORTER THAN `--stacked-lane-min` (416px). Without a floor a short
+  region (a phone held sideways, 200% zoom) gave cards 29-59px tall that
+  clipped their text; the page region scrolls further instead. It was the
+  shortest columns lane, 384px, until D25 (owner, 2026-10-07): the /puzzles
+  context lane needs 416 (four 79px cards, three gaps, the foot), and at 384 its
+  record cards overflowed by 6.7px on a phone held sideways.
+
+  The foot term is a variable rather than a second selector, so these rules
+  stay at the specificity the columns rule `.workspace-canvas > .workspace-lane`
+  beats.
+*/
+.workspace-lane {
+  --foot-block: 0px;
+  --lane-floor: var(--stacked-lane-min);
+}
+.workspace-lane[data-lane="activity"] { block-size: max(calc(var(--activity-share-stacked) * 100cqh + var(--foot-block)), var(--lane-floor)); }
+.workspace-lane[data-lane="context"] { block-size: max(calc(var(--context-share-stacked) * 100cqh + var(--foot-block)), var(--lane-floor)); }
+
+.workspace-lane-stack {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--gap-card);
+  min-block-size: 0;
+}
+
+/* A card divides its lane's stack by its share; its height never depends on
+   its content (spec §5). It is a size container for its own type. */
+.workspace-card {
+  flex: var(--share, 1) 1 0px;
+  min-block-size: 0;
+  overflow: hidden;
+  container-type: size;
+}
+.workspace-foot {
+  block-size: var(--toolbar);
+  min-block-size: 0;
+  overflow: hidden;
+  container-type: size;
+}
+/*
+  THE SIDE INSET IS THE PAGE'S, so a column of cards lines its content up on
+  one edge whatever type each card settles on (owner, 2026-10-01). It sits on
+  the CARD, whose font size is the lane's base, so `0.7em` is 0.7 x base with
+  no custom property: exact with or without `@property` (spec §3).
+*/
+.workspace-card,
+.workspace-foot {
+  padding-inline: 0.7em;
+}
+/*
+  CARD TYPOGRAPHY (spec §5, layout redesign C3). The card's type comes from its
+  own height: what its controls do not reserve, less the padding, divided by
+  the rows its type declares, at 0.45 of a row, never under 10px and never over
+  the lane's base. This is the rule `/puzzles` v3 runs in JavaScript with one
+  `ResizeObserver` per card (`TrainerLayoutSkeleton` `Box`), as CSS.
+
+  IT IS ON `card-content`, NOT ON THE CARD. Container units never query the
+  element that establishes the container, so on the card `100cqh` would be the
+  WORKSPACE's height. Here the nearest size container is the card. `1em` is the
+  font size inherited from the lane, so the cap needs no custom property to
+  cross a container boundary. Nothing between the lane and this element may set
+  `font-size`.
+
+  The 16px is the padding below, top and bottom.
+*/
+.workspace-card-content {
+  --card-row: calc((100cqh * (1 - var(--card-reserve)) - 16px) / var(--card-rows));
+  font-size: clamp(10px, calc(0.45 * var(--card-row)), 1em);
+
+  /*
+    THE CARD'S RHYTHM (spec §5, C5a, D22, owner 2026-10-06): v3's `Box` rule,
+    without measuring. The height the content does not use is shared in units
+    (`--card-units`, declared by the card type: see `cardTypes.ts`), each
+    unit capped at half the type and floored at half a pixel, so a short card
+    closes up rather than clipping. Everything reads from these four:
+
+      --card-air         half a unit; `2 x` is the row rhythm, `1 x` a label
+                         to its control, `3 x` a group boundary
+      --card-title-gap   two units under a `.card-label`, at least 2px
+      --card-pad-y       the card's own vertical padding, max(3px, half the type)
+      --card-lead-gap    the plan card's blank line under its title
+
+    All are computed HERE, where `1em` is the card's type and `100cqh` its
+    height, and registered so they inherit as pixels. Container units resolve
+    against the card at any depth inside it; an `em` read by a nested element
+    with a different size is the one thing that drifts where `@property` is
+    missing (Firefox 121-127), and only in gaps of a few pixels.
+  */
+  --card-type: 1em;
+  --card-h: 100cqh;
+  --card-w: 100cqw;
+  --card-pad-y: max(3px, 0.5em);
+  --card-unit: clamp(0.5px, calc((100cqh - 2 * var(--card-pad-y) - var(--card-content) * 1em - var(--card-controls)) / var(--card-units)), 0.5em);
+  --card-air: calc(var(--card-unit) / 2);
+  --card-title-gap: max(2px, calc(var(--card-unit) * 2));
+  --card-lead-gap: 0px;
+
+  block-size: 100%;
+  padding-block: var(--card-pad-y);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: calc(var(--card-air) * 2);
+  line-height: 1.35;
+}
+/* A blank line under the plan card's title where there is room for one, sized
+   for its tallest state so it does not move when the state does (v3's `lead`). */
+.workspace-card-content[data-card-lead] {
+  --card-lead-gap: clamp(0px, calc((100cqh - 2 * var(--card-pad-y) - var(--card-lead) * 1em - 2 * var(--card-air) * var(--card-gaps)) * 0.5), 1em);
+}
+
+/*
+  A CARD TITLE (spec §5, D20, owner 2026-10-05): 0.86 of the card's type, as
+  v3's `.card-label`, but never under the card's own 10px minimum. At the floor
+  0.86em alone printed titles at 8.6px.
+*/
+.workspace-card-content [data-card-title] {
+  font-size: max(10px, 0.86em);
+}
+/* v3's card components title with `.card-label` (0.86 x `--card-type`); the same floor. */
+.workspace-card-content .card-label {
+  font-size: max(10px, calc(var(--card-type) * 0.86));
+}
+
+/* The one scroll exception (spec §5, Unbounded lists; contract §9.1). */
+[data-workspace-list] {
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Hidden lanes and cards (focus mode) leave the layout entirely. */
+.workspace-canvas [hidden] {
+  display: none !important;
+}

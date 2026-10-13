@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/chess-queen-icon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/chess-queen-icon.png" />
+    <link rel="apple-touch-icon" href="/chess-queen-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The theme-color meta(s) and the app-theme pre-paint script, generated
+         by the app-theme-prepaint plugin in vite.config.ts from the colour
+         tokens (src/design/theme). theme-color must equal the page background
+         or the browser chrome frames the page in another colour, so it is
+         computed, never copied. Do not inline a copy here. -->
+    <!-- app-theme-prepaint -->
+    <!-- API preconnect removed: homepage doesn't call API (uses static JSON from CDN).
+         Pages that need the API (Champions, GameList) establish connections on navigation. -->
+    <!--
+      SEO/social tags below carry data-rh="true" so react-helmet-async treats
+      them as its own and REPLACES them on mount. Without it Helmet appends,
+      leaving two <meta name="description"> tags with the generic one first —
+      which is what crawlers and social scrapers actually read, so every page
+      advertised itself with the homepage copy.
+
+      They stay in the static HTML for scrapers that do not run JS, and
+      src/app/providers.tsx repeats them in a default <Helmet> so pages that
+      set no meta of their own still get these values back after the swap.
+      Keep the two lists in sync.
+    -->
+    <title>Chess Playbook - Master Your Game</title>
+    <!-- data-rh so Helmet replaces it per-route after hydration. On the raw
+         fallback (unknown paths, routes without static HTML) this tells
+         crawlers the page is a duplicate of the homepage rather than a
+         separate indexable URL — which is what the fallback content actually
+         is. Routes with real static HTML get their own canonical from
+         generate-route-html.cjs. -->
+    <link data-rh="true" rel="canonical" href="https://www.chessplaybook.com/" />
+    <meta data-rh="true" name="description" content="Play chess online or against the computer, solve tactical puzzles, take the Champion Challenge, and understand any position in plain English. Free, no account required." />
+    <meta name="author" content="Chess Playbook" />
+
+    <!-- Self-hosted fonts (perf: eliminates 2 DNS lookups + cross-origin requests to Google) -->
+    <link rel="preload" href="/fonts/fonts.css" as="style">
+    <link rel="stylesheet" href="/fonts/fonts.css">
+    <!-- No homepage LCP image preload. There used to be one here for the
+         LiveTournamentSpotlight article image, kept in sync by hand with a
+         comment in that component. Both were removed on 2026-08-02: the
+         homepage is now a six-card chooser and renders no image at all, so
+         preloading one was a high-priority download for nothing on the
+         site's paid landing page. -->
+    <!--
+      Preload the champion roster on the two pages built from it.
+
+      Both render nothing until this lands, but they reach it very differently:
+      /champions is bundled into index.js and fetches it as soon as that runs,
+      while /champion-challenge is a lazy route, so its fetch could not start
+      until the route chunk arrived ~300ms later and then queued behind the
+      chunks still in flight. Starting the request during HTML parse removes
+      that gap and costs nothing on pages that never ask for it.
+    -->
+    <script>if(/^\/(champions|champion-challenge)(\/|$)/.test(location.pathname)){document.head.insertAdjacentHTML('beforeend','<link rel="preload" href="/assets/players/players_list.json" as="fetch" type="application/json" crossorigin>')}</script>
+
+    <!--
+      /puzzles: start the daily-puzzle request during HTML parse (PZ-013).
+
+      Measured on production, 360px / cold cache / 4x CPU / ~1.6Mbps: the board
+      is PAINTED at 2.66s but the puzzle is not even REQUESTED until ~2.87s,
+      because the fetch cannot begin until the lazy route chunk has downloaded,
+      parsed and mounted. The API call itself then takes ~1.1s. So roughly a
+      second and a half of the wait is the request waiting for JavaScript,
+      which no amount of bundle work removes — it is an ordering problem.
+
+      A `preload as=fetch` warms the same URL the app will ask for, so the
+      component's own fetch is served from the memory cache instead of the
+      network. No globals, no promise handoff, no second copy of the response
+      shape: if this preload never lands, the page behaves exactly as before.
+
+      Gated on the SAME localStorage key the app uses (`cp_daily_puzzle_seen`),
+      so a returning visitor who has already had today's daily does not pay for
+      a request the page will not make. `%VITE_API_URL%` is substituted by Vite
+      from the same variable the app reads, so the origin has one source.
+    -->
+    <script>try{if(/^\/puzzles(\/|$)/.test(location.pathname)&&localStorage.getItem('cp_daily_puzzle_seen')!==new Date().toISOString().split('T')[0]){document.head.insertAdjacentHTML('beforeend','<link rel="preload" href="%VITE_API_URL%/api/puzzles/daily" as="fetch" crossorigin>')}}catch(e){}</script>
+
+    <meta data-rh="true" property="og:title" content="Chess Playbook - Master Your Game" />
+    <meta data-rh="true" property="og:description" content="Elevate your chess strategy with the champion's playbook. Learn advanced tactics, openings, and endgame mastery." />
+    <meta data-rh="true" property="og:type" content="website" />
+    <meta data-rh="true" property="og:url" content="https://www.chessplaybook.com" />
+    <meta data-rh="true" property="og:image" content="https://www.chessplaybook.com/assets/facebook_cover.jpg" />
+    <meta data-rh="true" property="og:site_name" content="Chess Playbook" />
+
+    <meta data-rh="true" name="twitter:card" content="summary_large_image" />
+    <meta data-rh="true" name="twitter:image" content="https://www.chessplaybook.com/assets/facebook_cover.jpg" />
+
+    <!-- Site-level identity, and the ONE page that carries it: every other
+         route has this block stripped by generate-route-html.cjs, and its
+         description is patched from route-meta.json by the same script so it
+         cannot drift from the meta description above. The sitelinks search-box
+         action was removed on 2026-08-07 — Google retired that feature in
+         October 2024, so it had rendered nothing since; see
+         docs/Fixes/SITE_AUDIT_2026-08-07_SEO.md. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Chess Playbook",
+      "url": "https://www.chessplaybook.com",
+      "description": "Play chess online or against the computer, solve tactical puzzles, take the Champion Challenge, and understand any position in plain English. Free, no account required."
+    }
+    </script>
+
+    <!-- Apply board theme from localStorage BEFORE React renders.
+         Prevents flash of default brown board when full CSS loads async (Beasties).
+         Generated at build time from src/config/boardThemes.ts by the
+         board-theme-prepaint plugin in vite.config.ts; do not inline a copy here. -->
+    <!-- board-theme-prepaint -->
+  </head>
+
+  <body>
+    <!-- Meta Pixel <noscript> fallback. Fires PageView for users with
+         JS disabled. The active Pixel install is in src/services/metaPixel.ts.
+         Pixel ID 943497925350474 is public (sent in every browser request)
+         so hardcoding it here is safe. Per HTML5 spec, <noscript> with
+         <img> content must be in <body>, not <head>. -->
+    <noscript>
+      <img height="1" width="1" style="display:none"
+           src="https://www.facebook.com/tr?id=943497925350474&ev=PageView&noscript=1"
+           alt="" />
+    </noscript>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- GA4 is initialized by react-ga4 (deferred via requestIdleCallback).
+         No gtag calls here, to avoid duplicate events. The dataLayer stub is needed so
+         gtag() calls in analytics.ts don't throw before the script loads.
+
+         GOOGLE ADS IS *NOT* INITIALIZED HERE OR ANYWHERE. This comment said it was,
+         which was false and had been since 2026-08-01: `analytics.ts` configures the
+         GA4 measurement id and nothing else, deliberately, because the campaign runs on
+         GA4-IMPORTED conversion actions and a client-side Ads tag would count the same
+         action twice. Corrected 2026-08-10 while tracing where a gtag console error
+         came from — a comment that outlives its subject is how the next person concludes
+         the feature still exists.
+
+         The `postMessage` errors naming www.google.com / www.youtube.com / m.youtube.com
+         come from gtag's own cross-domain sync (GOOGLE SIGNALS), which is a GA4 PROPERTY
+         setting — Admin → Data collection → Google signals — not anything in this repo.
+         It engages only for visitors signed in to Google with ad personalization on,
+         which is why it is invisible to a headless probe. Turning it off would silence
+         the console but also costs demographics and remarketing audiences, so it is a
+         product decision, not a bug fix. -->
+
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}</script>
+  </body>
+</html>

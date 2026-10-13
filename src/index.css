@@ -1,0 +1,1543 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  COLOURS ARE NOT DECLARED HERE (layout redesign B1). Every colour role, and the
+  card surface's sheen, highlight and shadow, is defined once in
+  `src/design/tokens/color.tokens.ts`, which `tailwind.config.ts` emits as
+  custom properties and turns into the Tailwind colour map. Add or change a
+  colour there; a value written here would be a second copy.
+
+  The `.dark` block that used to sit below `:root` is gone. It was the
+  pre-2026-08-07 palette, read only by a DEV gallery toggle, and it is exactly
+  what would have shipped if anyone had added a theme switch without revisiting
+  it. The light theme is designed in B2.
+*/
+@layer base {
+  :root {
+    --radius: 0.375rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /*
+   * Nothing may make the page scroll sideways on mobile.
+   *
+   * Two sources do it today, and both are decorative overhang rather than
+   * content: chessground's file-coordinate row is `left: 24px; width: 100%`
+   * (its base CSS, the lichess corner-label look), so it hangs 24px past the
+   * board's right edge; and several decorative fixed-width flourishes are
+   * wider than a 320px viewport. Measured 406px against a 390px viewport on
+   * /analysis and 360px against 320px on the homepage.
+   *
+   * `clip`, not `hidden`: `hidden` would make this a scroll container and
+   * break the `sticky` nav. `clip` suppresses the overflow without one. Only
+   * the x axis is clipped, so nothing that needs to escape vertically (drag
+   * ghosts, dropdowns, tooltips) is affected -- and the clipped region is
+   * empty box, so no glyph is cut.
+   */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  /*
+    THE SCROLLBAR'S SPACE IS ALWAYS RESERVED (#55, owner 2026-08-23: *"when I
+    change between homepage and puzzles page, the menu row changes, that is not
+    OK, I said it needs to be a fixed component that doesn't change"*).
+
+    The last thing making the shell differ by page, and it was never in the nav.
+    Content pages scroll and app pages do not, so on Windows - where a classic
+    scrollbar takes 15px rather than overlaying - the homepage gave the row
+    1201px and /puzzles gave it 1216. The bar shifted about 7px and every gap
+    moved with it, on navigation, between two pages whose nav is now byte for
+    byte the same.
+
+    A HEADLESS BROWSER CANNOT SEE THIS. Chromium overlays its scrollbar there, so
+    both pages measured an identical 1920px client width and the shell measured
+    identical on both. The owner reported it from a real browser after those
+    measurements said it was fixed.
+
+    `stable` keeps the gutter whether or not the page scrolls, so a scrolling
+    page and a fitted one have the same content width. It applies site-wide by
+    design: this is the shell's promise, not the nav's.
+  */
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  /*
+    THE SHELL (spec §1, layout redesign C1a). Two rows: the nav, then the page
+    region, which is the kind layout's element carrying `data-kind` and the
+    shell's direct child (`pageKind.test.tsx` holds that).
+
+    ONE COLUMN, PINNED TO THE WINDOW'S WIDTH. A grid's implicit column is
+    sized by its widest content, where the flex column this replaced simply
+    took the container's width; without `minmax(0, 1fr)` one wide table row
+    would widen the whole page.
+
+    `100vh` first, then `100dvh`: a browser without dynamic viewport units
+    keeps the first.
+  */
+  [data-shell] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    min-block-size: 100vh;
+    min-block-size: 100dvh;
+  }
+
+  /*
+    THE WORKSPACE LOCK: only a Workspace page needs a definite height, so only
+    it locks the shell to the viewport, and a stacked Workspace scrolls inside
+    its region. Styled from the static `data-kind`, never from a measurement.
+    No route is in the Workspace group until C5, so this applies to nothing yet.
+  */
+  [data-shell]:has(> [data-kind="workspace"]) {
+    block-size: 100vh;
+    block-size: 100dvh;
+  }
+  [data-kind="workspace"] {
+    min-block-size: 0;
+    overflow-y: auto;
+  }
+
+  /*
+    FOCUS MODE: the nav stays mounted as a zero-height row (C1a), `inert` from
+    the component. `visibility` as well as the height, so nothing of it paints.
+  */
+  [data-shell] > nav[data-chrome-hidden] {
+    block-size: 0;
+    overflow: hidden;
+    border-bottom-width: 0;
+    visibility: hidden;
+  }
+
+  /* No page kind prints truncated (spec §1, Print). */
+  @media print {
+    [data-shell] {
+      block-size: auto;
+      min-block-size: 0;
+    }
+    [data-kind] {
+      overflow: visible;
+    }
+  }
+
+}
+
+@layer utilities {
+  /*
+    THE ONE CARD SURFACE — TRIAL 2026-08-07.
+
+    A card is a raised surface, not a drawn outline: a background step above the
+    page, a 1px highlight along the top edge as if lit from above, and a soft
+    shadow beneath. No border at all.
+
+    It lives here rather than in a component because it has to be worn by two
+    things that cannot import each other — `TrainerUI`'s `Section`, which is
+    explicitly the trainer's own inventory, and the Champion Challenge cards,
+    which are plain shadcn `Card`s. The alternative was a fifth copy of the same
+    class string, and this project already has six copies of the plan card's
+    border to show what that becomes: five at `p-3`, one at `p-4`, and nothing
+    enforcing agreement.
+
+    The Champion Challenge cards were not merely a different style — they were
+    `bg-slate-900 border-slate-700`, hardcoded Tailwind literals that belong to
+    no palette, so they could never have followed a token change.
+  */
+  /*
+    RADIUS IS NOT IN HERE, deliberately. It stays the `rounded-lg` utility each
+    card already carried. Moving it in cost nothing visually and broke two
+    guards — `verify-card-stability` and `verify-panel-cards-fixed` both select
+    `.rounded-lg`, so they silently found 3 cards instead of 7 and reported a
+    layout regression that did not exist. This class owns the SURFACE; shape
+    stays where the guards can still see it.
+
+    IN `utilities`, NOT `components`, and that is load-bearing. shadcn's `Card`
+    hardcodes `shadow-sm` in its base classes — a utility — which beats anything
+    in the components layer. Defined there, the Champion Challenge cards took
+    the right fill and NO elevation at all: `rgba(0, 0, 0, 0) 0px 0px`, measured
+    rather than assumed. Same layer, later in the file, is what wins.
+  */
+  .surface-card {
+    border: 0;
+    background-color: hsl(var(--card));
+    background-image: linear-gradient(to bottom, var(--surface-card-sheen), transparent);
+    box-shadow:
+      /* The edge first, so it paints over the top highlight. INSET: a Workspace
+         lane clips (`overflow: hidden`) and its cards fill it, so an outer ring
+         was cut away (measured, F1). */
+      inset 0 0 0 1px var(--surface-card-edge),
+      inset 0 1px 0 var(--surface-card-highlight),
+      0 2px 12px var(--surface-card-shadow);
+  }
+
+  /*
+    THE PROMOTED SURFACE — a `surface-card` that is marked.
+
+    One thing on the trainer is deliberately louder than the rest: the training
+    plan. That was the owner's call on 2026-08-06, amending PRD §6.3 after Codex
+    flagged the contradiction — *"it's what will keep people on the site."* The
+    mark is a gold edge, and it works because it is the exception.
+
+    It existed as SIX hardcoded copies of `border border-primary/40 bg-card p-3`
+    — in `PlanEntry`, `PlanSummaryCard`, `PlanOffer`, `StandingLink`'s emphasis
+    branch, `PuzzlePlan` and inline in `PuzzleTrainerV2`, the last of which
+    duplicated `PlanSummaryCard`'s own container so two files had to be edited
+    in step to change one card. They had already drifted: five at `p-3`, one at
+    `p-4`. Padding stays at the call site because those two are genuinely
+    different; the SURFACE does not.
+
+    IT IS WORN ALONGSIDE `.surface-card`, NOT INSTEAD OF IT — `class="surface-card
+    surface-card-promoted"` — and this rule is defined after it so the border
+    wins. The first version replaced it, which set border and background and
+    nothing else: the promoted card came out FLATTER than every ordinary card,
+    in a pass whose whole premise is that elevation is what makes a card a card.
+    Caught by Codex on 2026-08-07. Promotion has to be additive, or the marked
+    thing reads as the demoted one.
+  */
+  .surface-card-promoted {
+    border: 1px solid hsl(var(--primary) / 0.4);
+  }
+  .surface-card-promoted:hover {
+    border-color: hsl(var(--primary));
+  }
+
+  .training-area-tactics {
+    border-color: hsl(var(--training-tactics-border));
+    background-color: hsl(var(--training-tactics));
+    color: hsl(var(--training-tactics-foreground));
+  }
+  .training-area-middlegame {
+    border-color: hsl(var(--training-middlegame-border));
+    background-color: hsl(var(--training-middlegame));
+    color: hsl(var(--training-middlegame-foreground));
+  }
+  .training-area-endgame {
+    border-color: hsl(var(--training-endgame-border));
+    background-color: hsl(var(--training-endgame));
+    color: hsl(var(--training-endgame-foreground));
+  }
+  .training-area-mixed {
+    border-color: hsl(var(--training-review-border));
+    color: hsl(var(--training-review-foreground));
+    background:
+      linear-gradient(135deg,
+        hsl(var(--training-tactics)) 0 32%,
+        hsl(var(--training-middlegame)) 32% 66%,
+        hsl(var(--training-endgame)) 66% 100%);
+  }
+}
+
+/* Ensure elements with fade-in animation start invisible */
+@layer utilities {
+  .animate-fade-in {
+    opacity: 0;
+  }
+
+  /*
+    Scrollbar for panels that scroll inside the page (owner, 2026-08-04).
+
+    The browser default is OS chrome dropped into a themed dark UI: wrong
+    colour, wrong weight, and it reads as a control rather than as a position
+    marker. Everything here is drawn from our own tokens.
+
+    A 4px pill, no track, floated off the edge by a transparent inset border.
+    That border trick is the only way to give a webkit thumb padding: the
+    thumb is painted 10px wide with 3px of transparent border and
+    `background-clip: padding-box`, so what you see is 4px with air around it.
+
+    Two mechanisms on purpose, not by accident:
+      - `scrollbar-width`/`scrollbar-color` is the standard property, and the
+        only one Firefox honours.
+      - `::-webkit-scrollbar` is what Safari and older Chromium read, and it
+        is the only one that can do the rounded floating pill.
+    A browser that supports both takes the pseudo-elements.
+
+    `scrollbar-gutter: stable` reserves the space at all times, so content does
+    not reflow at the moment a panel becomes scrollable — which on this page
+    would mean the text shifting under the reader exactly when a result
+    arrives.
+
+    The gutter alone is not breathing room: it is exactly the width of the bar,
+    so a card's edge ends up flush against the thumb. The panels add their own
+    `pr-3` on top of it (owner, 2026-08-04).
+  */
+  /*
+    THE MENU'S TYPE IS SIZED TO THE ROW IT HAS TO FIT IN.
+
+    Owner, 2026-08-15: the landscape layout shows the desktop menu rather than a
+    hamburger, and *"the size of the fonts need to be adapted so the menu fits"*.
+
+    MEASURED, NOT CHOSEN. The row holds eight links, each an icon plus a label,
+    the wordmark and Sign in. At 788px of viewport there are 740px to put them
+    in, and the natural width of that set is 962 at 14px - so it needs 9px to
+    fit, which is what the owner picked when shown the alternatives (dropping the
+    icons fits at 13, dropping the wordmark at 12, dropping both at 16).
+
+    9px was where it first fitted; the owner then asked for 10, which the row
+    can afford once the logo scales with it and Sign in is tighter than a link.
+    The line through 10px at 788 and 14px at 1908 is `7.19px + 0.357vw`, clamped
+    at both ends. Everything else in the row is a
+    multiple of it, using the same ratios the measurement used, so the widths it
+    produced are the widths this renders.
+  */
+  /*
+    THE STACKED ROW IS TIGHTER STILL (owner, 2026-08-15: *"on the stacked layout
+    we need to limit more the height of the menu row"*).
+
+    It was a flat 64px at every portrait size - 7.6% of a phone and 4.7% of an
+    iPad held vertically - because every scaling rule below sits inside the
+    landscape query. And it holds far less: a logo, the wordmark and a hamburger,
+    against eight links plus Sign in.
+
+    Same model as landscape - content plus air - with the content being the 32px
+    logo and the air 10px rather than 14. 42px, and it stops there: on a stacked
+    layout the page scrolls anyway, so a taller header buys nothing at all, while
+    on a phone it is the difference between seeing the board and not.
+  */
+  [data-nav-row] {
+    /*
+      ONE DEFINITION OF THE ROW'S HEIGHT, IN BOTH ORIENTATIONS (#70).
+
+      This used to be a literal `38px` here and `var(--nav-bar)` in the
+      landscape block, so `--nav-bar` described the row on a desktop and
+      described nothing on a phone - while `--nav-total`, which is what
+      `SiteShell` subtracts to publish `--shell-content-h`, was computed from it
+      unconditionally. Measured at 390x844: the token said 48.71px and the bar
+      was 39. Every stacked app page reserved ~9.7px it did not have.
+
+      `--nav-bar` now defaults to the stacked height on `:root` and the
+      landscape curve overrides it, so the token is the row at every viewport
+      and there is nothing to keep in sync.
+
+      Since C1b that token is `--nav-block`, generated from `layout.tokens.ts`
+      and including the 1px rule, so the row is the block less the rule.
+    */
+    height: calc(var(--nav-block) - var(--nav-rule));
+  }
+
+  /*
+    EVERY NAV CONTROL HAS A 24x24 TARGET (#78, layout redesign C1c).
+
+    WCAG 2.5.8 is about the HIT AREA, not the ink. The bar, its type and its
+    spacing are approved and frozen (#55), and the controls are small at
+    800x600 (15px of ink) because nine labels and a sign-in slot share 800px.
+    So the target is extended, not the control: an invisible box at least
+    24x24 centred on each one, inside a row that is always taller than 24.
+
+    The control is an <a>, or a <button> that is not inside one: the nav wraps
+    its buttons in links, and the link is what is clicked.
+    `verify-nav-targets.mjs` asks the browser what lies under nine points of
+    that square, which is the area a click actually reaches.
+  */
+  [data-nav-row] :is(a, button):not(a *) {
+    position: relative;
+  }
+  [data-nav-row] :is(a, button):not(a *)::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 24px);
+    height: max(100%, 24px);
+    transform: translate(-50%, -50%);
+  }
+  /*
+    ONE RULE: THE BAR IS ITS CONTENT PLUS AIR, AND EVERYTHING IS CENTRED IN IT
+    (owner, 2026-08-15: *"whatever the menu row height, the logo and menu or
+    menu items are centered verically"*).
+
+    The row already carried `items-center`; what broke the symmetry was 5px of
+    padding above it, which bought the distance from the screen edge the owner
+    asked for and spent it only on the top. Folding that into the height and
+    letting centring share it gives 10px above and 10 below instead of 12 and 8
+    - the same header, two pixels moved, and no second rule to remember.
+  */
+  /*
+    The mark comes down with the row. It was 32px - the desktop size - inside a
+    42px band, so the header was almost entirely logo and the space under it
+    read as waste (owner, 2026-08-15: *"the space below the logo, unused is too
+    much"*). 26px keeps the brand legible on a phone and hands 6px back.
+  */
+  [data-nav-row] img {
+    width: 18px;
+    height: 18px;
+  }
+  /*
+    THE NAME SITS NEXT TO THE MARK, NOT IN THE MIDDLE OF THE BAR (owner,
+    2026-08-15: *"for the mobile/stacked lets have the Chess Playbook text close
+    to the icon, don't separate them"*).
+
+    There are two wordmarks in this bar: one beside the logo, hidden below `md`,
+    and one absolutely centred, shown only there. So a phone had its mark hard
+    left and its name floating in the middle with nothing joining them - they
+    read as two separate objects rather than one lockup.
+
+    The centred one goes and the one beside the mark shows. `[data-nav-row]
+    [data-nav-wordmark]` outweighs the `hidden` utility on it, which is why this
+    is a rule here rather than a class change in the component.
+  */
+  [data-nav-row] a[class*="md:hidden"] {
+    display: none;
+  }
+  [data-nav-row] [data-nav-wordmark] {
+    display: inline;
+    /* `--nav-bar-stacked` was never declared, so this was always 38px x 0.4;
+       it reads the real token since C1b, same value. */
+    font-size: calc(var(--nav-row-stacked) * 0.4);
+  }
+
+  /*
+    800, NOT 760 (#55). This block styles the desktop nav row, which turns on
+    at `navrow` - a threshold of its own, because nine labels need 800 while
+    the workspace columns need 760. At 760 the row measured exactly 0 between
+    every item. See tailwind.config.ts for the measurement.
+  */
+  @media (orientation: landscape) and (min-width: 840px) {
+
+    [data-nav-row] {
+      /*
+        TWO TYPE SCALES, AND THEY ARE NOT THE SAME THING (owner, 2026-08-15:
+        *"we need to distinguish between the logo type and the menu items type,
+        the logo needs separate treatment"*).
+
+        `--nav-brand` drives the logo, the wordmark and THE BAR'S OWN HEIGHT,
+        because the logo is the tallest thing in the row and therefore what the
+        bar is built around. It keeps the curve the bar was frozen on, so the
+        heights the owner approved do not move.
+
+        `--nav-type` drives the menu and is DECLARED, not solved. It used to be
+        the tighter of a height constraint and a width one, both with fitted
+        constants; every one of those constants encoded the padding the buttons
+        happened to have that week. See its own comment below for what replaced
+        them and why.
+
+        THE TWO CONSTANTS DESCRIBE TODAY'S LABELS. A ninth item, a longer word,
+        or a signed-in username in place of Sign in makes them wrong, and wrong
+        quietly, because the row compresses rather than errors.
+      */
+      /*
+        What the bar occupies, its 1px rule included, is `--nav-block` (C1b),
+        generated from `layout.tokens.ts`; see the note on `:root` below.
+      */
+
+      /*
+        THE MENU TYPE IS DECLARED, NOT FITTED (#55, #67, owner 2026-08-23).
+
+        It was grown in JavaScript until the row stopped it, in a layout effect
+        that MEASURED the rendered children and wrote the answer back here. Two
+        defects followed from that and neither was fixable inside it:
+
+          - the write happens AFTER first paint, so the correction is visible.
+            That is the flicker #55 was filed for.
+          - the answer depends on what is in the row, so `/analysis` (which
+            renders `Import Game` instead of `Analysis`) got 18.5px where every
+            other route got 19px, and a signed-in row got less again. The bar
+            changed shape by ROUTE and by auth state.
+
+        Both poles below were chosen by the owner from real pages rendered at
+        1:1, not from a table:
+
+          1920 -> 16px   from the type ladder, against Lichess 14, Chess.com 14
+                         (16 in its signed-in sidebar), GitHub 16. The old 19px
+                         was larger than any body text on our own homepage.
+          800  -> 10.5px judged at 800x600 on the real homepage and /puzzles.
+                         12.5 overflows the row by 5.1px, 11.5 leaves 0.1px
+                         between items, 10.5 leaves 5.3px.
+
+        THE FLOOR IS WHAT REMOVES THE ICON-ONLY TIER. Measured ceilings with
+        labels: 11.5px at 800x600, 12.8px at 900x640, 12.5px at 1024x640. The
+        line sits under all three, so the row keeps its labels from 800x600
+        upward and never changes shape - no icon tier, no item ever dropped.
+
+        The cap is a decision, not a derivation: without it the type keeps
+        growing on a 4K display until the bar is absurd.
+      */
+      --nav-type: clamp(10.5px, calc(0.4911vw + 6.57px), 18px);
+      /*
+        THE AIR IS CSS NOW, AND IT HAS TO BE (#55).
+
+        It was `14 * (1 + 0.5 * log2(vh / 467))`, computed in JavaScript because
+        CSS has no `log()`, and written in a passive effect. So the bar rendered
+        at its 14px default first and grew a moment later - and the app pages,
+        which measure their available height in a LAYOUT effect, measured before
+        that. `/dev/puzzles-layout` pinned its columns to 947 - 53 = 894 where the
+        bar is really 59.2, and scrolled 6px for ever after. Self-sustaining: the
+        columns' own heights then held the box at the wrong value, so a forced
+        re-measure did not correct it.
+
+        The shell's geometry has to be final during the browser's first layout,
+        or "decide once, before paint" is not true of the one thing every app page
+        measures.
+
+        PIECEWISE LINEAR, PINNED TO THE CURVE IT REPLACES. Each segment is the
+        chord between two points of `14 * (1 + 0.5 * log2(vh / 467))`, at
+        vh = 467, 635, 947, 1307 and 2160 - so the air is reproduced EXACTLY at
+        those heights and only the shape BETWEEN them becomes a straight line.
+
+        Verified against the live bar rather than against the arithmetic: the row
+        renders 45.27px at 467, 48.38 at 635, 58.19 at 947 and 61.45 at 1307,
+        which is what the JavaScript produced to within a hundredth of a pixel.
+
+        (The `38 / 45 / 53 / 56` row heights quoted in the 2026-08-15 note below
+        do not reproduce with today's `--nav-brand` and are not the yardstick;
+        the yardstick is the behaviour being replaced.)
+
+        `svh`, not `vh` or `dvh`: the small viewport is the one that does not move
+        when a mobile toolbar appears, and a bar that changes height mid-scroll is
+        the defect this is replacing, one axis over.
+      */
+      /*
+        THE ACCOUNT SLOT IS FIXED, AND IT IS THE SAME WIDTH SIGNED IN OR OUT
+        (owner, 2026-08-23: *"it always has the same width, either signed in or
+        not, so all the other menu items have the same position regardless of
+        the sign in control state"*).
+
+        Signed in it is an avatar and a chevron, no username. That is forced by
+        the floor above: with a name the slot is ~122px against ~35px without,
+        and at 10.5px the row overflows by 15.6px. The username is still shown in
+        the dropdown, beside the email. Widening this constant is what it costs
+        to put the name back, and the cost is paid at 800x600 by everyone.
+
+        THE WIDTH IS SET BY THE WIDER STATE, WHICH IS `Sign in` - the words, not
+        the avatar. So signing in makes the slot's contents narrower, never wider,
+        and they are start-aligned so the gap in front of them does not move.
+        Sizing it to the avatar instead would clip the one control most visitors
+        are meant to press.
+      */
+      --nav-slot: calc(var(--nav-type) * 4.3);
+      /*
+        THE ROW FOLLOWS THE TYPE, at the proportion 800x600 settled on.
+
+        Owner, 2026-08-15: start from 800x600, where 38px of row with 10px type
+        is the shape they approved - so `type / rowH = 0.263`, i.e.
+        `rowH = 3.80 x type`, and that ratio is carried to every resolution.
+
+        The type is the constrained quantity: the menu has to fit 740px of width
+        at 800x600, which is what fixes it at 10px there. The row height is
+        constrained by nothing but taste, so it is derived from the type rather
+        than the other way round. Driving the two independently - the row from
+        `8vh`, the type from `vw` - is what made the same page render at 26% type
+        on one window and 16% on another.
+      */
+      /*
+        THE ROW IS CONTENT PLUS AIR, AND ONLY THE AIR CURVES (owner,
+        2026-08-15: *"not to apply the ratio linearly, to use some smothing,
+        something like a log increase but keep the increase of the type"*).
+
+        MEASURED: the tallest thing in the row is the logo at 2.29 x type, so
+        that IS the minimum - 24px at 800x600, 32px at 1908. The row the owner
+        approved at 800x600 is 38, i.e. the minimum plus 14px of air.
+
+        A flat share of the screen (8.14vh, the 800x600 ratio carried up) grows
+        the air instead of holding it: 45px of slack at 1908 and 74px at 2548,
+        which is a 106px header. So the air is anchored at 14px and grows with
+        log2 of how much taller the window is than the 467px anchor, at half
+        weight. Row: 38 at 467, 45 at 635, 53 at 947, 56 at 1307.
+
+        `log` is not available in CSS, so the curve is expressed as the term it
+        is - `k * log2(vh / 467)` - in `--nav-air`, computed in JS where the
+        viewport height is already being read. If it ever needs to be pure CSS,
+        the closest is a `clamp` between the two ends, which is a chord rather
+        than the curve.
+
+        The height itself is declared once, on the base `[data-nav-row]` rule
+        outside this query; `--nav-block` (until C1b `--nav-bar`) is the only thing that changes here.
+      */
+    }
+    /*
+      THE WHOLE ROW, not the links only. The first version scaled
+      `[data-nav-desktop] button` and the wordmark, and left the logo tile and
+      Sign in at full size - so the row rendered at three sizes at once, with the
+      biggest thing in it being the button beside 9px links.
+    */
+    /*
+      EQUAL GAPS, AND THE LEFTOVER GOES INTO THEM (owner, 2026-08-23: *"the
+      distance between them should be equal apart from the first item (the logo
+      and ChessPlaybook text) and the next one"*).
+
+      `space-between` over the whole remaining width is what makes that true
+      without arithmetic: every gap between items is identical, and the brand's
+      gap is whatever is left, which is the one allowed to be larger.
+
+      A FIXED GAP CANNOT DO THIS. With `gap: type/2` the row's spare width has to
+      go somewhere, and it went into a hole beside one item - which is exactly
+      what the owner spotted on the first sample page.
+    */
+    [data-nav-desktop] {
+      flex: 1 1 auto;
+      min-width: 0;
+      justify-content: space-between;
+      gap: 0;
+    }
+    /*
+      AND THE BRAND IS IN THE SAME DISTRIBUTION (owner, 2026-08-23: *"the
+      distance between logo and 'Explain' is less than the distance between other
+      menu items, it should be at least equal if not larger"*).
+
+      It was outside it. The row is brand + menu + hamburger, and `space-between`
+      inside the MENU spread the links only - so the brand's gap was whatever the
+      menu did not take, which is smaller than a gap rather than larger.
+
+      `display: contents` dissolves the menu's own box, so the brand, the links
+      and the account slot are siblings in ONE `space-between` row and every gap
+      is equal by construction, the brand's included. Nothing needs to know what
+      the gap is, which is what a computed margin would have required.
+
+      SCOPED INSIDE THIS MEDIA QUERY DELIBERATELY. The menu carries `hidden
+      cols:flex`; this selector outranks both, so outside the landscape query it
+      must not apply or the menu would render on a phone.
+    */
+    [data-nav-row] [data-nav-desktop] {
+      display: contents;
+    }
+    [data-nav-desktop] a,
+    [data-nav-desktop] button {
+      font-size: var(--nav-type);
+    }
+    /*
+      EACH LINK IS WRAPPED IN AN `<a>`, and the anchor is a block with its own
+      line box - 20px at 10px type - so the 15px button sat at the TOP of it
+      while Sign in was centred in its wrapper. Measured: link 10.8..26 against
+      Sign in 13.3..28.5, a 2.5px offset that reads as the button being
+      misaligned when it was the links.
+    */
+    [data-nav-desktop] > a {
+      display: flex;
+      align-items: center;
+    }
+    /*
+      THE BUTTON HUGS ITS TEXT (owner, 2026-08-15: *"looks like there is enough
+      room horizontally as well, so the reason that if would not fit
+      horizontally doesn't stand"*).
+
+      It was `2.1 x type`, so at 22px text the button was 46px tall and the bar
+      was full of padding rather than of type. The height limit was measuring my
+      own padding: the row reported itself full while it visibly was not. 1.45
+      leaves room for descenders and nothing else, so what stops the type now is
+      the bar or the row's width, which are the only two real limits.
+    */
+    [data-nav-desktop] button {
+      height: calc(var(--nav-type) * 1.45);
+      padding-inline: calc(var(--nav-type) * 0.5);
+      gap: calc(var(--nav-type) * 0.32);
+    }
+    [data-nav-desktop] svg,
+    [data-nav-desktop] img {
+      width: calc(var(--nav-type) + 2px);
+      height: calc(var(--nav-type) + 2px);
+    }
+    /*
+      THE ACCOUNT SLOT. Fixed width from `--nav-slot`, so signing in moves
+      nothing; its contents start-aligned so the gap in FRONT of it is the same
+      as every other gap and any unused width falls after it, at the row's edge.
+
+      The divider is gone: with equal gaps it read as a second, unequal gap.
+
+      AND NO `overflow: hidden`, WHICH THIS RULE HAD AND WHICH BROKE THE ACCOUNT
+      MENU. The slot is the positioning parent of that dropdown, so clipping it
+      clipped the menu to a 69px box - the owner's screenshot shows the sliver
+      that survived. It was there to truncate a long username, and the username
+      is no longer in the bar, so it was guarding against nothing.
+
+      Same defect as the 2026-08-10 theme popover, which rendered perfectly and
+      swallowed every click because the footer slot it opened out of was a scroll
+      container. A box that hosts a popover must not clip.
+    */
+    [data-nav-desktop] > .nav-account-slot {
+      flex: 0 0 var(--nav-slot);
+      width: var(--nav-slot);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    /*
+      SIGN IN IS TIGHTER THAN A LINK, not the same (owner, 2026-08-15: *"the
+      sign in button still looks to big"*). A filled button carries its own
+      weight from the fill, so at a link's padding it reads as the largest thing
+      in a row of quiet items - which is the wrong emphasis for a control most
+      visitors ignore.
+    */
+    /*
+      SIGN IN IS SMALLER THAN A LINK, not larger (owner, 2026-08-15: *"can we
+      make the sign in button just a bit samller?"*).
+
+      A filled button already carries weight from its fill, so matching a link's
+      type in a taller, wider box made it the loudest thing in a row of quiet
+      items - the wrong emphasis for a control most visitors ignore. Its type is
+      0.9 of a link's and its box hugs it at the same 1.45 the links use.
+
+      It also buys width back, which now goes into the gaps.
+    */
+    /*
+      SIGN IN IS AN `<a>`, NOT A BUTTON, and every earlier rule here missed it.
+      It rendered 36px tall against the links' 29 and was the tallest item in the
+      row - so it, not the menu, was setting the height limit the old fit loop
+      hit. That loop is gone (#55); the observation about its height stands.
+      Two rounds of "Sign in is too big" were measured against the Live link by
+      mistake, which is why the numbers looked fine and the screen did not.
+
+      Smaller than a link, deliberately (owner, 2026-08-15: *"can we make the
+      sign in button just a bit samller?"*): a filled control already carries
+      weight from its fill, so matching a link's type made it the loudest thing
+      in a row of quiet items.
+    */
+    /*
+      Its own wrapper is a plain block, so the control sat on the text baseline
+      rather than on the row's centre line - 36px tall inside a 24px parent,
+      which is what made it read as unaligned however its type was set.
+    */
+    [data-nav-desktop] > .nav-account-slot {
+      display: flex;
+      align-items: center;
+      /*
+        `align-self: stretch` so this wrapper spans the row's line box and its
+        centre IS the row's centre. Centred inside a wrapper that is itself only
+        as tall as its text, the control landed 2.5px low at 800x600 and 0.8px
+        high at QHD - small, and enough to read as unaligned.
+      */
+      align-self: stretch;
+    }
+    /*
+      THE ACCOUNT TRIGGER'S PARTS SCALE WITH THE BAR TOO.
+
+      Its avatar is `w-7 h-7` and its chevron `h-3.5 w-3.5` - fixed pixels, from
+      when this control lived in a bar of one size. The slot is a multiple of
+      `--nav-type`, so at the 10.5px floor it is 45px while those fixed parts plus
+      their padding need about 64: the trigger would burst the row for signed-in
+      visitors on exactly the small screens the floor exists for.
+
+      Sized in `em` against the rule above, so the control is a proportion of the
+      bar like every other item rather than a constant that happens to fit at one
+      size.
+    */
+    [data-nav-desktop] > .nav-account-slot button > div:first-child {
+      width: 1.5em;
+      height: 1.5em;
+    }
+    [data-nav-desktop] > .nav-account-slot button svg {
+      width: 0.9em;
+      height: 0.9em;
+    }
+
+    [data-nav-desktop] > .nav-account-slot a,
+    [data-nav-desktop] > .nav-account-slot button {
+      display: inline-flex;
+      align-items: center;
+      font-size: calc(var(--nav-type) * 0.95);
+      height: calc(var(--nav-type) * 1.45);
+      min-height: 0;
+      padding-block: 0;
+      padding-inline: calc(var(--nav-type) * 0.6);
+    }
+    /*
+      The logo tile and the wordmark, which sit outside the links container.
+
+      Both are MULTIPLES of the same number rather than offsets from it. An
+      offset like `+3px` is a third of the type at 9px and a fifth of it at 14,
+      so the wordmark grew relatively larger exactly where the row is tightest -
+      it rendered 12px against 9px links at 800x600, which is what read as
+      "the logo is too big".
+    */
+    /*
+      THE RATIOS ARE THE DESKTOP ONES. At the full 14px type this renders the
+      sizes the row has always had - 32px logo, 18px wordmark - so nothing
+      changes on a big screen, which is where nothing was wrong. The complaint
+      was never that the logo was the wrong size; it was that it stayed 32px on
+      an 800x600 window. Below full size everything keeps the same proportion to
+      the links beside it.
+    */
+    [data-nav-row] img {
+      width: calc(var(--nav-brand) * 2.29);
+      height: calc(var(--nav-brand) * 2.29);
+      border-radius: calc(var(--nav-brand) * 0.57);
+    }
+    /*
+      THE WORDMARK READS WITH THE MENU, NOT WITH THE BAR (owner, 2026-08-15:
+      *"Chess Playbook looks too small compared to the others"*).
+
+      It was `1.28 x brand`, and brand caps at 14px because brand is what the
+      frozen bar height is built from - so at QHD the site's name rendered 17.9px
+      beside 27px menu items. It rides `--nav-type` now, at the same size as a
+      link, which is the thing the eye compares it to.
+
+      The LOGO TILE stays on the brand scale deliberately. It is the tallest item
+      in the row, so it is what the bar's height is derived from, and moving it
+      would move the bar the owner froze.
+    */
+    [data-nav-wordmark] {
+      font-size: var(--nav-type);
+      line-height: 1.2;
+    }
+    /* The group's own gap was a flat 1rem, i.e. wider than a link at 9px. */
+    [data-nav-row] > div:first-of-type {
+      gap: calc(var(--nav-brand) * 0.6);
+    }
+    [data-nav-row] a[href="/"] {
+      gap: calc(var(--nav-brand) * 0.45);
+    }
+  }
+
+  .card-row > :first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /*
+    EVERY MARK ON A CARD IS THE SAME SIZE, AND IT IS THE CARD'S (owner,
+    2026-08-15: *"the icons of the cards titles are bigger in production"*, then
+    *"also the ones of the items are a bit bigger"*, then *"so all icons"*).
+
+    They were `1em` of whatever each icon happened to inherit, which is not one
+    rule but three: 14px beside a body row, 12 beside a card title, 12 beside a
+    stat label - so the marks shrank exactly where the type did, and production
+    draws all of them at a flat 14.
+
+    `1 x --card-type` is 14px at the base, production's size, and unlike
+    production's flat `w-3.5` it follows the card on a smaller screen. An icon is
+    a MARK, not text: it does not need to shrink with the label it sits beside,
+    and below about 12px a lucide glyph stops being legible at all.
+
+    The board, the control strip and the appearance card are excluded: those two
+    bands size their marks from the BAR instead (0.38 of it), which is a
+    different box with a different rule. The strip's icons are a ratio
+    of the BAR (0.38 of it), which is a different box with a different rule, and
+    the board has no marks of ours in it.
+  */
+  [data-skeleton-card]:not([data-skeleton-card='strip']):not([data-skeleton-card='board']):not([data-skeleton-card='theme-focus']):not([data-skeleton-card='analysis']) svg {
+    width: calc(var(--card-type, 14px) * 1);
+    height: calc(var(--card-type, 14px) * 1);
+  }
+
+  /*
+    THE APPEARANCE CARD'S TWO CONTROLS FILL THEIR BAND (owner, 2026-08-15:
+    *"buttons need to be bigger on the theme card"*).
+
+    `PuzzleAppearanceCard` sizes them for the OLD layout's 52px footer, where
+    40px of control in 52 of band is right. This band is `--strip-h`, which is 56
+    at the owner's viewport and up to 96 on a large screen, so a fixed 40 left
+    them looking marooned — the same defect as the control strip's icons, one
+    card along.
+
+    0.79 of the band is 44px here, the project's touch-target size and the height
+    of the buttons in the strip directly opposite. `flex: 1` shares the card's
+    width between them rather than leaving both hugging their labels.
+
+    SCOPED TO THIS PAGE by the `data-skeleton-card` attribute: the same component
+    renders in the old layout's 52px slot, and it must keep the size it was tuned
+    for there.
+  */
+  [data-skeleton-card='theme-focus'] button {
+    /*
+      0.62 AND ITS OWN TYPE (owner, 2026-08-16: *"theme and focus buttons are way
+      too big in this case"*).
+
+      0.79 of the band was 44px - the project's touch size, and right when the
+      band is the only thing at that scale. At 788x467 the strip sits on its 56px
+      floor while every card beside it is 83px with 10px type, so a 44px control
+      carrying 14px text was the largest thing in the column.
+
+      The font was the worse half: `var(--card-type, 14px)` on a card that
+      publishes no `--card-type`, so it ALWAYS fell back to 14 - a fixed size
+      that could not follow the band at any resolution.
+
+      THE FIRST FIX WAS AIMED AT THE WRONG AXIS (2026-08-18). Rebinding the type
+      to `--strip-h` made it follow the BAND, and the band is clamped 56..96px
+      while the page's base moves 10..18 - so the label was out of step at both
+      ends: larger than its neighbours at 800x600 and stuck at 10.08px beside
+      18px cards at 1920x947. The card publishes `--card-type` now (see the
+      theme-focus slot in TrainerLayoutSkeleton), so the ORIGINAL expression is
+      the right one and it finally has a value to read. The band is the CAP
+      rather than the source, which is what keeps a tall line out of a short
+      strip. `min-height` stays a fraction of the band - that one is about
+      hittability, which really is the band's business.
+    */
+    min-height: clamp(20px, calc(var(--strip-h, 52px) * 0.5), 40px);
+    flex: 1;
+    font-size: clamp(9px, var(--card-type, 14px), calc(var(--strip-h, 52px) * 0.4));
+  }
+  /*
+    AND ITS MARKS ARE THE STRIP'S, NOT THE CARD'S (owner, 2026-08-15: *"the icons
+    need to be bigger on the theme card"*).
+
+    The general card rule sizes a mark from `--card-type`, 14px, which is right
+    beside a row of text. This card is not a row of text: it is two 44px controls
+    in the same band as the control strip, and the strip draws its marks at 0.38
+    of that band. At 14 they were two thirds the size of the arrows directly
+    opposite, in buttons of identical height.
+
+    Same 0.38, so the two bands read as one line of controls across the page.
+  */
+  /*
+    THE ANALYSIS BAND IS THE STRIP'S BAND, so it takes the strip's rules.
+
+    `PuzzleAnalysisCard` is tuned for the OLD layout's flat 52px footer - a 24px
+    fish, 14px type, 6px of vertical padding, which is 52 less 2x6 = the 40px
+    control beside it. This band is `--strip-h`: 56 at the owner's viewport and
+    up to 96 on a large screen, so those fixed numbers leave the card's contents
+    marooned in it exactly as the appearance card's were.
+
+    Same 0.38 for the mark, so the fish, the arrows in the control strip and the
+    theme card's icons are one line of marks across the page; the type is the
+    card's own, which is the page's base.
+
+    SCOPED BY `data-skeleton-card`, because the same component renders in the old
+    layout's 52px slot and must keep the size it was tuned for there.
+  */
+  /*
+    THE PRIMARY ACTION IS A FRACTION OF ITS CARD, CLAMPED (owner, 2026-08-16:
+    *"the new puzzle button covers a third of the live card"*, then *"we set the
+    height of the new puzzle button dependent on the card height but with a cap,
+    is that possible as a simple rule without breaking the rest?"*).
+
+    It is. `Action` floors itself at 44px, which is documented as a fact about
+    thumbs rather than about the card - and that floor was the only thing keeping
+    the button from following its box. Measured at 44 it is 19% of the live card
+    at the owner's viewport and 35% at 788x467, where everything around it has
+    shrunk to 10px type.
+
+    ONE LINE, THREE NUMBERS. 0.16 of the card is 37px at the owner's viewport,
+    which is close to what the design already had; 28px is the floor, comfortably
+    above WCAG 2.5.8's 24px minimum for any pointer; 48px is the cap, so a tall
+    card cannot grow a slab. No measurement loop and no JavaScript - the card
+    publishes `--card-h` in the observer it already runs, and CSS does the rest.
+
+    SCOPED TO THIS PAGE by `[data-skeleton-card]`. The same component renders in
+    the old layout, where the flat 44 is what it was tuned against.
+  */
+  /*
+    0.21 AND A 64px CAP, WHICH IS PRODUCTION'S OWN RATIO. Measured off the
+    owner's production screenshot: New Puzzle is 60px in a 280px live card, i.e.
+    0.214, and Show solution 48 in the same card, 0.171. 0.16/48 held the button
+    below its card on any roomy screen - 48px in a 302px card - and the leftover
+    became the empty band under the buttons that the owner reported. The floor
+    is untouched, so nothing changes at 800x600, where the floor is what binds.
+  */
+  [data-skeleton-card] .trainer-action {
+    height: clamp(28px, calc(var(--card-h, 231px) * 0.21), 64px);
+    min-height: 0;
+  }
+  /*
+    AND THE REVEAL BUTTON BY THE SAME LAW (owner, 2026-08-16: *"there are issues
+    with the solution button on several resolutions"*, then *"on mobile the
+    solution button is not visible at all"*).
+
+    Its 44px is deliberate and well argued - the outcomes either side of it are
+    not symmetrical, since revealing by accident costs the rating on that puzzle
+    - but that argument assumes the button is on screen. Measured before this: 24
+    px below the card's edge at 390x844, 48 at 788x467. A control nobody can see
+    protects nobody.
+
+    A shade smaller than the primary, 0.14 against 0.16, because it is the
+    secondary action and the pair should not read as equals. The floor stays
+    above WCAG 2.5.8's 24px.
+  */
+  /*
+    THE GAPS ARE WHAT IS LEFT OVER, NOT A MULTIPLE OF THE TYPE (owner,
+    2026-08-16: *"the new puzzle button and the spaces between rows should depend
+    on the card height minus the new puzzle button and the solution button, if
+    there isn't too much space then the spaces between lines should be
+    drastically reduced"*).
+
+    Measured at 390x844 before this: the card is 221px with 198 usable, the
+    content wanted 224, and THIRTY-THREE of those were the two gaps alone -
+    `mt-[1.15em]` above the actions and `mt-[0.85em]` between the buttons. Both
+    are multiples of the TYPE, so they grew with the text while the space left
+    for them shrank, and the reveal button was pushed 31px past the card's edge.
+
+    As fractions of the card they behave the way the owner described: generous
+    where there is room (20px and 14 at FHD) and drastically smaller where there
+    is not (7px and 6 on a phone), which is 20px recovered on exactly the card
+    that had none.
+  */
+  /*
+    SUPERSEDED BY `--card-air` (2026-08-16). These were a second spacing rule,
+    private to this card and keyed on the card's HEIGHT rather than on what the
+    card has left over - which is why the live card had its own answer to a
+    question every card asks. `3 x air` is a group boundary (the status region
+    and the actions are different groups) and `2 x air` is the row rhythm between
+    the two buttons: the same two multiples every other card now uses.
+
+    THE `mt-[…]` IN THE JSX WAS OVERRIDDEN BY THIS RULE and always had been - a
+    small version of the `--card-title-gap` trap, a value that reads live in the
+    component and moves nothing on this page. It is gone from the JSX, so the
+    component now says what actually happens.
+  */
+  [data-skeleton-card] .live-actions {
+    margin-top: calc(var(--card-air, calc(var(--card-type) * 0.175)) * 3);
+  }
+  [data-skeleton-card] .live-reveal-row {
+    margin-top: calc(var(--card-air, calc(var(--card-type) * 0.175)) * 2);
+  }
+
+  [data-skeleton-card] .trainer-reveal {
+    /* 0.17 and 52, the same reading off production: 48px in a 280px card. */
+    height: clamp(26px, calc(var(--card-h, 231px) * 0.17), 52px);
+    min-height: 0;
+  }
+
+  [data-skeleton-card='analysis'] > section {
+    /* HORIZONTAL INSET HALVED (owner, 2026-08-16: *"these changes need to make
+       more analysis moves visible, at the moment not even one entire move is
+       properly visible"*). Every pixel of side padding is a pixel the line of
+       moves does not get, and this is the one card whose content is a sentence
+       that runs out of room rather than a label. */
+    padding: calc(var(--strip-h, 52px) * 0.107) calc(var(--card-type, 14px) * 0.18);
+    /*
+      THE LEFT EDGE JOINS THE COLUMN (owner, 2026-10-01: the fish sat 3.2px from
+      the card's edge while every other card in the column starts its content at
+      the column inset, so the icons did not form a line). Only the LEFT side
+      moves: the right keeps the halved inset the 2026-08-16 decision gave the
+      line of moves, so this costs that line 9.4px at the owner's viewport,
+      about one character, rather than twice that.
+    */
+    padding-left: calc(var(--card-type, 14px) * 0.7);
+  }
+  /*
+    The other two cards that did not share the column inset (2026-10-01).
+    `LiveStatus` carries its own `px-1` because on the old page it sits without
+    a card around it; inside a card here that 4px was on top of the card's own
+    padding, putting the live card's icon at 16.6px against 12.6. The theme band
+    carried a hard-coded `px-2.5`, 10px. Both bands set `--card-type` to the
+    page base, so 0.7 of it is the same inset the cards above them use.
+  */
+  [data-skeleton-card] .live-status {
+    padding-inline: 0;
+  }
+  [data-skeleton-card='theme-focus'] > section {
+    padding-inline: calc(var(--card-type, 14px) * 0.7);
+  }
+  /*
+    IN A WORKSPACE FOOT THE FOOT IS THE CARD (layout redesign C5a, 2026-10-06).
+    Both bands draw their own surface because v3 places them in plain boxes;
+    inside a `.workspace-foot`, which already is a surface with the column's
+    side inset, that drew a card inside a card and doubled the inset, which cut
+    the analysis line short. The band keeps its content and nothing else. The
+    analysis band keeps its halved right inset (2026-08-16) by giving the foot's
+    back.
+  */
+  .workspace-foot [data-skeleton-card] > section {
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+  /*
+    COORDINATES OFF UNDER 480px (2026-08-14), as a container query now. On the
+    Workspace the board's size is CSS (C5b), so the `coordinates={board >= 480}`
+    prop had no number to read. Chessground draws them INSIDE the squares, and on
+    a small board the file letters print over the back-rank pieces.
+  */
+  /* ON EVERY WORKSPACE BOARD, not only /puzzles' (Dg, 2026-10-08): it was keyed
+     on /puzzles' card name, so a board moved onto the Workspace from another
+     page would have printed coordinates over its pieces. `.workspace-board` is
+     100% wide and square, so inline-size containment cannot change its size. */
+  /* And on a Document page's board (E7 `ArticleGameViewer`, E8 `LiveGameCard`): the
+     same reason, the same threshold. Measured at 390x844: a 327px board printed the H
+     off its edge. */
+  .workspace-board,
+  .document-board {
+    container: workspace-board / inline-size;
+  }
+  /* `!important` because chessground's `.cg-wrap coords { display: flex }` is
+     UNLAYERED and this rule is in `utilities`: an unlayered rule beats a layered
+     one whatever the specificity, and only a layered `!important` beats it back.
+     Measured: without it the coordinates showed on 309-340px boards. */
+  @container workspace-board (max-width: 479.98px) {
+    .workspace-board coords,
+    .document-board coords {
+      display: none !important;
+    }
+  }
+  .workspace-foot [data-skeleton-card='analysis'] > section {
+    /* `auto`, not the component's `w-full`: a fixed width ignores the margin. */
+    inline-size: auto;
+    margin-inline-end: calc(var(--card-type, 14px) * 0.18 - 0.7em);
+  }
+  /*
+    THE FISH IS THE OLD CARD'S SIZE, WHICH IS 24px IN A 52px BAND (owner,
+    2026-08-15: *"the fish icon is way too small, we need to have a look at the
+    old code to see what size it was"*).
+
+    It was rendering at 14. Two mistakes stacked: the rule below was written at
+    0.38 - the CONTROL STRIP's ratio, which is right for the arrows opposite and
+    wrong for this, because the fish is the card's subject rather than a mark on
+    a button - and it never applied at all, because the general card-icon rule
+    carries three `:not()` attribute selectors and so outranks a plain
+    `[data-skeleton-card='analysis'] svg`. `analysis` is excluded from it above,
+    the way `strip`, `board` and `theme-focus` already were.
+
+    0.46 is 24/52, the old card's own proportion, so this band draws it at 25.8px
+    at the owner's viewport and scales it on a smaller screen where production
+    could not.
+  */
+  /*
+    THE FISH FOLLOWS THE TYPE NOW, NOT THE BAND (owner, 2026-08-18: *"analysis is
+    still a bit too small, we need the fish a bit bigger, the font type is
+    fine"*).
+
+    It was a fraction of `--strip-h`, which is the same wrong axis the theme
+    control carried until earlier today: the strip is clamped 56..96px so it
+    barely moves, while the page's base runs 10..18 - so the mark drifted out of
+    step with the text beside it at BOTH ends. Measured before the change, the
+    fish sat at 13.4-13.7px at every resolution alike: SMALLER than its 16.2px
+    text at 1920x947 and BIGGER than its 10.8px text at 800x600. The comment
+    below has said all along that the LINK's icon follows the type "which is what
+    the old card does too"; the fish was the last thing here that did not.
+
+    1.25, AND THE FIRST ATTEMPT AT THIS WAS TOO TIMID. It went to 0.95 of the
+    type - 13.7px to 17.1 - reasoning that the ratio had been tuned DOWN twice
+    before (0.46, 0.32, 0.24 of the band) and that 18.2px had once been refused.
+    The owner's answer was *"still too small, didn't seem to have changed"*, and
+    they were right: a 25% step on a 14px mark is invisible at arm's length, so a
+    real change read as no change at all.
+
+    THE OLD REFUSALS WERE AGAINST DIFFERENT TEXT, which is what makes them a poor
+    guide here. When 26.2px was called too big the caption beside it was 13.5px,
+    so the mark was 1.94x its text. The type is 16.2px now, so 1.25 of it - 22.5px
+    - is 1.39x, comfortably below the proportion that was rejected while being a
+    step anyone can see. Capped at half the band so a short strip is never
+    overrun by its own mark.
+  */
+  [data-skeleton-card='analysis'] svg {
+    width: clamp(10px, calc(var(--card-type, 14px) * 1.25), calc(var(--strip-h, 52px) * 0.5));
+    height: clamp(10px, calc(var(--card-type, 14px) * 1.25), calc(var(--strip-h, 52px) * 0.5));
+  }
+  /*
+    The link's icon is beside its own text, not a control's mark, so it follows
+    the TYPE rather than the band - which is what the old card does too: `h-4`
+    beside `text-sm` is 16 against 14, and 1.14 reproduces it.
+  */
+  [data-skeleton-card='analysis'] a svg {
+    width: calc(var(--card-type, 14px) * 0.85);
+    height: calc(var(--card-type, 14px) * 0.85);
+  }
+  /*
+    0.9 OF THE CARD'S TYPE. It was 0.75 (owner, 2026-08-16: *"the font type of
+    the analysis itself need to be a bit smaller and the Full analysis font type
+    needs to be smaller"*, then *"more"*) and the owner revised that call on
+    2026-08-18, looking at the deployed page: at their base of 18 it rendered
+    13.5px in a band whose other card had just been put back on the page base at
+    18, so it read as the smallest thing on the screen.
+
+    THE 08-16 REASONING STILL HOLDS and is why this is 0.9 rather than 1.0 - the
+    quieter half of a band, not a second voice in it. Capped by the strip for
+    the same reason the theme control above is.
+
+    The line of moves is the only content on this page that is longer than its
+    box - every other card holds a label or a number - so this is the one place
+    where smaller type buys something real rather than just looking quieter.
+  */
+  [data-skeleton-card='analysis'] span,
+  [data-skeleton-card='analysis'] a {
+    font-size: clamp(9px, calc(var(--card-type, 14px) * 0.9), calc(var(--strip-h, 52px) * 0.4));
+  }
+
+  [data-skeleton-card='theme-focus'] button svg {
+    /* 0.28, was 0.38. The marks were raised to 0.38 while the label beside them
+       was a fixed 14px; with the label now a fraction of the band they measured
+       21.3px against 12.3px of text and read as the loudest thing in the column.
+       This keeps the mark a shade larger than its word, which is the ratio the
+       rest of the page uses. */
+    width: calc(var(--strip-h, 52px) * 0.28);
+    height: calc(var(--strip-h, 52px) * 0.28);
+  }
+
+  .card-label {
+    /* 0.86, so the title lands on production's 12px at the 14px base (owner,
+       2026-08-15: *"the title is also smaller than in production"*). 0.8 gave
+       11.2 - a pixel under, and the one line on the card that has to read as a
+       heading rather than as another quiet row. */
+    font-size: calc(var(--card-type) * 0.86);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    /*
+      A LABEL THAT TOUCHES ITS CONTENT IS NOT A LABEL (owner, 2026-08-15: *"the
+      distance between the card title and the three lines is too small"*).
+
+      The card's own `gap` is 0.35 of the type, which is the rhythm BETWEEN rows -
+      4.9px at the 14px base, and far too tight for the one boundary on the card
+      that separates a heading from the thing it heads. Production reserves 12px
+      there (`mb-3` on `Section`), so 0.5 on top of the existing gap lands on the
+      same 0.85 of the type.
+
+      This is the same rule the trainer learned on 2026-08-06, when the title was
+      briefly centred with the body and ended up flush against the first row:
+      *"you can't distinguish the title from the card items"*.
+    */
+    /*
+      1.0, PAST PRODUCTION'S 12px (owner, 2026-08-15: *"the three lines need to
+      go even more down"*). With the card's own 0.35 gap that is ~19px at the
+      14px base.
+
+      Deliberately more than production, and the card is why: production's card
+      is sized by its content, so the title sits 12px above rows that end where
+      they end. Ours is a fixed share of the column with slack left over, and the
+      owner is spending that slack on the boundary that matters rather than
+      leaving it under the last row.
+    */
+    /*
+      THE CARD DECIDES THIS, FROM ITS OWN SLACK. See `--card-title-gap` in
+      TrainerLayoutSkeleton: half of what the card has left once its title and
+      its rows have taken theirs, capped at the `1 x type` this always was and
+      floored at 2px. Unchanged wherever there is room, minimal where there is
+      not.
+
+      THIS DECLARATION IS THE ONLY CONSUMER OF `--card-title-gap`, and that makes
+      the variable a trap worth naming here: the layout publishes it on EVERY
+      card, so it reads back off any card element as though it were live, while
+      it can only move a card that renders a `.card-label`. The live card and the
+      plan card render none. On 2026-08-16 an afternoon went into tuning this
+      value against the live card, which could not respond to any of it.
+
+      Cards with a label: settings, run-setup, record-session, record-overall,
+      standings, go-to. Cards without: live, plan-link, theme-focus, analysis.
+      A card in the second list is spaced by `--card-air` and `--card-pad-y`,
+      which `.card` itself consumes, or by its own component - `LiveStatus`
+      reserves its whole status region in a grid stack, `.card-lead` below gives
+      the plan card its blank line.
+    */
+    margin-bottom: var(--card-title-gap, calc(var(--card-type) * 1));
+  }
+  /*
+    A BLANK LINE UNDER A TITLE THAT IS NOT A `.card-label`.
+
+    The plan card's title is a `card-row`, so it never got the boundary every
+    other card's title has. This is that boundary, and the value is published by
+    the card from its own free space - see `--card-lead-gap` in
+    TrainerLayoutSkeleton. The default is 0: a card whose Box does not declare
+    what its tallest state holds gets nothing, which is what keeps this to the
+    one card it was asked for.
+  */
+  .card-lead {
+    margin-bottom: var(--card-lead-gap, 0px);
+  }
+  .card-row {
+    display: flex;
+    align-items: center;
+    /* One line. The analysis card's sentence wrapped to two at 18px and pushed
+       its own card out of shape; production truncates it for the same reason. */
+    white-space: nowrap;
+    overflow: hidden;
+    /* Horizontal space is the CARD'S width, not its type: a 240px record card
+       and a 416px live card should not separate a label from its value by the
+       same number of pixels. */
+    gap: calc(var(--card-w, 240px) * 0.04);
+    color: hsl(var(--muted-foreground));
+  }
+  .card-value {
+    font-size: calc(var(--card-type) * 1.4);
+    line-height: 1.2;
+    color: hsl(var(--foreground));
+    font-weight: 600;
+  }
+  /*
+    THE LIVE CARD'S CONTROLS SIT AT ITS FOOT, which is where production puts
+    them: its Show solution ends 6px off the card's bottom edge, and the card's
+    spare height is one gap ABOVE New Puzzle, not a band below it. `.card` packs
+    from the top - correct for every card whose content is rows - so the actions
+    claim the remainder themselves. On a starved card there is no remainder and
+    this does nothing, which is why 800x600 is unaffected.
+  */
+  [data-skeleton-card] .live-actions {
+    margin-top: auto;
+  }
+  .card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--card-type) * 0.4);
+    height: calc(var(--card-type) * 2.2);
+    border-radius: calc(var(--card-type) * 0.4);
+    background: hsl(var(--muted) / 0.5);
+    color: hsl(var(--foreground));
+  }
+  .card-btn-primary {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    font-weight: 600;
+  }
+  /*
+    Rows sit under the title, in their own rhythm, and the slack stays at the
+    bottom. Centring the body was tried and the owner rejected it on sight - it
+    opened a gap between a card's title and its first row that read as a mistake.
+  */
+  .card-body {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: calc(var(--card-air, calc(var(--card-type) * 0.175)) * 2);
+  }
+  .card-fill { flex: 1 1 0; min-height: 0; }
+
+  .panel-scroll {
+        scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.25) transparent;
+  }
+
+  .panel-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  /* Trainer cards keep their overflow reachable without showing browser chrome. */
+  .thin-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .thin-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .panel-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .panel-scroll::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.25);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 9999px;
+  }
+
+  .panel-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.45);
+  }
+
+  /* No arrows, and no square in the corner where two bars would meet. */
+  .panel-scroll::-webkit-scrollbar-button,
+  .panel-scroll::-webkit-scrollbar-corner {
+    display: none;
+  }
+}
+
+/*
+  ── THE BOARD CONTROL BAR ─────────────────────────────────────────────────
+
+  THIS IS THE CHAMPION GAME VIEWER'S CODE, not a reimplementation of it
+  (owner, 2026-08-08: "you need to look at the code in the champions games
+  and take the code from there"). Three earlier attempts rebuilt the look in
+  Tailwind from measurements and each one was wrong in a different way.
+
+  Copied from `@lichess-org/pgn-viewer`'s own stylesheet (the library was
+  removed in layout redesign E9, 2026-10-12), rules `.lpv__controls`,
+  `.lpv__controls .lpv__fbt`, `.lpv__fbt` and its disabled state, verbatim in
+  structure. Copyright (c) Lichess contributors,
+  https://github.com/lichess-org/pgn-viewer, GPL-3.0-or-later:
+
+    .lpv__controls          display:flex; flex-flow:row nowrap;
+                            align-items:stretch; user-select:none
+    .lpv__controls .lpv__fbt  flex:1 1 auto; font-size:1.4em;
+                            padding:.4em .7em; border-left:1px solid …
+    .lpv__fbt               background:none; border:none; outline:none;
+                            cursor:pointer
+    [disabled]              opacity:.4; cursor:default
+
+  WHY IT WAS COPIED RATHER THAN IMPORTED. Every `.lpv` rule needed a matching
+  DOM, and the accompanying custom stylesheet was not safe to load site-wide:
+  its board rule was `cg-board, .lpv cg-board { … !important }`, the FIRST
+  selector unscoped, so it would have repainted every chessground board and
+  defeated the board-theme system.
+
+  WHAT CHANGED IN THE COPY, and only this: the library's own theming hooks
+  (`--c-lpv-bg-controls`, `--c-lpv-border`, `--c-lpv-font`,
+  `--c-lpv-fbt-hover`) are pointed at OUR tokens. That is what the library
+  intends those variables for — our custom file bypassed them with
+  hardcoded `#1e293b` / `#475569` / `#334155` and `!important`, which is why
+  that bar could never follow a theme change and this one can.
+*/
+@layer components {
+  .board-controls {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    gap: 0.375rem;
+    user-select: none;
+    /*
+      NO `background` HERE. The surface comes from `.surface-card`, which the
+      component wears alongside this class — see the note there. Declaring a
+      background in both places is how the two would drift, and this bar has
+      already been through three surfaces in two days.
+    */
+    /*
+      0.75rem -> 0.375rem (owner, 2026-08-08: "make the margin of the container
+      that holds the controls a bit thinner so we save some space, there are
+      issues with plan card because of its size").
+
+      The reference uses 12px, but it sits under a board that owns its whole
+      column. Here the board's height is what is left after this bar, and the
+      right panel's cards are a fraction of the board — so every pixel spent
+      here is taken from the plan card twice over. The segments keep their own
+      size; only the trough is thinner.
+
+      ── THE OVERHANG IS GONE (owner, 2026-08-09) ──────────────────────────────
+
+      This carried `margin-inline: -0.375rem`, so the trough ran 6px past the
+      board on each side and the BUTTONS ended up flush with the board's edges.
+      That satisfied *"the gap between the last button and the board's right
+      edge"* and *"no space at all between the last button and the container"* at
+      the same time, which is why it was built that way.
+
+      The owner then saw the result beside the board and called it: *"can we do
+      the trough same as the cards and fix also the width, remove the 6px on both
+      sides?"* A container that overhangs the object it belongs to reads as
+      misaligned — it was reported as exactly that — and once the trough became a
+      surface like the cards, its edge became something you can see rather than
+      infer.
+
+      **THE COST IS REAL AND WAS ACCEPTED, NOT OVERLOOKED:** the trough is now
+      exactly the board's width, so the buttons sit 6px inside the board's edges
+      rather than flush with them. That is the 08-09 rule reversed, deliberately,
+      because the two cannot both hold while the buttons keep padding.
+    */
+    padding: 0.375rem;
+    border-radius: var(--radius);
+  }
+
+  .board-controls__fbt {
+    /* .lpv__fbt */
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) - 2px);
+    outline: none;
+    cursor: pointer;
+    align-items: normal;
+    line-height: 1.5;
+    text-decoration: none;
+
+    /* .lpv__controls .lpv__fbt */
+    flex: 1 1 auto;
+    font-size: 1.4em;
+    padding: 0.4em 0.7em;
+
+    /* ours: the face the library leaves to --c-lpv-bg-controls' sibling */
+    background: hsl(var(--control));
+    color: hsl(var(--control-foreground));
+    min-height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  /* .lpv__fbt:hover:not(.disabled):not([disabled]) */
+  /*
+    THE MARK SCALES WITH THE BAR (owner, 2026-08-15, looking at the rebuilt
+    layout: *"the size of the icons on the buttons of the moves navigation
+    row?"*).
+
+    The bar is a proportion of the screen — `clamp(56px, 0.0654 x availH, 96px)`
+    — and its buttons stretch to fill it, but the icons inside them were a flat
+    `w-5 h-5` from Tailwind. So the box grew and the glyph did not: at 96px of
+    strip the same 20px arrow sits in a button nearly five times its height, and
+    the bar reads as five empty slabs with specks in them.
+
+    Same rule as everything else on this page: the content is a ratio of the box.
+    0.38 of the strip reproduces today's 20px at the 52px fallback, so
+    `/analysis` and the Champion Challenge — which do not publish `--strip-h` —
+    render exactly as they do now. This is the reason the fallback is 52 rather
+    than the layout's 56 floor.
+
+    A DESCENDANT SELECTOR beats the utility class on specificity (0,1,1 against
+    0,1,0), so the sizes stay in the markup for anyone reading the component and
+    are overridden only where the bar has a measured height to scale against.
+  */
+  .board-controls__fbt svg {
+    width: calc(var(--strip-h, 52px) * 0.38);
+    height: calc(var(--strip-h, 52px) * 0.38);
+  }
+
+  .board-controls__fbt:hover:not([disabled]) {
+    background: hsl(var(--control-hover));
+    color: hsl(var(--control-foreground));
+  }
+
+  /* .lpv__fbt.disabled, .lpv__fbt[disabled] */
+  .board-controls__fbt[disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+
+/*
+  THE BAR'S GEOMETRY LIVES ON THE ROOT, NOT ON THE ROW.
+
+  It used to be declared on `[data-nav-row]`. That works for the bar itself, and
+  failed for anything ABOVE it: `SiteShell` computed the space it left as
+  `100svh - var(--nav-total)`, and a custom property declared on a descendant is
+  invisible to an ancestor. The subtraction resolved to nothing, so every app
+  page fell back to a full `100svh` and scrolled by exactly the height of the bar.
+
+  These are functions of the viewport, not of the row, so the root is where they
+  belonged anyway.
+*/
+:root {
+  --nav-brand: clamp(10px, calc(7.19px + 0.357vw), 14px);
+  --nav-air: 14px;
+  /*
+    THE STACKED HEIGHT IS THE DEFAULT, THE CURVE IS THE OVERRIDE (#70).
+
+    Every scaling rule for this bar sits inside the landscape query, so outside
+    it the row is a flat 38px. The curve was declared here unconditionally
+    anyway, which made the token wrong by ~9.7px on a phone.
+  */
+  /*
+    `--nav-bar` (the row) and `--nav-border` (its 1px rule) became one token in
+    C1b: `--nav-block`, what the bar occupies with its rule, generated from
+    `layout.tokens.ts` by the Tailwind plugin (stacked 38px + 1px; the landscape
+    curve below). Subtracting the row alone once left every app page scrolling
+    by exactly 1px, which is why the rule is inside the token now.
+
+    Its alias `--nav-total` and the alias's `@property` registration went in
+    F2 with `useNavTotal`, the last reader.
+  */
+}
+
+/*
+  The landscape curve. Same query as the nav row block it describes - `navrow`,
+  840px since F3 (800 until the theme button joined the row).
+*/
+/* (The landscape curve itself is generated since C1b: `navCustomProperties` in
+   layout.tokens.ts, `--nav-brand x 2.29 + --nav-air + 5px + the rule`.) */
+
+/*
+  THE AIR CHORDS, LAST IN THE FILE AND DELIBERATELY SO.
+
+  `--nav-air`'s 14px default is declared inside the landscape nav block, on
+  `[data-nav-row]` itself. These overrides have the same specificity, so the one
+  that wins is the one that comes later - and when they sat above that block they
+  lost at every height while looking perfectly correct. Measured: the bar read
+  51.05px at both 947 and 1307, which is the default air, not the curve.
+
+  They are also outside `@layer`, so nothing inside a layer can outrank them.
+*/
+/*
+  The chords between the approved anchors. Each one reproduces its endpoints
+    exactly; see the note on `--nav-air`. The last extends the curve past 1307
+    towards its value at 2160 rather than growing without bound.
+
+    ON `[data-nav-row]`, NOT `:root`. The default sits on the row itself, and a
+    declaration on the element beats an inherited one however specific the
+    inherited selector is - so `:root` overrides here applied to nothing and the
+    air stayed at its 14px default at every height. Measured before it was
+    believed: the bar read 51.05px at both 947 and 1307.
+*/
+@media (min-height: 467px)  { :root { --nav-air: calc(5.373px  + 1.8472svh); } }
+@media (min-height: 635px)  { :root { --nav-air: calc(8.889px  + 1.2937svh); } }
+@media (min-height: 947px)  { :root { --nav-air: calc(12.580px + 0.9038svh); } }
+@media (min-height: 1307px) { :root { --nav-air: calc(16.620px + 0.5948svh); } }
+

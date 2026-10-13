@@ -1,0 +1,110 @@
+{
+  "Gukesh": {
+    "fullName": "Dommaraju Gukesh",
+    "imagePath": "assets/images/champions/portraits-v1/Gukesh.webp",
+    "championshipYears": "World Champion 2024-Present",
+    "biography": "The youngest world chess champion in history, winning the title at age 18. Known for his deep preparation and exceptional tactical vision."
+  },
+  "Ding": {
+    "fullName": "Ding Liren",
+    "imagePath": "assets/images/champions/portraits-v1/Ding.webp",
+    "championshipYears": "World Champion 2023-2024",
+    "biography": "First Chinese world champion, known for his solid positional play and exceptional endgame technique. Rose to prominence through consistent tournament victories."
+  },
+  "Carlsen": {
+    "fullName": "Magnus Carlsen",
+    "imagePath": "assets/images/champions/portraits-v1/Carlsen.webp",
+    "championshipYears": "World Champion 2013-2023",
+    "biography": "Highest-rated player in chess history with a peak rating of 2882. Known for his universal playing style, exceptional endgame technique, and ability to grind down opponents in seemingly equal positions."
+  },
+  "Anand": {
+    "fullName": "Viswanathan Anand",
+    "imagePath": "assets/images/champions/portraits-v1/Anand.webp",
+    "championshipYears": "World Champion 2000-2002, 2007-2013",
+    "biography": "First Asian world champion and India's greatest chess player. Known for his rapid playing style, deep opening preparation, and versatility across all phases of the game."
+  },
+  "Kramnik": {
+    "fullName": "Vladimir Kramnik",
+    "imagePath": "assets/images/champions/portraits-v1/Kramnik.webp",
+    "championshipYears": "World Champion 2000-2007",
+    "biography": "Defeated Kasparov to become world champion. Master of strategic chess known for his deep understanding of positional play and the Berlin Defense."
+  },
+  "Kasparov": {
+    "fullName": "Garry Kasparov",
+    "imagePath": "assets/images/champions/portraits-v1/Kasparov.webp",
+    "championshipYears": "World Champion 1985-2000",
+    "biography": "Regarded as one of the greatest chess players of all time. Known for his aggressive, dynamic style and deep opening preparation. Dominated chess for 15 years with innovative play."
+  },
+  "Karpov": {
+    "fullName": "Anatoly Karpov",
+    "imagePath": "assets/images/champions/portraits-v1/Karpov.webp",
+    "championshipYears": "World Champion 1975-1985",
+    "biography": "Legendary positional player known for his strategic mastery and endgame technique. His rivalry with Kasparov produced some of the greatest chess matches in history."
+  },
+  "Fischer": {
+    "fullName": "Bobby Fischer",
+    "imagePath": "assets/images/champions/portraits-v1/Fischer.webp",
+    "championshipYears": "World Champion 1972-1975",
+    "biography": "American chess legend who ended Soviet dominance in 1972. Known for his perfect play, deep opening preparation, and revolutionary contributions to chess theory. His match against Spassky was a Cold War sensation."
+  },
+  "Spassky": {
+    "fullName": "Boris Spassky",
+    "imagePath": "assets/images/champions/portraits-v1/Spassky.webp",
+    "championshipYears": "World Champion 1969-1972",
+    "biography": "Soviet grandmaster known for his universal playing style and sporting attitude. His loss to Fischer in 1972 marked a turning point in chess history."
+  },
+  "Petrosian": {
+    "fullName": "Tigran Petrosian",
+    "imagePath": "assets/images/champions/portraits-v1/Petrosian.webp",
+    "championshipYears": "World Champion 1963-1969",
+    "biography": "Master of defense and prophylaxis, known as 'Iron Tigran.' His deep understanding of chess strategy and exceptional defensive skills made him nearly unbeatable in his prime."
+  },
+  "Tal": {
+    "fullName": "Mikhail Tal",
+    "imagePath": "assets/images/champions/portraits-v1/Tal.webp",
+    "championshipYears": "World Champion 1960-1961",
+    "biography": "The 'Magician from Riga' known for his brilliant tactical sacrifices and imaginative attacking play. His aggressive style and creative combinations thrilled chess fans worldwide."
+  },
+  "Smyslov": {
+    "fullName": "Vasily Smyslov",
+    "imagePath": "assets/images/champions/portraits-v1/Smyslov.webp",
+    "championshipYears": "World Champion 1957-1958",
+    "biography": "Soviet grandmaster renowned for his harmonious positional play and exceptional endgame mastery. His smooth, aesthetic style earned him admiration throughout the chess world."
+  },
+  "Botvinnik": {
+    "fullName": "Mikhail Botvinnik",
+    "imagePath": "assets/images/champions/portraits-v1/Botvinnik.webp",
+    "championshipYears": "World Champion 1948-1957, 1958-1960, 1961-1963",
+    "biography": "The 'Patriarch of Soviet Chess' who dominated the post-war era. Known for his scientific approach to chess, deep preparation, and training methods that influenced generations of players."
+  },
+  "Euwe": {
+    "fullName": "Max Euwe",
+    "imagePath": "assets/images/champions/portraits-v1/Euwe.webp",
+    "championshipYears": "World Champion 1935-1937",
+    "biography": "Dutch grandmaster and mathematics professor who stunned the chess world by defeating Alekhine. Known for his systematic approach and contributions to chess education."
+  },
+  "Alekhine": {
+    "fullName": "Alexander Alekhine",
+    "imagePath": "assets/images/champions/portraits-v1/Alekhine.webp",
+    "championshipYears": "World Champion 1927-1935, 1937-1946",
+    "biography": "One of the greatest attacking players in chess history. Known for his complex combinations, deep strategic understanding, and the Alekhine Defense which bears his name."
+  },
+  "Capablanca": {
+    "fullName": "José Raúl Capablanca",
+    "imagePath": "assets/images/champions/portraits-v1/Capablanca.webp",
+    "championshipYears": "World Champion 1921-1927",
+    "biography": "The 'Chess Machine' known for his seemingly effortless mastery and exceptional endgame play. His simple, clear style made difficult positions look easy and inspired generations."
+  },
+  "Lasker": {
+    "fullName": "Emanuel Lasker",
+    "imagePath": "assets/images/champions/portraits-v1/Lasker.webp",
+    "championshipYears": "World Champion 1894-1921",
+    "biography": "Held the world title for 27 years, the longest reign in chess history. Mathematician and philosopher who brought psychological warfare into chess, adjusting his style to opponent weaknesses."
+  },
+  "Steinitz": {
+    "fullName": "Wilhelm Steinitz",
+    "imagePath": "assets/images/champions/portraits-v1/Steinitz.webp",
+    "championshipYears": "World Champion 1886-1894",
+    "biography": "The first official world chess champion and father of modern chess theory. Revolutionized chess by introducing positional principles and systematic strategic planning."
+  }
+}
