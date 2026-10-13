@@ -115,6 +115,14 @@ export const Footer = () => {
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <a href="/credits" className="hover:text-link transition-colors">Credits & Attribution</a>
+            <a
+              href="https://github.com/mihaikondort/chessplaybook-web"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-link transition-colors"
+            >
+              Source code
+            </a>
           </div>
         </div>
       </div>

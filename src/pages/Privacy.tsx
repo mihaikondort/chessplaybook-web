@@ -6,6 +6,7 @@
  */
 
 import SeoHead from '@/components/SeoHead';
+import { LEGAL_LAST_UPDATED, formatLegalDate } from '@/config/legalDates';
 import { Link } from 'react-router-dom';
 
 const Privacy = () => {
@@ -20,7 +21,7 @@ const Privacy = () => {
 
             <div className="prose prose-invert max-w-none">
               <p className="text-muted-foreground mb-6">
-                <strong>Last Updated:</strong> {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                <strong>Last Updated:</strong> {formatLegalDate(LEGAL_LAST_UPDATED.privacy)}
               </p>
 
               <section className="mb-8">

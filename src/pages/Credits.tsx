@@ -46,15 +46,16 @@ const Credits = () => {
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground">
                     Lichess is a free, open-source chess server powered entirely by donations and volunteers.
-                    We use Lichess technology to bring you live tournament coverage and game visualization.
+                    Much of this site is built on what Lichess shares.
                   </p>
 
                   <div className="space-y-2">
                     <h4 className="font-semibold text-sm">What we use from Lichess:</h4>
                     <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                      <li>PGN Viewer - Interactive chess board component</li>
+                      <li>Our puzzles, from the Lichess puzzle database (public domain, CC0)</li>
+                      <li>Chessground, the chessboard, and chessops, the chess rules (GPL-3.0)</li>
                       <li>Live tournament broadcasts and game streams</li>
-                      <li>Game data and analysis</li>
+                      <li>Game import on the analysis page</li>
                     </ul>
                   </div>
 
@@ -66,6 +67,34 @@ const Credits = () => {
                       className="inline-flex items-center gap-2 text-link hover:underline"
                     >
                       Visit Lichess.org
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Our own source (#48). Chessground and chessops are GPL, so the
+                  site's code is published under the GPL too. */}
+              <Card id="source">
+                <CardHeader>
+                  <CardTitle>This Website's Code</CardTitle>
+                  <CardDescription>
+                    Free Software Under the GPL
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-muted-foreground">
+                    The code of this website is free software under the GNU General Public License, version 3.
+                    You can read it, copy it and change it.
+                  </p>
+                  <div className="pt-2">
+                    <a
+                      href="https://github.com/mihaikondort/chessplaybook-web"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-link hover:underline"
+                    >
+                      Read the source on GitHub
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
@@ -126,7 +155,13 @@ const Credits = () => {
                     </ul>
                   </div>
 
-                  <div className="pt-2">
+                  <p className="text-sm text-muted-foreground">
+                    Stockfish is licensed under the GNU General Public License, version 3. The engine your browser
+                    runs is Stockfish.js 18 (npm package stockfish 18.0.7), shipped with{' '}
+                    <a href="/stockfish/Copying.txt" className="text-link hover:underline">its licence</a>.
+                  </p>
+
+                  <div className="pt-2 flex flex-wrap gap-x-6 gap-y-2">
                     <a
                       href="https://stockfishchess.org"
                       target="_blank"
@@ -134,6 +169,15 @@ const Credits = () => {
                       className="inline-flex items-center gap-2 text-link hover:underline"
                     >
                       Visit Stockfishchess.org
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                    <a
+                      href="https://github.com/nmrugg/stockfish.js"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-link hover:underline"
+                    >
+                      Stockfish.js source
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
@@ -219,9 +263,16 @@ const Credits = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground">
-                    The historical chess games featured on Chess Playbook come from various sources
-                    including chess databases, historical archives, and the public domain. We are
-                    grateful to the chess community for preserving and sharing these legendary games.
+                    The champions' games come from the free player collections at{' '}
+                    <a
+                      href="https://www.pgnmentor.com/files.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-link hover:underline"
+                    >
+                      PGN Mentor
+                    </a>
+                    . We are grateful to the chess community for preserving and sharing these legendary games.
                   </p>
 
                   <div className="space-y-2">

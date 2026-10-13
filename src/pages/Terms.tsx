@@ -6,6 +6,7 @@
  */
 
 import SeoHead from '@/components/SeoHead';
+import { LEGAL_LAST_UPDATED, formatLegalDate } from '@/config/legalDates';
 
 const Terms = () => {
   return (
@@ -19,7 +20,7 @@ const Terms = () => {
 
             <div className="prose prose-invert max-w-none">
               <p className="text-muted-foreground mb-6">
-                <strong>Last Updated:</strong> {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                <strong>Last Updated:</strong> {formatLegalDate(LEGAL_LAST_UPDATED.terms)}
               </p>
 
               <section className="mb-8">
@@ -64,8 +65,21 @@ const Terms = () => {
 
                 <h3 className="text-xl font-semibold text-link mb-3">Website Content</h3>
                 <p className="text-muted-foreground mb-4">
-                  The design, layout, code, graphics, and original content of the Website are owned by The Chess Playbook Team
-                  and protected by copyright laws. All rights reserved.
+                  The Website's code is free software. You can use, copy and change it under the GNU General Public
+                  License, version 3 or later. The source is at{' '}
+                  <a
+                    href="https://github.com/mihaikondort/chessplaybook-web"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-link hover:underline"
+                  >
+                    github.com/mihaikondort/chessplaybook-web
+                  </a>
+                  .
+                </p>
+                <p className="text-muted-foreground mb-4">
+                  That licence covers the code only. Our articles and other original content are owned by The Chess
+                  Playbook Team. All rights reserved.
                 </p>
               </section>
 
