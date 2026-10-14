@@ -23,7 +23,19 @@ vi.mock('../services/ProgressService', async (importOriginal) => {
   return { ...actual, fetchPuzzleProgress: vi.fn() };
 });
 
+vi.mock('../services/PlanApi', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../services/PlanApi')>();
+  return { ...actual, fetchActivePlan: vi.fn() };
+});
+
+vi.mock('@/services/analytics', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/services/analytics')>();
+  return { ...actual, logGA4Event: vi.fn() };
+});
+
 const { fetchPuzzleProgress } = await import('../services/ProgressService');
+const { fetchActivePlan } = await import('../services/PlanApi');
+const { logGA4Event } = await import('@/services/analytics');
 
 function makeData(over: Partial<PuzzleProgressData> = {}): PuzzleProgressData {
   return {
@@ -55,7 +67,11 @@ function renderPage() {
   );
 }
 
-beforeEach(() => { vi.mocked(fetchPuzzleProgress).mockReset(); });
+beforeEach(() => {
+  vi.mocked(fetchPuzzleProgress).mockReset();
+  vi.mocked(fetchActivePlan).mockReset().mockResolvedValue(null);
+  vi.mocked(logGA4Event).mockReset();
+});
 afterEach(() => { vi.restoreAllMocks(); });
 
 describe('PuzzleProgress', () => {
@@ -95,12 +111,15 @@ describe('PuzzleProgress', () => {
     expect(screen.queryByText(/nothing to show yet/i)).not.toBeInTheDocument();
     // Scoped: "20" is both the attempt total and the unrated count, and an
     // ambiguous query here would pass for the wrong reason.
-    const overview = screen.getByRole('region', { name: /overview/i });
-    expect(within(overview).getByText('Positions attempted').previousSibling).toHaveTextContent('20');
-    expect(within(overview).getByText('Practice or helped').previousSibling).toHaveTextContent('20');
-    // And the gap it does have is stated in the product's own terms.
-    const gaps = screen.getByRole('region', { name: /gaps in your training/i });
-    expect(within(gaps).getByText(/tactics or middlegame/i)).toBeInTheDocument();
+    const totals = screen.getByRole('region', { name: /totals/i });
+    expect(within(totals).getByText('Puzzles attempted').nextSibling).toHaveTextContent('20');
+    expect(within(totals).getByText('Did not count toward your rating').nextSibling).toHaveTextContent('20');
+    expect(within(totals).getByText('Solution shown').nextSibling).toHaveTextContent('20');
+    // And the gap it does have is the next step, in the product's own terms.
+    const next = screen.getByRole('region', { name: /next step/i });
+    expect(within(next).getByText(/you have not tried a tactics puzzle yet/i)).toBeInTheDocument();
+    expect(within(next).getByRole('link', { name: /solve middlegame puzzles/i }))
+      .toHaveAttribute('href', '/puzzles?area=middlegame');
     // The untouched areas say so on their own rows as well.
     const areasSection = screen.getByRole('region', { name: /by area/i });
     expect(within(areasSection).getAllByText(/not trained yet/i)).toHaveLength(2);
@@ -114,25 +133,24 @@ describe('PuzzleProgress', () => {
         untouchedAreas: [],
       },
       areas: [
-        { area: 'endgame', attempts: 5, solved: 2, rated: 5, ratedSolved: 2, averageRatingFaced: 1500, accuracy: 0.4, performance: 1420, confidence: 'provisional', lastAttemptAt: '2026-08-02 10:00:00' },
+        // Accuracy deliberately runs OPPOSITE to recency, so ordering by either
+        // one gives a different answer from ordering by the other.
+        { area: 'tactics', attempts: 15, solved: 12, rated: 13, ratedSolved: 11, averageRatingFaced: 1500, accuracy: 0.84, performance: 1690, confidence: 'established', lastAttemptAt: '2026-08-01 10:00:00' },
+        { area: 'endgame', attempts: 5, solved: 2, rated: 5, ratedSolved: 2, averageRatingFaced: 1500, accuracy: 0.4, performance: 1420, confidence: 'provisional', lastAttemptAt: '2026-08-03 10:00:00' },
         { area: 'middlegame', attempts: 10, solved: 7, rated: 9, ratedSolved: 6, averageRatingFaced: 1500, accuracy: 0.66, performance: 1580, confidence: 'provisional', lastAttemptAt: '2026-08-02 10:00:00' },
-        { area: 'tactics', attempts: 15, solved: 12, rated: 13, ratedSolved: 11, averageRatingFaced: 1500, accuracy: 0.84, performance: 1690, confidence: 'established', lastAttemptAt: '2026-08-02 10:00:00' },
       ],
     }));
     renderPage();
     await waitFor(() => expect(screen.getByText(/by area/i)).toBeInTheDocument());
-    // No gaps section at all, and no area row claiming to be untrained. NOT a
-    // page-wide text search: the page's own subtitle contains the same words,
-    // so that assertion would pass for a reason unrelated to the data.
-    expect(screen.queryByRole('region', { name: /gaps in your training/i })).not.toBeInTheDocument();
+    // No area called untried, in the next step or on a row.
+    expect(screen.queryByText(/have not tried/i)).not.toBeInTheDocument();
     const areasRegion = screen.getByRole('region', { name: /by area/i });
     expect(within(areasRegion).queryByText(/not trained yet/i)).not.toBeInTheDocument();
-    // Areas keep the server's order — weakest first — so the page and the
-    // weak-areas mode can never disagree about what is weakest.
-    const areasSection = screen.getByRole('region', { name: /by area/i });
-    const headings = within(areasSection)
+    // Areas are ordered by fact, the one trained longest ago first. Never by
+    // accuracy: at these sample sizes the lowest accuracy is mostly noise.
+    const headings = within(areasRegion)
       .getAllByText(/^(Tactics|Middlegame|Endgame)$/).map(n => n.textContent);
-    expect(headings).toEqual(['Endgame', 'Middlegame', 'Tactics']);
+    expect(headings).toEqual(['Tactics', 'Middlegame', 'Endgame']);
   });
 
   it('a failed load says nothing was lost, and offers a way back', async () => {
@@ -198,7 +216,7 @@ describe('PuzzleProgress — the confidence gate (C8)', () => {
     renderPage();
     await waitFor(() => expect(screen.getByText(/by area/i)).toBeInTheDocument());
     const areas = screen.getByRole('region', { name: /by area/i });
-    expect(within(areas).getByText(/not enough rated attempts/i)).toBeInTheDocument();
+    expect(within(areas).getByText(/1 more rated puzzle to rate this area/i)).toBeInTheDocument();
     expect(within(areas).queryByText(/performance$/i)).not.toBeInTheDocument();
     expect(within(areas).queryByText('0')).not.toBeInTheDocument();
   });
@@ -246,8 +264,20 @@ describe('PuzzleProgress — the confidence gate (C8)', () => {
     ]));
     renderPage();
     await waitFor(() => expect(screen.getByText(/puzzle rating/i)).toBeInTheDocument());
-    const overview = screen.getByRole('region', { name: /overview/i });
-    expect(within(overview).getByText('Puzzle rating').previousSibling).toHaveTextContent('1640');
+    const rating = screen.getByRole('region', { name: /puzzle rating/i });
+    expect(rating).toHaveTextContent('1640');
+    // A deviation of 72 is settled: no provisional mark.
+    expect(within(rating).queryByText(/provisional/i)).not.toBeInTheDocument();
+  });
+
+  it('marks the rating provisional while its deviation is 110 or more', async () => {
+    const data = withAreas([area({ area: 'endgame', attempts: 3, rated: 3 }), area({ area: 'middlegame' }), area({ area: 'tactics' })]);
+    data.overall = { ...data.overall, rating: 1388, rd: 140 };
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(data);
+    renderPage();
+    await waitFor(() => expect(screen.getByText(/puzzle rating/i)).toBeInTheDocument());
+    const rating = screen.getByRole('region', { name: /puzzle rating/i });
+    expect(within(rating).getByText(/provisional/i)).toBeInTheDocument();
   });
 });
 
@@ -267,41 +297,24 @@ describe('PuzzleProgress — strengths, weak spots, history, one click to train 
     ...over,
   });
 
-  it('ranks only motifs the server was willing to judge', async () => {
-    // A motif below the minimum sample has no accuracy, and ranking on it would
-    // produce a confident-looking list of noise — one lucky fork is not a
-    // strength.
+  it('names no weakness, even when the server sends motifs with accuracy', async () => {
+    /*
+      #107: the raw-accuracy strengths-and-weak-spots list is gone. At puzzle
+      sample sizes the lowest accuracy is mostly noise and the difficulty of
+      what was served, so ranking it named weaknesses that were not there.
+      Weakness claims return behind an evidence rule (#109).
+    */
     vi.mocked(fetchPuzzleProgress).mockResolvedValue(populated({
       motifs: [
         motif({ motif: 'fork', accuracy: 0.9 }),
-        motif({ motif: 'pin', accuracy: 0.3 }),
-        motif({ motif: 'skewer', accuracy: null, attempts: 2, confidence: 'insufficient' }),
+        motif({ motif: 'pin', accuracy: 0.2 }),
       ],
     }));
     renderPage();
-    await waitFor(() => expect(screen.getByText(/strengths and weak spots/i)).toBeInTheDocument());
-    expect(screen.getByText('Fork')).toBeInTheDocument();
-    expect(screen.getByText('Pin')).toBeInTheDocument();
-    expect(screen.queryByText('Skewer')).not.toBeInTheDocument();
-  });
-
-  it('says so plainly when nothing has enough evidence', async () => {
-    vi.mocked(fetchPuzzleProgress).mockResolvedValue(populated({
-      motifs: [motif({ motif: 'fork', accuracy: null, attempts: 3, confidence: 'insufficient' })],
-    }));
-    renderPage();
-    await waitFor(() => expect(screen.getByText(/not enough rated attempts on any single motif/i)).toBeInTheDocument());
-  });
-
-  it('every weak spot is one click from training it', async () => {
-    vi.mocked(fetchPuzzleProgress).mockResolvedValue(populated({
-      motifs: [motif({ motif: 'backRankMate', accuracy: 0.2 })],
-    }));
-    renderPage();
-    await waitFor(() => expect(screen.getByText('Back rank mate')).toBeInTheDocument());
-    const train = screen.getAllByRole('link', { name: /^Train →$/ });
-    expect(train.length).toBeGreaterThan(0);
-    expect(train[0]).toHaveAttribute('href', '/puzzles?theme=backRankMate');
+    await waitFor(() => expect(screen.getByText(/by area/i)).toBeInTheDocument());
+    expect(screen.queryByText('Pin')).not.toBeInTheDocument();
+    expect(screen.queryByText(/weak/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/strong/i)).not.toBeInTheDocument();
   });
 
   it('an area trains by AREA, never by the middlegame theme', async () => {
@@ -351,5 +364,71 @@ describe('PuzzleProgress — strengths, weak spots, history, one click to train 
     renderPage();
     await waitFor(() => expect(screen.getByText(/by area/i)).toBeInTheDocument());
     expect(screen.queryByText(/recent weeks/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('PuzzleProgress — the next step (#107)', () => {
+  const recent = new Date(Date.now() - 2 * 86_400_000).toISOString();
+  const trained = (name: 'tactics' | 'middlegame' | 'endgame', lastAttemptAt = recent) => ({
+    area: name, attempts: 10, solved: 6, rated: 10, ratedSolved: 6, averageRatingFaced: 1500,
+    accuracy: 0.6, performance: 1550, confidence: 'established' as const, lastAttemptAt,
+  });
+  const record = (areas = [trained('tactics'), trained('middlegame'), trained('endgame')]) => makeData({
+    summary: {
+      totalAttempts: 30, totalSolved: 18, unrated: 0, unratedReasons: {},
+      firstAttemptAt: recent, lastAttemptAt: recent, untouchedAreas: [],
+    },
+    areas,
+  });
+
+  it('says nothing is urgent when every area is fresh and no plan is owed', async () => {
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record());
+    renderPage();
+    const next = await screen.findByRole('region', { name: /next step/i });
+    expect(within(next).getByText('Nothing urgent.')).toBeInTheDocument();
+    expect(within(next).getByRole('link', { name: 'Solve puzzles' })).toHaveAttribute('href', '/puzzles');
+  });
+
+  it('names an area left for a month, with its date', async () => {
+    const old = new Date(Date.now() - 30 * 86_400_000).toISOString();
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record([trained('tactics'), trained('middlegame'), trained('endgame', old)]));
+    renderPage();
+    const next = await screen.findByRole('region', { name: /next step/i });
+    expect(within(next).getByText(/you have not solved an endgame puzzle since/i)).toBeInTheDocument();
+    expect(within(next).getByRole('link', { name: /solve endgame puzzles/i }))
+      .toHaveAttribute('href', '/puzzles?area=endgame');
+  });
+
+  it('puts an owed plan day first and links to the plan', async () => {
+    const today = new Date();
+    const day = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    vi.mocked(fetchActivePlan).mockResolvedValue({
+      id: 'p1', status: 'active', sessionsPerWeek: 3, positionsPerSession: 25,
+      startsOn: day, endsOn: day, targetEvent: null, createdAt: day, endedAt: null,
+      items: [{ id: 'i1', scheduledOn: day, ordinal: 0, area: 'endgame', total: 25, kind: 'training', sessionId: null, status: 'pending' }],
+      progress: { items: 1, completed: 0, positions: 25, positionsDone: 0, finished: false },
+    });
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record());
+    renderPage();
+    const next = await screen.findByRole('region', { name: /next step/i });
+    expect(within(next).getByText('Your training plan has 25 endgame puzzles waiting.')).toBeInTheDocument();
+    expect(within(next).getByRole('link', { name: 'Go to your plan' })).toHaveAttribute('href', '/puzzles/plan');
+  });
+
+  it('still renders the record when the plan cannot be read', async () => {
+    vi.mocked(fetchActivePlan).mockRejectedValue(new Error('plan request failed: 503'));
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record());
+    renderPage();
+    const next = await screen.findByRole('region', { name: /next step/i });
+    expect(within(next).getByText('Nothing urgent.')).toBeInTheDocument();
+  });
+
+  it('reports the view once, with the step it showed', async () => {
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record());
+    renderPage();
+    await screen.findByRole('region', { name: /next step/i });
+    const views = vi.mocked(logGA4Event).mock.calls.filter(([e]) => e.name === 'training_record_viewed');
+    expect(views).toHaveLength(1);
+    expect(views[0][0].params).toMatchObject({ next_step: 'none', other_steps: 0, signed_in: false });
   });
 });

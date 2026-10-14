@@ -358,7 +358,20 @@ type GA4Event =
   */
   | { name: 'plan_setup_opened'; params: { from: 'card' | 'offer' | 'page' } }
   | { name: 'plan_details_opened'; params: { from: 'card' } }
+  /*
+    The training record's success test (#107): of the players who open it, how
+    many act on its next step. `viewed` is the denominator and carries the step
+    that was shown, so a low click rate can be read per kind of advice rather
+    than as one number. `primary` separates the recommendation from the smaller
+    links under it. Whether a session follows is read from the puzzle events
+    that come after the click in the same GA4 session.
+  */
+  | { name: 'training_record_viewed'; params: { next_step: TrainingRecordStep; other_steps: number; signed_in: boolean } }
+  | { name: 'training_record_next_step'; params: { step: TrainingRecordStep; primary: boolean } }
   | { name: 'signed_in'; params: { provider: 'google' | 'cognito' } };
+
+/** The kinds of advice the training record gives. Mirrors `NextStep['kind']`. */
+export type TrainingRecordStep = 'plan' | 'untried' | 'stale' | 'none';
 
 /** Where a plan event happened. See the `surface` note on the plan events. */
 export type PlanSurface = 'card' | 'plan_page';

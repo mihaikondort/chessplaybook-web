@@ -17,27 +17,35 @@
  * (via route-meta) so it never inherits the homepage's, which is the drift the
  * 2026-07-28 audit found on eight routes.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/features/auth/AuthContext';
 import SeoHead from '@/components/SeoHead';
 import { Target, ArrowLeft, AlertCircle, CalendarDays, ChevronRight } from 'lucide-react';
-import { setAreaPreference } from '../services/PlanApi';
+import { setAreaPreference, fetchActivePlan, type TrainingPlan } from '../services/PlanApi';
+import { deriveNext } from '../hooks/usePlan';
+import { logGA4Event } from '@/services/analytics';
 import {
   fetchPuzzleProgress,
   confidenceNote,
-  motifLabel,
   AREA_LABELS,
   type AreaProgress,
-  type MotifProgress,
   type PuzzleProgressData,
   type PuzzleArea,
 } from '../services/ProgressService';
+import {
+  nextSteps,
+  orderAreasByFact,
+  lastTrainedLabel,
+  ratedPuzzlesStillNeeded,
+  UNRATED_REASON_LABELS,
+  type NextStep,
+} from '../services/trainingRecord';
 
 type LoadState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ready'; data: PuzzleProgressData };
+  | { status: 'ready'; data: PuzzleProgressData; plan: TrainingPlan | null };
 
 /**
  * Has this player trained anything at all?
@@ -58,8 +66,14 @@ export default function PuzzleProgress() {
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    fetchPuzzleProgress(controller.signal)
-      .then(data => { if (!cancelled) setState({ status: 'ready', data }); })
+    /*
+      The plan only feeds the next step. A failed plan read must not take the
+      record down with it, so it degrades to "no plan" and the page still
+      renders everything else.
+    */
+    const plan = fetchActivePlan().catch(() => null);
+    Promise.all([fetchPuzzleProgress(controller.signal), plan])
+      .then(([data, active]) => { if (!cancelled) setState({ status: 'ready', data, plan: active }); })
       .catch(err => {
         if (cancelled || controller.signal.aborted) return;
         /*
@@ -145,7 +159,9 @@ export default function PuzzleProgress() {
         {state.status === 'loading' && <LoadingShell />}
         {state.status === 'error' && <ErrorPanel message={state.message} />}
         {state.status === 'ready' && (
-          hasRecord(state.data) ? <RecordShell data={state.data} /> : <EmptyRecord />
+          hasRecord(state.data)
+            ? <RecordShell data={state.data} plan={state.plan} signedIn={!!user} />
+            : <EmptyRecord />
         )}
         {state.status === 'ready' && hasRecord(state.data) && !user && <SaveThisRecord />}
       </main>
@@ -173,8 +189,8 @@ function SaveThisRecord() {
     <div className="mt-8 rounded-lg border border-border bg-muted/30 p-4">
       <p className="text-sm text-foreground">This record lives on this device.</p>
       <p className="mt-1 text-sm text-muted-foreground">
-        Sign in and it follows you to any browser you use — along with your rating,
-        your plan and everything you have solved.
+        Sign in and it follows you to any browser you use. So do your rating, your
+        plan and everything you have solved.
       </p>
       <Link
         to={`/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}
@@ -212,7 +228,7 @@ function ErrorPanel({ message }: { message: string }) {
         <div>
           <p className="font-medium">Your record could not be loaded.</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Nothing has been lost — this page could not reach the server. Try again in a moment.
+            Nothing has been lost. This page could not reach the server. Try again in a moment.
           </p>
           <p className="text-xs text-muted-foreground mt-3 font-mono">{message}</p>
           <Link
@@ -270,14 +286,6 @@ function EmptyRecord() {
   `summary.firstAttemptAt` still comes down the wire and is untouched, so this is
   reversible by rendering it again — nothing was thrown away but the sentence.
 */
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-border bg-card p-4">
-      <div className="text-xl font-bold">{value}</div>
-      <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
-    </div>
-  );
-}
 
 /**
  * One area, and the decision of whether it may show a number (C8).
@@ -356,15 +364,19 @@ function AreaRow({ area, preference, onPreference }: {
   onPreference: (area: PuzzleArea, next: 'more' | 'less' | null) => void;
 }) {
   const note = confidenceNote(area.confidence, area.rated);
+  const lastTrained = lastTrainedLabel(area.lastAttemptAt);
+  const stillNeeded = ratedPuzzlesStillNeeded(area);
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4 flex items-baseline justify-between gap-4">
+    // Stacked on a phone: side by side, the right-hand block ran past the card's edge at 390px.
+    <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
       <div>
         <div className="font-medium">{AREA_LABELS[area.area]}</div>
         <div className="text-xs text-muted-foreground mt-0.5">
           {area.attempts === 0
             ? 'Not trained yet'
             : `${area.attempts} attempted · ${area.solved} solved`}
+          {lastTrained && ` · last trained ${lastTrained}`}
         </div>
         <AreaPreferenceControl
           area={area.area}
@@ -372,12 +384,16 @@ function AreaRow({ area, preference, onPreference }: {
           onChange={next => onPreference(area.area, next)}
         />
       </div>
-      <div className="flex items-baseline gap-4">
+      <div className="flex items-baseline justify-between gap-4 sm:justify-end">
         <TrainLink to={`/puzzles?area=${area.area}`} label={`Train ${AREA_LABELS[area.area].toLowerCase()}`} />
       <div className="text-right">
         {area.performance == null ? (
           <div className="text-sm text-muted-foreground">
-            {area.attempts === 0 ? 'No result yet' : 'Not enough rated attempts'}
+            {area.attempts === 0
+              ? 'No result yet'
+              : stillNeeded > 0
+                ? `${stillNeeded} more rated ${stillNeeded === 1 ? 'puzzle' : 'puzzles'} to rate this area`
+                : 'Not rated yet'}
           </div>
         ) : (
           <>
@@ -417,100 +433,6 @@ function TrainLink({ to, label }: { to: string; label: string }) {
     >
       {label} →
     </Link>
-  );
-}
-
-/**
- * Motifs the player is measurably good or bad at.
- *
- * ONLY motifs whose accuracy the server was willing to compute appear here —
- * below the minimum sample there is no claim to rank on, and sorting
- * insufficient evidence produces a confident-looking list of noise. A player
- * with one lucky fork should not be told forks are a strength.
- */
-const STRONG_AT = 0.7;
-
-function rankedMotifs(motifs: MotifProgress[]): { strong: MotifProgress[]; weak: MotifProgress[] } {
-  /*
-    Judged motifs only, and asserted rather than defaulted. An earlier version
-    wrote `m.accuracy ?? 0` / `?? 1`, which quietly invented a score for a motif
-    the server refused to rate — it happened to exclude them, but by accident,
-    and a counterfactual that removed the real filter still passed. A default
-    that stands in for missing evidence is the same mistake as rendering a null
-    performance as 0.
-  */
-  const judged = motifs.filter((m): m is MotifProgress & { accuracy: number } => m.accuracy != null);
-  const byAccuracy = [...judged].sort((a, b) => b.accuracy - a.accuracy);
-  return {
-    strong: byAccuracy.filter(m => m.accuracy >= STRONG_AT).slice(0, 5),
-    weak: [...byAccuracy].reverse().filter(m => m.accuracy < STRONG_AT).slice(0, 5),
-  };
-}
-
-function MotifList({ motifs, tone }: { motifs: MotifProgress[]; tone: 'strong' | 'weak' }) {
-  return (
-    <ul className="space-y-2">
-      {motifs.map(m => (
-        <li key={m.motif} className="flex items-baseline justify-between gap-3 text-sm">
-          <span className="font-medium">{motifLabel(m.motif)}</span>
-          <span className="flex items-baseline gap-3">
-            <span className={tone === 'strong' ? 'text-success' : 'text-muted-foreground'}>
-              {Math.round((m.accuracy ?? 0) * 100)}%
-            </span>
-            <span className="text-xs text-muted-foreground">{m.attempts} seen</span>
-            <TrainLink to={`/puzzles?theme=${encodeURIComponent(m.motif)}`} label="Train" />
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/**
- * What you are good and bad at, by motif (C9).
- *
- * Both halves are shown, and the strengths are not decoration: a page that only
- * lists failures is one a player stops opening. But nothing appears here
- * without enough rated attempts behind it — see `rankedMotifs`.
- */
-function StrengthsAndWeaknesses({ motifs }: { motifs: MotifProgress[] }) {
-  const { strong, weak } = rankedMotifs(motifs);
-  const judged = motifs.filter(m => m.accuracy != null).length;
-
-  if (judged === 0) {
-    return (
-      <section aria-labelledby="motifs-heading" role="region">
-        <h2 id="motifs-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
-          Strengths and weak spots
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Not enough rated attempts on any single motif yet. Solve a few more and this will
-          show which patterns you find easy and which cost you points.
-        </p>
-      </section>
-    );
-  }
-
-  return (
-    <section aria-labelledby="motifs-heading" role="region">
-      <h2 id="motifs-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
-        Strengths and weak spots
-      </h2>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-border bg-card p-4">
-          <h3 className="text-sm font-medium mb-3">Strongest</h3>
-          {strong.length > 0
-            ? <MotifList motifs={strong} tone="strong" />
-            : <p className="text-sm text-muted-foreground">Nothing above 70% yet.</p>}
-        </div>
-        <div className="rounded-lg border border-border bg-card p-4">
-          <h3 className="text-sm font-medium mb-3">Weakest</h3>
-          {weak.length > 0
-            ? <MotifList motifs={weak} tone="weak" />
-            : <p className="text-sm text-muted-foreground">Nothing below 70% — well done.</p>}
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -580,13 +502,169 @@ function History({ history }: { history: PuzzleProgressData['history'] }) {
 }
 
 /**
- * The frame the C8 and C9 views drop into.
+ * What to do next (TRAINING_RECORD_ANALYSIS §7 A).
  *
- * What it shows today is the summary and the coverage gap — the two things
- * that need no rating and no minimum sample, and the second of which is the
- * product's whole argument ("you have not tried a single endgame", PRD §6.3).
+ * One recommendation with one button, and the other steps that also apply as
+ * small links under it. Every step is a fact (see `trainingRecord.ts`), so the
+ * card never tells a player they are weak at something the evidence cannot
+ * support.
  */
-function RecordShell({ data }: { data: PuzzleProgressData }) {
+const AREA_ONE_PUZZLE: Record<PuzzleArea, string> = {
+  tactics: 'a tactics puzzle',
+  middlegame: 'a middlegame puzzle',
+  endgame: 'an endgame puzzle',
+};
+
+function stepCopy(step: NextStep): { heading: string; detail?: string; action: string; to: string } {
+  switch (step.kind) {
+    case 'plan': {
+      const { item, total } = step;
+      if (item.status === 'active') {
+        return { heading: 'Your training plan session is under way.', action: 'Go to your plan', to: '/puzzles/plan' };
+      }
+      const what = item.kind === 'review'
+        ? `a ${total}-puzzle review`
+        : `${total} ${item.area === 'mixed' ? 'mixed' : item.area} puzzles`;
+      return { heading: `Your training plan has ${what} waiting.`, action: 'Go to your plan', to: '/puzzles/plan' };
+    }
+    case 'untried':
+      return {
+        heading: `You have not tried ${AREA_ONE_PUZZLE[step.area]} yet.`,
+        action: `Solve ${AREA_LABELS[step.area].toLowerCase()} puzzles`,
+        to: `/puzzles?area=${step.area}`,
+      };
+    case 'stale': {
+      const date = step.lastTrained.toLocaleDateString(undefined, { day: 'numeric', month: 'long' });
+      return {
+        heading: `You have not solved ${AREA_ONE_PUZZLE[step.area]} since ${date}.`,
+        action: `Solve ${AREA_LABELS[step.area].toLowerCase()} puzzles`,
+        to: `/puzzles?area=${step.area}`,
+      };
+    }
+    case 'none':
+      return {
+        heading: 'Nothing urgent.',
+        detail: 'You have trained every area in the last two weeks.',
+        action: 'Solve puzzles',
+        to: '/puzzles',
+      };
+  }
+}
+
+function NextStepCard({ steps }: { steps: NextStep[] }) {
+  const [first, ...rest] = steps;
+  const copy = stepCopy(first);
+  return (
+    <section aria-labelledby="next-heading" role="region" className="surface-card rounded-lg p-5">
+      <h2 id="next-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-2">
+        Next step
+      </h2>
+      <p className="text-lg font-medium">{copy.heading}</p>
+      {copy.detail && <p className="text-sm text-muted-foreground mt-1">{copy.detail}</p>}
+      <Link
+        to={copy.to}
+        onClick={() => logGA4Event({ name: 'training_record_next_step', params: { step: first.kind, primary: true } })}
+        className="inline-block mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 transition-opacity"
+      >
+        {copy.action}
+      </Link>
+      {rest.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <span className="text-muted-foreground">Also:</span>
+          {rest.map(step => {
+            const c = stepCopy(step);
+            return (
+              <Link
+                key={`${step.kind}-${'area' in step ? step.area : ''}`}
+                to={c.to}
+                onClick={() => logGA4Event({ name: 'training_record_next_step', params: { step: step.kind, primary: false } })}
+                className="text-link hover:underline"
+              >
+                {c.action}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
+/**
+ * The rating, on its own line until the rating graph replaces it (#108).
+ * "provisional" at a deviation of 110 or more, the line Lichess uses.
+ */
+const PROVISIONAL_RD = 110;
+
+function RatingLine({ overall }: { overall: PuzzleProgressData['overall'] }) {
+  return (
+    <section aria-labelledby="rating-heading" role="region" className="flex items-baseline gap-3">
+      <h2 id="rating-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+        Puzzle rating
+      </h2>
+      {overall.rating == null ? (
+        <span className="text-sm text-muted-foreground">No rating yet.</span>
+      ) : (
+        <span className="text-2xl font-bold tabular-nums">
+          {overall.rating}
+          {overall.rd != null && overall.rd >= PROVISIONAL_RD && (
+            <span className="ml-2 text-xs font-medium text-muted-foreground">provisional</span>
+          )}
+        </span>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Totals, small and last (§7 G). Every figure comes from the attempt log, the
+ * same source as the rest of the page, so nothing here can disagree with a
+ * number above it.
+ */
+function Totals({ summary }: { summary: PuzzleProgressData['summary'] }) {
+  const pct = Math.round((summary.totalSolved / summary.totalAttempts) * 100);
+  const reasons = Object.entries(summary.unratedReasons)
+    .filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1]);
+  return (
+    <section aria-labelledby="totals-heading" role="region">
+      <h2 id="totals-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
+        Totals
+      </h2>
+      <dl className="text-sm grid grid-cols-[1fr_auto] gap-x-6 gap-y-1 max-w-md">
+        <dt className="text-muted-foreground">Puzzles attempted</dt>
+        <dd className="tabular-nums text-right">{summary.totalAttempts}</dd>
+        <dt className="text-muted-foreground">Solved first try</dt>
+        <dd className="tabular-nums text-right">{summary.totalSolved} ({pct}%)</dd>
+        {summary.unrated > 0 && (
+          <>
+            <dt className="text-muted-foreground">Did not count toward your rating</dt>
+            <dd className="tabular-nums text-right">{summary.unrated}</dd>
+            {reasons.map(([reason, n]) => (
+              <div key={reason} className="contents">
+                <dt className="text-muted-foreground pl-4">{UNRATED_REASON_LABELS[reason] ?? reason}</dt>
+                <dd className="tabular-nums text-right text-muted-foreground">{n}</dd>
+              </div>
+            ))}
+          </>
+        )}
+      </dl>
+    </section>
+  );
+}
+
+/**
+ * The record, top to bottom (TRAINING_RECORD_ANALYSIS §7): what to do next,
+ * the rating, the areas in the order a player should look at them, recent
+ * weeks, and the totals. There is no strengths-and-weaknesses list on purpose:
+ * accuracy per motif at these sample sizes ranks noise, and a weakness claim
+ * waits for the evidence rule (#109).
+ */
+function RecordShell({ data, plan, signedIn }: {
+  data: PuzzleProgressData;
+  plan: TrainingPlan | null;
+  signedIn: boolean;
+}) {
   const { summary } = data;
 
   /*
@@ -608,60 +686,34 @@ function RecordShell({ data }: { data: PuzzleProgressData }) {
     });
   }, [data.areaPreferences]);
 
-  const accuracy = summary.totalAttempts > 0
-    ? Math.round((summary.totalSolved / summary.totalAttempts) * 100)
-    : 0;
+  const steps = useMemo(() => {
+    const { nextItem, nextDayTotal } = deriveNext(plan);
+    return nextSteps(data.areas, { plan, nextItem, nextDayTotal });
+  }, [data.areas, plan]);
+  const areas = useMemo(() => orderAreasByFact(data.areas), [data.areas]);
+
+  /* Once per page load: the denominator for the next-step click rate. */
+  const logged = useRef(false);
+  useEffect(() => {
+    if (logged.current) return;
+    logged.current = true;
+    logGA4Event({
+      name: 'training_record_viewed',
+      params: { next_step: steps[0].kind, other_steps: steps.length - 1, signed_in: signedIn },
+    });
+  }, [steps, signedIn]);
 
   return (
     <div className="space-y-8">
-      <section aria-labelledby="overview-heading" role="region">
-        <h2 id="overview-heading" className="sr-only">Overview</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {/*
-            The overall rating comes from the rating system, not from this
-            page's window — it is the same number the trainer shows, so the two
-            can never disagree the way the leaderboard did.
-          */}
-          <Stat label="Puzzle rating" value={data.overall.rating == null ? '—' : String(data.overall.rating)} />
-          <Stat label="Positions attempted" value={String(summary.totalAttempts)} />
-          <Stat label="Solved first try" value={`${accuracy}%`} />
-          {/*
-            Unrated is shown as a plain count, not as a share or a warning.
-            These attempts trained something — they simply moved no rating —
-            and presenting them as a deficit would punish exactly the players
-            who used the hint ladder the way it was designed to be used.
-          */}
-          <Stat label="Practice or helped" value={String(summary.unrated)} />
-        </div>
-      </section>
+      <NextStepCard steps={steps} />
+      <RatingLine overall={data.overall} />
 
-      {summary.untouchedAreas.length > 0 && (
-        <section aria-labelledby="gaps-heading" role="region" className="rounded-lg border-2 border-border bg-card p-5">
-          <h2 id="gaps-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-2">
-            Gaps in your training
-          </h2>
-          <p className="text-sm">
-            You have not tried{' '}
-            <span className="font-medium">
-              {summary.untouchedAreas.map(a => AREA_LABELS[a].toLowerCase()).join(' or ')}
-            </span>{' '}
-            here. That gap is worth closing before any number on this page means much.
-          </p>
-        </section>
-      )}
-
-      {/*
-        C8 fills in per-area performance with its confidence gate; C9 adds
-        strengths, weak areas, coverage and history, each one click from
-        training it. The frame is here so those land as views rather than as
-        four more pages.
-      */}
       <section aria-labelledby="areas-heading" role="region">
         <h2 id="areas-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
           By area
         </h2>
         <div className="space-y-3">
-          {data.areas.map(area => (
+          {areas.map(area => (
             <AreaRow
               key={area.area}
               area={area}
@@ -673,9 +725,7 @@ function RecordShell({ data }: { data: PuzzleProgressData }) {
         {/*
           The claim, stated once and narrowly (PRD §9). These positions are
           puzzles, so a figure drawn from endgame-tagged ones is endgame-PUZZLE
-          performance — not endgame skill, which needs the judgment trainers
-          that do not exist yet. Comparing it to a rating from another corpus
-          without calibration is exactly the overclaim the plan forbids.
+          performance, not endgame skill.
         */}
         <p className="text-xs text-muted-foreground mt-3">
           Performance is how you scored against the difficulty of the puzzles you faced,
@@ -684,8 +734,8 @@ function RecordShell({ data }: { data: PuzzleProgressData }) {
         </p>
       </section>
 
-      <StrengthsAndWeaknesses motifs={data.motifs} />
       <History history={data.history} />
+      <Totals summary={summary} />
     </div>
   );
 }
