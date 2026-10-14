@@ -371,7 +371,7 @@ type GA4Event =
   | { name: 'signed_in'; params: { provider: 'google' | 'cognito' } };
 
 /** The kinds of advice the training record gives. Mirrors `NextStep['kind']`. */
-export type TrainingRecordStep = 'plan' | 'untried' | 'stale' | 'none';
+export type TrainingRecordStep = 'replay' | 'plan' | 'untried' | 'stale' | 'none';
 
 /** Where a plan event happened. See the `surface` note on the plan events. */
 export type PlanSurface = 'card' | 'plan_page';

@@ -8,7 +8,7 @@
  * called the lower one a weakness would usually be wrong. Weakness claims come
  * later, behind an evidence rule (TRAINING_RECORD_ANALYSIS §6).
  */
-import type { AreaProgress, PuzzleArea } from './ProgressService';
+import type { AreaProgress, PuzzleArea, RatingPoint, TrainingDay } from './ProgressService';
 import type { PlanItem, TrainingPlan } from './PlanApi';
 
 /**
@@ -22,6 +22,7 @@ export const MIN_RATED_FOR_PERFORMANCE = 5;
 export const STALE_AFTER_DAYS = 14;
 
 export type NextStep =
+  | { kind: 'replay'; missed: number }
   | { kind: 'plan'; item: PlanItem; total: number }
   | { kind: 'untried'; area: PuzzleArea }
   | { kind: 'stale'; area: PuzzleArea; lastTrained: Date }
@@ -58,17 +59,20 @@ function localDay(now: Date): string {
  * Every next step that applies, most useful first. The page shows the first as
  * the recommendation and the rest as small links.
  *
- * Order: an owed plan day (the player chose it), then an area never tried, then
- * the area left longest past the stale line. `none` only when nothing applies.
- * Missed-puzzle replay and evidence-backed weaknesses join this list in later
- * issues (#108, #109).
+ * Order: missed puzzles waiting (the fastest fix there is), then an owed plan
+ * day (the player chose it), then an area never tried, then the area left
+ * longest past the stale line. `none` only when nothing applies. Evidence-backed
+ * weaknesses join this list later (#109).
  */
 export function nextSteps(
   areas: AreaProgress[],
   plan: { plan: TrainingPlan | null; nextItem: PlanItem | null; nextDayTotal: number },
   now: Date = new Date(),
+  missedToReplay = 0,
 ): NextStep[] {
   const steps: NextStep[] = [];
+
+  if (missedToReplay > 0) steps.push({ kind: 'replay', missed: missedToReplay });
 
   const { nextItem } = plan;
   if (plan.plan?.status === 'active' && nextItem
@@ -115,6 +119,70 @@ export function lastTrainedLabel(lastAttemptAt: string | null, now: Date = new D
 /** How many more rated puzzles before this area gets a performance figure. */
 export function ratedPuzzlesStillNeeded(area: AreaProgress): number {
   return Math.max(0, MIN_RATED_FOR_PERFORMANCE - area.rated);
+}
+
+/** Rated puzzles before the rating graph is drawn (TRAINING_RECORD_ANALYSIS §6). */
+export const MIN_RATED_FOR_GRAPH = 10;
+
+/** A rating is provisional at a deviation of 110 or more, the line Lichess uses. */
+export const PROVISIONAL_RD = 110;
+
+export type RatingWindow = 30 | 90 | 'all';
+
+/** YYYY-MM-DD of the day `n` days before `now`, on the player's calendar. */
+export function dayKey(now: Date, n = 0): string {
+  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - n);
+  return localDay(d);
+}
+
+/**
+ * The points a window shows, and the change across it.
+ *
+ * The change compares the latest rating with the rating the player HAD when the
+ * window opened: the last point at or before its first day. If they had no
+ * rating yet then, there is no honest "change over 30 days" and it is null
+ * rather than a number measured from somewhere else. "All" measures from the
+ * first point.
+ */
+export function ratingWindow(
+  points: RatingPoint[],
+  window: RatingWindow,
+  now: Date = new Date(),
+): { shown: RatingPoint[]; change: number | null } {
+  if (points.length === 0) return { shown: [], change: null };
+  if (window === 'all') {
+    return { shown: points, change: points.length > 1 ? points[points.length - 1].rating - points[0].rating : null };
+  }
+  const start = dayKey(now, window);
+  const before = points.filter(p => p.day <= start);
+  const inside = points.filter(p => p.day > start);
+  const base = before[before.length - 1];
+  const shown = base ? [base, ...inside] : inside;
+  const last = points[points.length - 1];
+  return { shown, change: base && inside.length > 0 ? last.rating - base.rating : null };
+}
+
+/**
+ * The calendar's grid: whole weeks, Monday first, the last one holding today.
+ * Each cell is a day key, or null for days after today.
+ */
+export function calendarWeeks(now: Date = new Date(), weeks = 12): Array<Array<string | null>> {
+  const mondayOffset = (now.getDay() + 6) % 7; // days since Monday
+  const firstMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - mondayOffset - 7 * (weeks - 1));
+  const today = dayKey(now);
+  return Array.from({ length: weeks }, (_, w) =>
+    Array.from({ length: 7 }, (_, d) => {
+      const key = localDay(new Date(firstMonday.getFullYear(), firstMonday.getMonth(), firstMonday.getDate() + 7 * w + d));
+      return key > today ? null : key;
+    }));
+}
+
+/** Days trained this week and last week, Monday to Sunday on the player's calendar. */
+export function daysTrainedByWeek(days: TrainingDay[], now: Date = new Date()): { thisWeek: number; lastWeek: number } {
+  const grid = calendarWeeks(now, 2);
+  const trained = new Set(days.filter(d => d.attempts > 0).map(d => d.day));
+  const count = (week: Array<string | null>) => week.filter(k => k != null && trained.has(k)).length;
+  return { thisWeek: count(grid[1]), lastWeek: count(grid[0]) };
 }
 
 /** Why an attempt did not move the rating, in the player's words. */

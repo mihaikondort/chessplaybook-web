@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import {
   nextSteps, orderAreasByFact, lastTrainedLabel, parseServerTime, ratedPuzzlesStillNeeded,
+  ratingWindow, calendarWeeks, daysTrainedByWeek,
   MIN_RATED_FOR_PERFORMANCE,
 } from './trainingRecord';
 import type { AreaProgress, PuzzleArea } from './ProgressService';
@@ -138,6 +139,57 @@ describe('ratedPuzzlesStillNeeded', () => {
   it('counts down to the minimum and never goes negative', () => {
     expect(ratedPuzzlesStillNeeded(area('tactics', { rated: 2 }))).toBe(3);
     expect(ratedPuzzlesStillNeeded(area('tactics', { rated: 9 }))).toBe(0);
+  });
+});
+
+describe('replay step (#108)', () => {
+  it('missed puzzles come before everything else, including an owed plan day', () => {
+    const steps = nextSteps([area('tactics'), area('middlegame'), area('endgame')], planWith({}), NOW, 7);
+    expect(steps.map(s => s.kind)).toEqual(['replay', 'plan']);
+  });
+  it('no missed puzzles, no replay step', () => {
+    expect(nextSteps([area('tactics'), area('middlegame'), area('endgame')], noPlan, NOW, 0))
+      .toEqual([{ kind: 'none' }]);
+  });
+});
+
+describe('ratingWindow', () => {
+  const pts = [
+    { day: '2026-08-01', rating: 1400 },
+    { day: '2026-09-10', rating: 1500 },
+    { day: '2026-10-05', rating: 1560 },
+    { day: '2026-10-13', rating: 1540 },
+  ];
+  it('measures from the rating held when the window opened', () => {
+    const { shown, change } = ratingWindow(pts, 30, NOW);
+    expect(shown.map(p => p.day)).toEqual(['2026-09-10', '2026-10-05', '2026-10-13']);
+    expect(change).toBe(40);
+  });
+  it('gives no change when there was no rating before the window', () => {
+    const { change } = ratingWindow(pts.slice(2), 30, NOW);
+    expect(change).toBeNull();
+  });
+  it('"all" measures from the first point', () => {
+    expect(ratingWindow(pts, 'all', NOW).change).toBe(140);
+  });
+});
+
+describe('calendarWeeks and daysTrainedByWeek', () => {
+  it('is whole weeks, Monday first, ending on the week holding today', () => {
+    const weeks = calendarWeeks(NOW, 2); // NOW is Wednesday 14 Oct 2026
+    expect(weeks[1][0]).toBe('2026-10-12');
+    expect(weeks[1][2]).toBe('2026-10-14');
+    expect(weeks[1][3]).toBeNull();
+    expect(weeks[0][0]).toBe('2026-10-05');
+  });
+  it('counts days trained, not puzzles', () => {
+    const days = [
+      { day: '2026-10-12', attempts: 30, solved: 20 },
+      { day: '2026-10-14', attempts: 1, solved: 1 },
+      { day: '2026-10-06', attempts: 4, solved: 2 },
+      { day: '2026-09-01', attempts: 9, solved: 9 },
+    ];
+    expect(daysTrainedByWeek(days, NOW)).toEqual({ thisWeek: 2, lastWeek: 1 });
   });
 });
 

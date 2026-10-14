@@ -13,7 +13,7 @@ import { PuzzleRunSetupCard } from './PuzzleRunSetupCard';
 import { usePuzzleSettings } from '../hooks/usePuzzleSettings';
 import { usePuzzleRecord } from '../hooks/usePuzzleRecord';
 import { usePuzzleRun } from '../hooks/usePuzzleRun';
-import { resolveLinkedFilters } from '../lib/linkedFilters';
+import { resolveLinkedFilters, linkedRunSelection } from '../lib/linkedFilters';
 import { usePlan } from '../hooks/usePlan';
 import { usePlanOffer } from '../hooks/usePlanOffer';
 import { PuzzlePlanCard } from './PuzzlePlanCard';
@@ -63,7 +63,9 @@ export default function TrainerLayoutSkeleton() {
     controls are not just a picture.
   */
   const settings = usePuzzleSettings();
-  const run = usePuzzleRun();
+  /* "Replay them" on the training record opens the run card on "Missed before" (#108). */
+  const [linkedRun] = useState(() => linkedRunSelection(new URLSearchParams(window.location.search)));
+  const run = usePuzzleRun(linkedRun);
   /*
     A LINK THAT NAMES A FILTER WINS OVER THE REMEMBERED ONE (C9).
 

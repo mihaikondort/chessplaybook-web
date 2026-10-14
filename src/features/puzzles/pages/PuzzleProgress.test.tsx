@@ -372,6 +372,93 @@ describe('PuzzleProgress — strengths, weak spots, history, one click to train 
     await waitFor(() => expect(screen.getByText(/by area/i)).toBeInTheDocument());
     expect(screen.queryByText(/recent weeks/i)).not.toBeInTheDocument();
   });
+
+  it('the calendar says how many days were trained this week and last', async () => {
+    const day = (n: number) => {
+      const d = new Date(); d.setDate(d.getDate() - n);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    };
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(populated({
+      // Today only, so the count does not depend on what weekday the test runs.
+      trainingDays: [{ day: day(0), attempts: 12, solved: 8 }, { day: day(30), attempts: 3, solved: 1 }],
+    }));
+    renderPage();
+    const habit = await screen.findByRole('region', { name: /training days/i });
+    expect(within(habit).getByText(/^Trained 1 day this week, \d+ last week\.$/)).toBeInTheDocument();
+    expect(within(habit).getByTitle(/: 12 puzzles$/)).toBeInTheDocument();
+  });
+
+  it('an older server without the new fields still renders the record', async () => {
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(populated());
+    renderPage();
+    await waitFor(() => expect(screen.getByText(/by area/i)).toBeInTheDocument());
+    expect(screen.queryByRole('region', { name: /training days/i })).not.toBeInTheDocument();
+  });
+});
+
+describe('PuzzleProgress — rating graph and replay (#108)', () => {
+  const base = (over: Partial<PuzzleProgressData> = {}) => makeData({
+    summary: {
+      totalAttempts: 40, totalSolved: 25, unrated: 5, unratedReasons: { hint: 5 },
+      firstAttemptAt: '2026-09-01 10:00:00', lastAttemptAt: new Date().toISOString(), untouchedAreas: [],
+    },
+    areas: (['tactics', 'middlegame', 'endgame'] as const).map(area => ({
+      area, attempts: 10, solved: 6, rated: 10, ratedSolved: 6, averageRatingFaced: 1500, accuracy: 0.6,
+      performance: 1550, confidence: 'established' as const, lastAttemptAt: new Date().toISOString(),
+    })),
+    overall: { rating: 1620, rd: 60, ratedAttempts: 35, lifetimeSolved: 25, lifetimeFailed: 15 },
+    ...over,
+  });
+
+  it('puts missed puzzles first and links into a Missed before run', async () => {
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(base({ missedToReplay: 12 }));
+    renderPage();
+    const next = await screen.findByRole('region', { name: /next step/i });
+    expect(within(next).getByText('12 puzzles you missed are waiting.')).toBeInTheDocument();
+    expect(within(next).getByRole('link', { name: 'Replay them' })).toHaveAttribute('href', '/puzzles?run=missed');
+  });
+
+  it('draws the graph, the peak and the change, with no verdict word', async () => {
+    const d = (n: number) => {
+      const x = new Date(); x.setDate(x.getDate() - n);
+      return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`;
+    };
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(base({
+      ratingSeries: {
+        points: [{ day: d(40), rating: 1580 }, { day: d(10), rating: 1700 }, { day: d(1), rating: 1620 }],
+        peak: { day: d(10), rating: 1700 },
+      },
+    }));
+    renderPage();
+    const rating = await screen.findByRole('region', { name: /puzzle rating/i });
+    expect(within(rating).getByRole('img', { name: /puzzle rating from/i })).toBeInTheDocument();
+    // Measured from the rating held when the 30-day window opened (1580).
+    expect(within(rating).getByText('+40 in 30 days')).toBeInTheDocument();
+    expect(within(rating).getByText(/^Peak/)).toHaveTextContent('Peak 1700');
+    expect(rating.textContent).not.toMatch(/improv|progress|better|worse/i);
+  });
+
+  it('never tells a player with plenty of rated puzzles to solve 10 more', async () => {
+    // Owner's screenshot on dev, 2026-10-14: 67 puzzles, an API without the
+    // series, and the page said the graph "appears after 10 rated puzzles".
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(base());
+    renderPage();
+    const rating = await screen.findByRole('region', { name: /puzzle rating/i });
+    expect(within(rating).getByText('1620')).toBeInTheDocument();
+    expect(within(rating).queryByText(/appears after/i)).not.toBeInTheDocument();
+  });
+
+  it('holds the graph back until 10 rated puzzles', async () => {
+    const data = base({
+      ratingSeries: { points: [{ day: '2026-10-01', rating: 1500 }], peak: { day: '2026-10-01', rating: 1500 } },
+    });
+    data.summary = { ...data.summary, totalAttempts: 9, unrated: 0 };
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(data);
+    renderPage();
+    const rating = await screen.findByRole('region', { name: /puzzle rating/i });
+    expect(within(rating).getByText(/appears after 10 rated puzzles/i)).toBeInTheDocument();
+    expect(within(rating).queryByRole('img')).not.toBeInTheDocument();
+  });
 });
 
 describe('PuzzleProgress — the next step (#107)', () => {

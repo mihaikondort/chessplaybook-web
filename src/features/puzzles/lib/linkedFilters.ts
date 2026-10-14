@@ -28,6 +28,18 @@ export interface LinkedFilters {
 }
 
 /**
+ * Which run mode the run card opens with, when a link chose one (#108).
+ *
+ * The training record's "Replay them" lands on the trainer with "Missed before"
+ * already picked, so the player sets a length and starts. Only that one mode
+ * can be linked; any other value is ignored. Like the filters above, it is read
+ * once and never saved.
+ */
+export function linkedRunSelection(params: URLSearchParams): 'failed_review' | null {
+  return params.get('run') === 'missed' ? 'failed_review' : null;
+}
+
+/**
  * @param params  the URL's query string
  * @param savedTheme  the player's remembered theme, or '' if none
  */

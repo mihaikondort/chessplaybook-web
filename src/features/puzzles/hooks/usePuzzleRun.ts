@@ -25,11 +25,12 @@ import type { PuzzleDraw } from './usePuzzleBoard';
  * mind. Collapsing a block moves WHEN its data is fetched, not just where it
  * sits - and the same is true of moving one into a component.
  */
-export function usePuzzleRun() {
+export function usePuzzleRun(initialSelection: SessionSelection | null = null) {
   const { session, loading, start, end, refresh, reload } = usePuzzleSession();
   const [options, setOptions] = useState<SelectionOption[] | undefined>();
   const [areas, setAreas] = useState<readonly string[] | undefined>();
-  const [selection, setSelection] = useState<SessionSelection>('adaptive');
+  /* A link can pick the mode (`?run=missed`, #108); otherwise the default. */
+  const [selection, setSelection] = useState<SessionSelection>(initialSelection ?? 'adaptive');
   const [area, setArea] = useState<SessionArea | null>(null);
   const [total, setTotal] = useState(10);
   const [starting, setStarting] = useState(false);

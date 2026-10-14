@@ -89,6 +89,28 @@ export interface PuzzleProgressData {
    * control unset rather than crashing the page around it.
    */
   areaPreferences?: Record<string, 'more' | 'less'>;
+  /*
+    #108. Optional for the same reason as `areaPreferences`: during a deploy the
+    page can meet the previous API, and it must render without these rather
+    than crash.
+  */
+  /** Puzzles whose latest attempt was a miss: what "Missed before" serves. */
+  missedToReplay?: number;
+  ratingSeries?: { points: RatingPoint[]; peak: RatingPoint | null };
+  /** Days with at least one attempt in the last 12 weeks, on the player's calendar. */
+  trainingDays?: TrainingDay[];
+}
+
+export interface RatingPoint {
+  /** The player's local date, YYYY-MM-DD. */
+  day: string;
+  rating: number;
+}
+
+export interface TrainingDay {
+  day: string;
+  attempts: number;
+  solved: number;
 }
 
 export const AREA_LABELS: Record<PuzzleArea, string> = {
@@ -131,7 +153,9 @@ export function confidenceNote(confidence: Confidence, rated: number): string | 
 
 export async function fetchPuzzleProgress(signal?: AbortSignal): Promise<PuzzleProgressData> {
   const headers = await getRequestHeaders();
-  const res = await fetch(`${env.apiBaseUrl}/api/puzzles/progress`, { headers, signal });
+  // Minutes EAST of UTC, so the server groups days on the player's calendar.
+  const tz = -new Date().getTimezoneOffset();
+  const res = await fetch(`${env.apiBaseUrl}/api/puzzles/progress?tz=${tz}`, { headers, signal });
   if (!res.ok) throw new Error(`progress request failed: ${res.status}`);
   const body = await res.json();
   if (!body?.success || !body?.data) throw new Error('progress response malformed');

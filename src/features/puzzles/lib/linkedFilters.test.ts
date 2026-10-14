@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolveLinkedFilters } from './linkedFilters';
+import { resolveLinkedFilters, linkedRunSelection } from './linkedFilters';
 
 const q = (s: string) => new URLSearchParams(s);
 
@@ -37,5 +37,13 @@ describe('resolveLinkedFilters', () => {
   it('an empty link parameter is not a filter', () => {
     expect(resolveLinkedFilters(q('theme=&area='), 'fork').theme).toBe('fork');
     expect(resolveLinkedFilters(q('theme=&area='), 'fork').area).toBe('');
+  });
+});
+
+describe('linkedRunSelection (#108)', () => {
+  it('only ?run=missed picks a mode, and it picks Missed before', () => {
+    expect(linkedRunSelection(q('run=missed'))).toBe('failed_review');
+    expect(linkedRunSelection(q('run=weak_areas'))).toBeNull();
+    expect(linkedRunSelection(q(''))).toBeNull();
   });
 });

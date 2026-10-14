@@ -40,6 +40,7 @@ import {
   UNRATED_REASON_LABELS,
   type NextStep,
 } from '../services/trainingRecord';
+import { RatingCard, TrainingCalendar } from '../components/TrainingRecordCharts';
 
 type LoadState =
   | { status: 'loading' }
@@ -533,6 +534,15 @@ const AREA_ONE_PUZZLE: Record<PuzzleArea, string> = {
 
 function stepCopy(step: NextStep): { heading: string; detail?: string; action: string; to: string } {
   switch (step.kind) {
+    case 'replay':
+      return {
+        heading: step.missed === 1
+          ? '1 puzzle you missed is waiting.'
+          : `${step.missed} puzzles you missed are waiting.`,
+        detail: 'Solving a position you got wrong is the quickest way to fix the mistake.',
+        action: 'Replay them',
+        to: '/puzzles?run=missed',
+      };
     case 'plan': {
       const { item, total } = step;
       if (item.status === 'active') {
@@ -601,32 +611,6 @@ function NextStepCard({ steps }: { steps: NextStep[] }) {
             );
           })}
         </div>
-      )}
-    </section>
-  );
-}
-
-/**
- * The rating, on its own line until the rating graph replaces it (#108).
- * "provisional" at a deviation of 110 or more, the line Lichess uses.
- */
-const PROVISIONAL_RD = 110;
-
-function RatingLine({ overall }: { overall: PuzzleProgressData['overall'] }) {
-  return (
-    <section aria-labelledby="rating-heading" role="region" className="flex items-baseline gap-3">
-      <h2 id="rating-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-        Puzzle rating
-      </h2>
-      {overall.rating == null ? (
-        <span className="text-sm text-muted-foreground">No rating yet.</span>
-      ) : (
-        <span className="text-2xl font-bold tabular-nums">
-          {overall.rating}
-          {overall.rd != null && overall.rd >= PROVISIONAL_RD && (
-            <span className="ml-2 text-xs font-medium text-muted-foreground">provisional</span>
-          )}
-        </span>
       )}
     </section>
   );
@@ -704,8 +688,8 @@ function RecordShell({ data, plan, signedIn }: {
 
   const steps = useMemo(() => {
     const { nextItem, nextDayTotal } = deriveNext(plan);
-    return nextSteps(data.areas, { plan, nextItem, nextDayTotal });
-  }, [data.areas, plan]);
+    return nextSteps(data.areas, { plan, nextItem, nextDayTotal }, new Date(), data.missedToReplay ?? 0);
+  }, [data.areas, plan, data.missedToReplay]);
   const areas = useMemo(() => orderAreasByFact(data.areas), [data.areas]);
 
   /* Once per page load: the denominator for the next-step click rate. */
@@ -722,7 +706,14 @@ function RecordShell({ data, plan, signedIn }: {
   return (
     <div className="space-y-8">
       <NextStepCard steps={steps} />
-      <RatingLine overall={data.overall} />
+      <RatingCard
+        rating={data.overall.rating}
+        rd={data.overall.rd}
+        ratedAttempts={summary.totalAttempts - summary.unrated}
+        series={data.ratingSeries}
+      />
+      {data.trainingDays && <TrainingCalendar days={data.trainingDays} />}
+      <History history={data.history} />
 
       <section aria-labelledby="areas-heading" role="region">
         <h2 id="areas-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
@@ -751,7 +742,6 @@ function RecordShell({ data, plan, signedIn }: {
         </p>
       </section>
 
-      <History history={data.history} />
       <Totals summary={summary} />
     </div>
   );
