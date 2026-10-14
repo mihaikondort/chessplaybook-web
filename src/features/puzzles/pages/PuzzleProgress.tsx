@@ -27,7 +27,6 @@ import { deriveNext } from '../hooks/usePlan';
 import { logGA4Event } from '@/services/analytics';
 import {
   fetchPuzzleProgress,
-  confidenceNote,
   AREA_LABELS,
   type AreaProgress,
   type PuzzleProgressData,
@@ -322,15 +321,17 @@ function EmptyRecord() {
  * puts the control back, because a control showing a choice the server never
  * took is the defect this phase found twice in the ratings.
  */
-function AreaPreferenceControl({ area, value, onChange }: {
+function AreaPreferenceControl({ area, value, onChange, inline = false }: {
   area: PuzzleArea;
   value: 'more' | 'less' | undefined;
   onChange: (next: 'more' | 'less' | null) => void;
+  /** In the area table the column header names the control; on a phone it keeps its words. */
+  inline?: boolean;
 }) {
   const label = AREA_LABELS[area].toLowerCase();
   return (
-    <div className="mt-2 flex items-center gap-1.5">
-      <span className="text-[11px] text-muted-foreground">In my training plans:</span>
+    <div className={`flex items-center gap-1.5 ${inline ? '' : 'mt-2'}`}>
+      <span className={`text-[11px] text-muted-foreground ${inline ? 'sm:sr-only' : ''}`}>In my training plans:</span>
       {(['more', 'less'] as const).map(choice => {
         const on = value === choice;
         return (
@@ -358,58 +359,73 @@ function AreaPreferenceControl({ area, value, onChange }: {
   );
 }
 
+/*
+  One area, one line (TRAINING_RECORD_ANALYSIS §7 D). Six cells from the sm
+  breakpoint up; on a phone the same cells wrap two to a line, so nothing
+  scrolls sideways and nothing runs past the card. Every column but the first
+  has a FIXED width: each row is its own grid, so an `auto` column sizes to
+  that row's content and the header would not line up with the rows.
+*/
+const AREA_GRID =
+  'grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 items-baseline sm:grid-cols-[minmax(6rem,1fr)_12.5rem_4rem_9rem_6.5rem_8.5rem]';
+
+function AreaHeader() {
+  return (
+    <div className={`${AREA_GRID} hidden sm:grid px-4 pt-3 pb-2 text-xs text-muted-foreground`} aria-hidden="true">
+      <span>Area</span>
+      <span>Performance</span>
+      <span className="text-right">Puzzles</span>
+      <span>Last trained</span>
+      <span>In your plans</span>
+      <span />
+    </div>
+  );
+}
+
 function AreaRow({ area, preference, onPreference }: {
   area: AreaProgress;
   preference: 'more' | 'less' | undefined;
   onPreference: (area: PuzzleArea, next: 'more' | 'less' | null) => void;
 }) {
-  const note = confidenceNote(area.confidence, area.rated);
   const lastTrained = lastTrainedLabel(area.lastAttemptAt);
   const stillNeeded = ratedPuzzlesStillNeeded(area);
+  const name = AREA_LABELS[area.area];
 
   return (
-    // Stacked on a phone: side by side, the right-hand block ran past the card's edge at 390px.
-    <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-      <div>
-        <div className="font-medium">{AREA_LABELS[area.area]}</div>
-        <div className="text-xs text-muted-foreground mt-0.5">
-          {area.attempts === 0
-            ? 'Not trained yet'
-            : `${area.attempts} attempted · ${area.solved} solved`}
-          {lastTrained && ` · last trained ${lastTrained}`}
-        </div>
-        <AreaPreferenceControl
-          area={area.area}
-          value={preference}
-          onChange={next => onPreference(area.area, next)}
-        />
-      </div>
-      <div className="flex items-baseline justify-between gap-4 sm:justify-end">
-        <TrainLink to={`/puzzles?area=${area.area}`} label={`Train ${AREA_LABELS[area.area].toLowerCase()}`} />
-      <div className="text-right">
+    <div className={`${AREA_GRID} px-4 py-3`}>
+      <div className="font-medium">{name}</div>
+      <div className="text-right sm:text-left">
         {area.performance == null ? (
-          <div className="text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground">
             {area.attempts === 0
-              ? 'No result yet'
+              ? 'Not trained yet'
               : stillNeeded > 0
-                ? `${stillNeeded} more rated ${stillNeeded === 1 ? 'puzzle' : 'puzzles'} to rate this area`
+                ? `${stillNeeded} more rated ${stillNeeded === 1 ? 'puzzle' : 'puzzles'} to rate`
                 : 'Not rated yet'}
-          </div>
+          </span>
         ) : (
-          <>
-            <div className="text-lg font-bold leading-tight">
-              {area.performance}
-              {area.confidence === 'provisional' && (
-                <span className="ml-1 align-top text-xs font-medium text-muted-foreground">?</span>
-              )}
-            </div>
-            <div className="text-xs text-muted-foreground">performance</div>
-          </>
-        )}
-        {note && area.performance != null && (
-          <div className="text-[11px] text-muted-foreground mt-0.5">{note}</div>
+          <span>
+            <span className="text-lg font-bold tabular-nums">{area.performance}</span>
+            {area.confidence === 'provisional' && (
+              <span className="ml-1.5 text-xs text-muted-foreground">provisional</span>
+            )}
+          </span>
         )}
       </div>
+      <div className="text-sm text-muted-foreground tabular-nums sm:text-right">
+        {area.attempts}<span className="sm:hidden"> puzzles</span>
+      </div>
+      <div className="text-sm text-muted-foreground text-right sm:text-left">
+        {lastTrained ? <><span className="sm:hidden">last trained </span>{lastTrained}</> : null}
+      </div>
+      <AreaPreferenceControl
+        area={area.area}
+        value={preference}
+        onChange={next => onPreference(area.area, next)}
+        inline
+      />
+      <div className="text-right">
+        <TrainLink to={`/puzzles?area=${area.area}`} label={`Train ${name.toLowerCase()}`} />
       </div>
     </div>
   );
@@ -712,7 +728,8 @@ function RecordShell({ data, plan, signedIn }: {
         <h2 id="areas-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
           By area
         </h2>
-        <div className="space-y-3">
+        <div className="rounded-lg border border-border bg-card divide-y divide-border">
+          <AreaHeader />
           {areas.map(area => (
             <AreaRow
               key={area.area}

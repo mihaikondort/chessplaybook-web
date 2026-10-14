@@ -216,9 +216,13 @@ describe('PuzzleProgress — the confidence gate (C8)', () => {
     renderPage();
     await waitFor(() => expect(screen.getByText(/by area/i)).toBeInTheDocument());
     const areas = screen.getByRole('region', { name: /by area/i });
-    expect(within(areas).getByText(/1 more rated puzzle to rate this area/i)).toBeInTheDocument();
-    expect(within(areas).queryByText(/performance$/i)).not.toBeInTheDocument();
-    expect(within(areas).queryByText('0')).not.toBeInTheDocument();
+    expect(within(areas).getByText(/^1 more rated puzzle to rate$/i)).toBeInTheDocument();
+    // The endgame row's only numbers are its puzzle count. No rating-sized
+    // figure, and no 0 standing in for one. (Untried areas do show a puzzle
+    // count of 0, which is true, so the check is scoped to this row.)
+    const row = within(areas).getByText('Endgame').parentElement!;
+    expect(row.textContent).not.toMatch(/\d{3,}/);
+    expect(row.textContent).not.toMatch(/(^|\D)0(\D|$)/);
   });
 
   it('shows an established figure plainly', async () => {
@@ -229,7 +233,9 @@ describe('PuzzleProgress — the confidence gate (C8)', () => {
     ]));
     renderPage();
     await waitFor(() => expect(screen.getByText('1712')).toBeInTheDocument());
-    expect(screen.getByText(/from 20 rated attempts/i)).toBeInTheDocument();
+    // Established: the number alone, with no qualifier beside it.
+    const areas = screen.getByRole('region', { name: /by area/i });
+    expect(within(areas).queryByText('provisional')).not.toBeInTheDocument();
   });
 
   it('marks a provisional figure as provisional', async () => {
@@ -240,7 +246,8 @@ describe('PuzzleProgress — the confidence gate (C8)', () => {
     ]));
     renderPage();
     await waitFor(() => expect(screen.getByText('1520')).toBeInTheDocument());
-    expect(screen.getByText(/provisional, from 6 rated attempts/i)).toBeInTheDocument();
+    // The word, beside the number, in the same cell.
+    expect(screen.getByText('1520').parentElement).toHaveTextContent(/^1520provisional$/);
   });
 
   it('keeps the claim narrow — puzzles, not skill', async () => {
