@@ -133,6 +133,17 @@ export async function fetchPuzzles(options?: {
    */
   selection?: string;
 }): Promise<PuzzleData[]> {
+  /*
+    A request is SPECIFIC when it names a theme, an area, or a run mode that
+    chooses for itself ("Missed before", weak spots, baseline). The sample
+    puzzles below ignore all three, so a specific request that gets nothing
+    must say nothing rather than hand over an unrelated puzzle. A replay run
+    used to end in sample puzzles presented as missed ones (2026-10-14).
+  */
+  const specific = Boolean(
+    options?.theme || options?.area
+    || (options?.selection && options.selection !== 'adaptive' && options.selection !== 'random'),
+  );
   const isOnline = await checkApi();
 
   if (isOnline) {
@@ -179,7 +190,8 @@ export async function fetchPuzzles(options?: {
           up from a generic sample, and even then the server returning zero is a
           server problem, not something to paper over.
         */
-        if (json.success && (options?.theme || options?.area)) {
+        // Answered or refused, a specific request gets the server's answer.
+        if (specific) {
           return [];
         }
       }
@@ -194,7 +206,7 @@ export async function fetchPuzzles(options?: {
     unreachable AND the caller asked for something specific, an empty list is
     the truthful answer; the sample puzzles would silently be the wrong ones.
   */
-  if (options?.theme || options?.area) return [];
+  if (specific) return [];
 
   // Fallback: return shuffled sample puzzles
   const filtered = FALLBACK_PUZZLES.filter(p => {

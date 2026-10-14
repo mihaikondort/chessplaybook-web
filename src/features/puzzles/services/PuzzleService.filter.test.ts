@@ -59,3 +59,16 @@ describe('fetchPuzzles with a filter', () => {
     expect(await fetchPuzzles({ theme: 'fork', count: 1 })).toEqual(real);
   });
 });
+
+describe('fetchPuzzles inside a run that chooses for itself (2026-10-14)', () => {
+  const refused = { ok: true, json: async () => ({ success: false, error: 'Every puzzle you missed has been played in this run', data: [] }) } as Response;
+  it('a refused Missed before draw returns nothing, never a sample puzzle', async () => {
+    stubFetch(async url => (url.includes('/stats') ? okStats : refused));
+    expect(await fetchPuzzles({ selection: 'failed_review', count: 1 })).toEqual([]);
+    expect(await fetchPuzzles({ selection: 'weak_areas', count: 1 })).toEqual([]);
+  });
+  it('an adaptive or random draw still falls back when the API is down', async () => {
+    stubFetch(async url => { if (url.includes('/stats')) return okStats; throw new Error('offline'); });
+    expect((await fetchPuzzles({ selection: 'adaptive', count: 1 })).length).toBeGreaterThan(0);
+  });
+});
