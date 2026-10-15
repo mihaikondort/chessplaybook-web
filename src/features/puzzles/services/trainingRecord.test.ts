@@ -4,6 +4,7 @@ import {
   nextSteps, orderAreasByFact, lastTrainedLabel, parseServerTime, ratedPuzzlesStillNeeded,
   ratingWindow, calendarWeeks, daysTrainedByWeek,
   MIN_RATED_FOR_PERFORMANCE,
+  STALE_AFTER_DAYS,
 } from './trainingRecord';
 import type { AreaProgress, PuzzleArea } from './ProgressService';
 import type { PlanItem, TrainingPlan } from './PlanApi';
@@ -201,5 +202,15 @@ describe.skipIf(!existsSync('backend'))('MIN_RATED_FOR_PERFORMANCE agrees with t
     const m = src.match(/const MIN_RATED_FOR_PERFORMANCE\s*=\s*(\d+)/);
     expect(m, 'could not find MIN_RATED_FOR_PERFORMANCE in the backend').not.toBeNull();
     expect(Number(m![1])).toBe(MIN_RATED_FOR_PERFORMANCE);
+  });
+});
+
+describe.skipIf(!existsSync('backend'))('STALE_AFTER_DAYS agrees with the server (#110)', () => {
+  it('matches backend/src/db/puzzleProgress.ts, so the next step and "Needs attention" agree on stale', async () => {
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync('backend/src/db/puzzleProgress.ts', 'utf8');
+    const m = src.match(/const STALE_AFTER_DAYS\s*=\s*(\d+)/);
+    expect(m, 'could not find STALE_AFTER_DAYS in the backend').not.toBeNull();
+    expect(Number(m![1])).toBe(STALE_AFTER_DAYS);
   });
 });

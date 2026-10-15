@@ -79,8 +79,9 @@ export interface GeneratedPlanSummary {
     at all. The one case where the reason matters most, because it was the
     player's own doing, was the one case that explained nothing.
   */
+  /* #110: the order's own reason, never raw accuracy. */
   emphasisReason:
-    'never_trained' | 'not_enough_evidence' | 'lowest_accuracy' | 'player_asked' | null;
+    'never_trained' | 'stale' | 'below_expectation' | 'least_recent' | 'player_asked' | null;
 }
 
 export interface GeneratedPlan {

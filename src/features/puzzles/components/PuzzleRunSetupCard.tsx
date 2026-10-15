@@ -41,7 +41,9 @@ export const SESSION_LENGTHS = [5, 10, 20] as const;
 export const SELECTION_LABEL: Record<string, string> = {
   adaptive: 'Your level',
   random: 'Mixed',
-  weak_areas: 'Weak spots',
+  /* #110: the mode picks what needs attention (untried, neglected, or below
+     expectation by the evidence rule), which is rarely a diagnosed weakness. */
+  weak_areas: 'Needs attention',
   failed_review: 'Missed before',
 };
 
@@ -347,7 +349,7 @@ export function PuzzleRunSetupCard({
               disabled={areaChosenForYou || locked || awaitingOptions}
               options={[
                 ...(shownTheme ? [{ value: THEME_VALUE, label: `${patternName(shownTheme)} only` }] : []),
-                { value: null, label: areaChosenForYou && !running ? 'Your weakest area' : 'All areas' },
+                { value: null, label: areaChosenForYou && !running ? 'Chosen for you' : 'All areas' },
                 ...shownAreas.map(a => ({
                   value: a as SessionArea,
                   label: AREA_LABEL[a] ?? a,

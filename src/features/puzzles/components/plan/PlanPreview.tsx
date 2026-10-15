@@ -92,10 +92,12 @@ export function PlanPreview({
           </span>{' '}
           {s.emphasisReason === 'never_trained'
             && 'You have no record in this area yet, so the plan gives it a first look.'}
-          {s.emphasisReason === 'not_enough_evidence'
-            && 'You have not solved enough puzzles overall for a clear read on which areas need work.'}
-          {s.emphasisReason === 'lowest_accuracy'
-            && 'This is the area where your results are currently weakest.'}
+          {s.emphasisReason === 'stale'
+            && 'You have not trained this area for over two weeks.'}
+          {s.emphasisReason === 'below_expectation'
+            && 'Your results here are below expectation for puzzles this hard.'}
+          {s.emphasisReason === 'least_recent'
+            && 'This is the area you trained longest ago.'}
           {s.emphasisReason === 'player_asked'
             && 'You asked for more practice in this area.'}
         </p>
