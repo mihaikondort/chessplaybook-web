@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Crown, History, UsersRound } from 'lucide-react';
 import SeoHead from '@/components/SeoHead';
+import ReportProblemLink from '@/components/support/ReportProblemLink';
 import { WorkspaceCard } from '@/components/chess/WorkspaceCard';
 import { backendAPIClient } from '@/services/BackendAPIClient';
 import type { Player, PlayersMap } from '@/types/chess';
@@ -120,6 +121,7 @@ const Champions = () => {
             {!loading && error && (
               <WorkspaceCard title="Champions unavailable" className="text-sm text-muted-foreground">
                 We couldn’t load the champions right now. Please try again later.
+                <div className="mt-2"><ReportProblemLink surface="load_error" /></div>
               </WorkspaceCard>
             )}
             {!loading && !error && champions.length === 0 && (

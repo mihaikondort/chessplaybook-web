@@ -7,6 +7,8 @@ import { getAuthHeader } from '../utils/getAuthToken';
 import { userPreferencesService, type ServerPreferences } from '@/services/UserPreferencesService';
 import env from '@/config/env';
 import { DeleteAccountCard } from '../components/DeleteAccountCard';
+import { contactHref } from '@/components/support/ReportProblemLink';
+import { logGA4Event } from '@/services/analytics';
 
 interface UserProfile {
   id: number;
@@ -266,6 +268,18 @@ export default function ProfilePage() {
             apart. The privacy policy promises this right; until 2026-08-04 it
             existed only as an email to a person.
           */}
+          {/* #44: account questions start here once there is a premium flow. */}
+          <p className="text-sm text-muted-foreground">
+            A question about your account?{' '}
+            <Link
+              to={contactHref('profile', undefined, 'account')}
+              onClick={() => logGA4Event({ name: 'support_entry_clicked', params: { surface: 'profile' } })}
+              className="inline-flex min-h-11 items-center text-link underline-offset-4 hover:underline"
+            >
+              Contact us
+            </Link>
+          </p>
+
           {profile?.username && <DeleteAccountCard username={profile.username} />}
 
         </main>

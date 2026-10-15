@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ReportProblemLink from '@/components/support/ReportProblemLink';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import RouteHeading from '@/components/RouteHeading';
 import SeoHead from '@/components/SeoHead';
@@ -76,6 +77,7 @@ export default function ChallengeSessionPage() {
             <p className="text-sm text-destructive" role="alert">
               Could not load the champions. Please try again.
             </p>
+            <ReportProblemLink surface="load_error" className="mt-2 inline-flex min-h-11 items-center text-sm text-link underline-offset-4 hover:underline" />
           </WorkspaceCard>
         </div>
       </>

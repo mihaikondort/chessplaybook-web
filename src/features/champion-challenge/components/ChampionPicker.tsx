@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ReportProblemLink from '@/components/support/ReportProblemLink';
 import { chessDataService } from '@/services/ChessDataService';
 import type { Player, PlayersMap } from '@/types/chess';
 import { WorkspaceCard } from '@/components/chess/WorkspaceCard';
@@ -100,6 +101,7 @@ export function ChampionPicker({ onSelect, length }: ChampionPickerProps) {
     return (
       <WorkspaceCard title="Champion challenges">
         <p className="text-sm text-destructive" role="alert">{error}</p>
+        <ReportProblemLink surface="load_error" className="mt-2 inline-flex min-h-11 items-center text-sm text-link underline-offset-4 hover:underline" />
       </WorkspaceCard>
     );
   }

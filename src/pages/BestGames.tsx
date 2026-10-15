@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useState, useMemo } from 'react';
+import ReportProblemLink from '@/components/support/ReportProblemLink';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { backendAPIClient } from '@/services/BackendAPIClient';
@@ -94,6 +95,9 @@ const BestGames = () => {
           <Link to="/champions">
             <Button>Back to Champions</Button>
           </Link>
+          <div className="mt-4">
+            <ReportProblemLink surface="load_error" />
+          </div>
         </div>
       </div>
     );

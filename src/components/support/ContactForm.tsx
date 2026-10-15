@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/features/auth/AuthContext';
-import { logGA4Event } from '@/services/analytics';
+import { logGA4Event, SUPPORT_SURFACES, type SupportSurface } from '@/services/analytics';
 import { sendSupportMessage, SupportApiError, type SupportCategory } from '@/services/supportApi';
 
 const TOPICS: Array<{ value: SupportCategory; label: string }> = [
@@ -73,6 +73,11 @@ export default function ContactForm() {
   const [website, setWebsite] = useState('');
   const [status, setStatus] = useState<Status>({ kind: 'editing' });
   const [page] = useState(() => originPage(params.get('from')));
+  // Which door the visitor came through (#44); a typed-in URL is the page itself.
+  const [surface] = useState<SupportSurface>(() => {
+    const via = params.get('via');
+    return (SUPPORT_SURFACES as readonly string[]).includes(via ?? '') ? (via as SupportSurface) : 'contact_page';
+  });
   const ids = { topic: useId(), message: useId(), email: useId(), note: useId(), status: useId() };
 
   // A signed-in visitor can be answered at their account address; fill it in once.
@@ -106,7 +111,7 @@ export default function ContactForm() {
         viewport: `${document.documentElement.clientWidth}x${document.documentElement.clientHeight}`,
         website,
       });
-      logGA4Event({ name: 'contact_form_submitted', params: { category, has_email: Boolean(trimmedEmail), surface: 'contact_page' } });
+      logGA4Event({ name: 'contact_form_submitted', params: { category, has_email: Boolean(trimmedEmail), surface } });
       setStatus({ kind: 'sent', withEmail: Boolean(trimmedEmail) });
       setMessage('');
     } catch (error) {

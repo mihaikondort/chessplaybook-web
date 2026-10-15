@@ -1,7 +1,9 @@
 import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { NavThemeButton, MenuThemeChoice } from '@/components/ThemeToggle';
-import { Users, ChevronLeft, Radio, Swords, Newspaper, BarChart3, Menu, X, Crown, Lightbulb } from 'lucide-react';
+import { Users, ChevronLeft, Radio, Swords, Newspaper, BarChart3, Menu, X, Crown, Lightbulb, MessageSquare } from 'lucide-react';
+import { contactHref } from '@/components/support/ReportProblemLink';
+import { logGA4Event } from '@/services/analytics';
 import { MdPsychology } from 'react-icons/md';
 import { lazy, Suspense, useState, useEffect, useRef, type CSSProperties } from 'react';
 
@@ -376,6 +378,15 @@ export const Navigation = ({ hidden = false }: { hidden?: boolean }) => {
                   </Link>
                 );
               })}
+              {/* #44: the phone menu has room the desktop row does not. */}
+              <Link
+                to={contactHref('mobile_menu', undefined, null)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                onClick={() => { logGA4Event({ name: 'support_entry_clicked', params: { surface: 'mobile_menu' } }); setMobileMenuOpen(false); }}
+              >
+                <MessageSquare className="h-5 w-5" />
+                <span className="font-medium">Contact</span>
+              </Link>
               <div className="border-t border-border/50 mt-1 pt-2">
                 <MenuThemeChoice />
               </div>

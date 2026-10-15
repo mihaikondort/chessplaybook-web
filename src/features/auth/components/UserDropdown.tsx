@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, LogOut, ChevronDown, LayoutDashboard, Target, CalendarDays } from 'lucide-react';
+import { User, LogOut, ChevronDown, LayoutDashboard, Target, CalendarDays, MessageSquare } from 'lucide-react';
+import { contactHref } from '@/components/support/ReportProblemLink';
+import { logGA4Event } from '@/services/analytics';
 import { useAuth } from '../AuthContext';
 
 export function UserDropdown() {
@@ -122,6 +124,16 @@ export function UserDropdown() {
             >
               <CalendarDays className="h-4 w-4" />
               Training plan
+            </Link>
+
+            {/* #44: a way to us from the account, where access questions land. */}
+            <Link
+              to={contactHref('account_menu', undefined, null)}
+              onClick={() => { logGA4Event({ name: 'support_entry_clicked', params: { surface: 'account_menu' } }); setOpen(false); }}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Contact us
             </Link>
 
             <button

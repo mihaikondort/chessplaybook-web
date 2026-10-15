@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import ReportProblemLink from "@/components/support/ReportProblemLink";
 
 const NotFound = () => {
   const location = useLocation();
@@ -27,6 +28,9 @@ const NotFound = () => {
             >
               Return to Home
             </a>
+            <p className="mt-6 text-sm text-muted-foreground">
+              Followed a link here? <ReportProblemLink surface="not_found" from={location.pathname} label="Tell us where it was" />
+            </p>
           </div>
         </main>
       </div>

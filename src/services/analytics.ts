@@ -377,13 +377,22 @@ type GA4Event =
      intent, not a sent message: a device with no mail app opens nothing. */
   | { name: 'contact_email_clicked'; params: { surface: 'contact_page' } }
   /* #43: the contact form. `submitted` fires only once the server has stored the message,
-     so it counts messages we actually have. No message text, and no address, ever. */
-  | { name: 'contact_form_submitted'; params: { category: string; has_email: boolean; surface: 'contact_page' } }
+     so it counts messages we actually have. No message text, and no address, ever.
+     `surface` is the door the visitor came through (#44): 'contact_page' when none. */
+  | { name: 'contact_form_submitted'; params: { category: string; has_email: boolean; surface: SupportSurface } }
+  /* #44: a way to the contact form was pressed, and from where. */
+  | { name: 'support_entry_clicked'; params: { surface: SupportSurface } }
   | { name: 'contact_form_failed'; params: { reason: 'invalid' | 'rate_limited' | 'network' | 'server' } }
   | { name: 'signed_in'; params: { provider: 'google' | 'cognito' } };
 
 /** The kinds of advice the training record gives. Mirrors `NextStep['kind']`. */
 export type TrainingRecordStep = 'replay' | 'plan' | 'untried' | 'stale' | 'weakness' | 'none';
+
+/** The doors to the contact form (#44). Reported on the click and on the message. */
+export const SUPPORT_SURFACES = [
+  'contact_page', 'error_boundary', 'not_found', 'load_error', 'account_menu', 'mobile_menu', 'profile',
+] as const;
+export type SupportSurface = (typeof SUPPORT_SURFACES)[number];
 
 /** Where a plan event happened. See the `surface` note on the plan events. */
 export type PlanSurface = 'card' | 'plan_page';

@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
+import ReportProblemLink from '@/components/support/ReportProblemLink';
 
 interface Props {
   children: ReactNode;
@@ -163,6 +164,10 @@ export class ErrorBoundary extends Component<Props, State> {
               Go Home
             </button>
           </div>
+          {/* Outside the router, so a plain anchor (#44). */}
+          <p className="mt-6 text-sm text-muted-foreground">
+            Still broken? <ReportProblemLink surface="error_boundary" asAnchor label="Tell us what happened" />
+          </p>
         </div>
       </div>
     );

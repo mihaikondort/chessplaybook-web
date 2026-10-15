@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { chessDataService } from '@/services/ChessDataService';
 import * as challengeApi from '../services/ChampionChallengeApi';
 import {
@@ -21,7 +22,7 @@ function arrangeLoadedPicker() {
 describe('ChampionPicker', () => {
   it('renders portrait cards on the shared Puzzles surface', async () => {
     arrangeLoadedPicker();
-    render(<ChampionPicker length={10} onSelect={vi.fn()} />);
+    render(<ChampionPicker length={10} onSelect={vi.fn()} />, { wrapper: MemoryRouter });
 
     const action = await screen.findByRole('button', {
       name: `Take the ${championPlayerFixture.fullName} challenge`,
@@ -41,7 +42,7 @@ describe('ChampionPicker', () => {
   it('keeps the explicit CTA as the only champion-selection action', async () => {
     arrangeLoadedPicker();
     const onSelect = vi.fn();
-    render(<ChampionPicker length={20} onSelect={onSelect} />);
+    render(<ChampionPicker length={20} onSelect={onSelect} />, { wrapper: MemoryRouter });
 
     fireEvent.click(await screen.findByRole('button', {
       name: `Take the ${championPlayerFixture.fullName} challenge`,
@@ -59,7 +60,7 @@ describe('ChampionPicker', () => {
   it('keeps an honest empty state when the server has no challenges', async () => {
     vi.spyOn(challengeApi, 'fetchChampions').mockResolvedValue([]);
     vi.spyOn(chessDataService, 'loadPlayers').mockResolvedValue({});
-    render(<ChampionPicker length={10} onSelect={vi.fn()} />);
+    render(<ChampionPicker length={10} onSelect={vi.fn()} />, { wrapper: MemoryRouter });
 
     await waitFor(() => {
       expect(screen.getByText(/No champion challenges are available yet/).closest('.surface-card')).not.toBeNull();
@@ -69,7 +70,7 @@ describe('ChampionPicker', () => {
   it('keeps an honest error state when the challenge roster fails', async () => {
     vi.spyOn(challengeApi, 'fetchChampions').mockRejectedValue(new Error('offline'));
     vi.spyOn(chessDataService, 'loadPlayers').mockResolvedValue({});
-    render(<ChampionPicker length={10} onSelect={vi.fn()} />);
+    render(<ChampionPicker length={10} onSelect={vi.fn()} />, { wrapper: MemoryRouter });
 
     const message = await screen.findByText(/Could not load the challenge list/);
     expect(message).toHaveClass('text-destructive');

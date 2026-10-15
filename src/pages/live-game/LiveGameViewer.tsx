@@ -13,6 +13,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import ReportProblemLink from '@/components/support/ReportProblemLink';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
@@ -102,6 +103,9 @@ export default function LiveGameViewer() {
           <Button asChild variant="outline">
             <Link to={back}>Back to the round</Link>
           </Button>
+          <div>
+            <ReportProblemLink surface="load_error" />
+          </div>
         </div>
       </div>
     );
