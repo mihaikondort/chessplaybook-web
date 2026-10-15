@@ -370,6 +370,12 @@ type GA4Event =
   | { name: 'training_record_next_step'; params: { step: TrainingRecordStep; primary: boolean } }
   /* #109: a pattern row's Replay link. Its run's own events say whether it was played. */
   | { name: 'training_record_pattern_replay'; params: { motif: string; missed: number } }
+  /* #42: someone pressed the contact email link. GA4's automatic outbound clicks do not
+     count `mailto:` links, so nothing else measures it. Views of /contact are its
+     page_view, which is why there is no separate view event. `surface` says which link,
+     so entry points added elsewhere can be compared with the contact page. A click is
+     intent, not a sent message: a device with no mail app opens nothing. */
+  | { name: 'contact_email_clicked'; params: { surface: 'contact_page' } }
   | { name: 'signed_in'; params: { provider: 'google' | 'cognito' } };
 
 /** The kinds of advice the training record gives. Mirrors `NextStep['kind']`. */

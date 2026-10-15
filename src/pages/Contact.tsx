@@ -6,6 +6,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import SeoHead from '@/components/SeoHead';
+import { logGA4Event } from '@/services/analytics';
 
 const Contact = () => {
   return (
@@ -46,6 +47,7 @@ const Contact = () => {
                     </p>
                     <a
                       href="mailto:contact@chessplaybook.com"
+                      onClick={() => logGA4Event({ name: 'contact_email_clicked', params: { surface: 'contact_page' } })}
                       className="text-link hover:underline text-lg"
                     >
                       contact@chessplaybook.com
