@@ -376,6 +376,10 @@ type GA4Event =
      so entry points added elsewhere can be compared with the contact page. A click is
      intent, not a sent message: a device with no mail app opens nothing. */
   | { name: 'contact_email_clicked'; params: { surface: 'contact_page' } }
+  /* #43: the contact form. `submitted` fires only once the server has stored the message,
+     so it counts messages we actually have. No message text, and no address, ever. */
+  | { name: 'contact_form_submitted'; params: { category: string; has_email: boolean; surface: 'contact_page' } }
+  | { name: 'contact_form_failed'; params: { reason: 'invalid' | 'rate_limited' | 'network' | 'server' } }
   | { name: 'signed_in'; params: { provider: 'google' | 'cognito' } };
 
 /** The kinds of advice the training record gives. Mirrors `NextStep['kind']`. */

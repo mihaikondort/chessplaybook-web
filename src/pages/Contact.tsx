@@ -1,12 +1,13 @@
 /**
  * Contact Page
  *
- * Provides contact information and methods to reach The Chess Playbook Team.
+ * The contact form (#43), with the address as the alternative, and the FAQ.
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import SeoHead from '@/components/SeoHead';
 import { logGA4Event } from '@/services/analytics';
+import ContactForm from '@/components/support/ContactForm';
 
 const Contact = () => {
   return (
@@ -31,57 +32,25 @@ const Contact = () => {
 
             <div className="space-y-6">
               <p className="text-lg text-muted-foreground mb-8">
-                We'd love to hear from you! Whether you have questions, feedback, or suggestions,
-                feel free to reach out to The Chess Playbook Team.
+                Found a problem, or have an idea? Tell us here.
               </p>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-foreground text-2xl">Get in Touch</CardTitle>
+                  <CardTitle className="text-foreground text-2xl">Send us a message</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-link mb-2">Email</h3>
-                    <p className="text-muted-foreground">
-                      For general inquiries, feedback, or support:
-                    </p>
+                  <ContactForm />
+                  <p className="text-muted-foreground border-t border-border pt-4">
+                    Or email us at{' '}
                     <a
                       href="mailto:contact@chessplaybook.com"
                       onClick={() => logGA4Event({ name: 'contact_email_clicked', params: { surface: 'contact_page' } })}
-                      className="text-link hover:underline text-lg"
+                      className="text-link hover:underline"
                     >
                       contact@chessplaybook.com
                     </a>
-                    <p className="text-muted-foreground text-sm mt-2">
-                      We typically respond within 24-48 hours.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold text-link mb-2">Report Issues</h3>
-                    <p className="text-muted-foreground mb-2">
-                      Found a bug or technical issue? Let us know!
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      Please include details about the issue, the page where it occurred, and your browser/device information.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold text-link mb-2">Game Data</h3>
-                    <p className="text-muted-foreground">
-                      Notice incorrect game data or missing games? We appreciate your help in maintaining
-                      accurate chess records.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold text-link mb-2">Suggestions</h3>
-                    <p className="text-muted-foreground">
-                      Have ideas for new features or improvements? We're always looking to make Chess Playbook
-                      better for the chess community.
-                    </p>
-                  </div>
+                  </p>
                 </CardContent>
               </Card>
 

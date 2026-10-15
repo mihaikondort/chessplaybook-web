@@ -156,7 +156,7 @@ const LASTMOD = {
   articleWch2026Geneva: '2026-07-29',
   articleSindarovGukesh: '2026-07-27',
   articleVaishaliJu: '2026-07-27',
-  legal: '2026-10-13',
+  legal: '2026-10-15',
 };
 
 /*

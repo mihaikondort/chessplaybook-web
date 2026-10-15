@@ -67,6 +67,13 @@ const Privacy = () => {
                   <li>Date and time of visits</li>
                   <li>Pages accessed</li>
                 </ul>
+
+                <h3 className="text-xl font-semibold text-link mb-3">Messages You Send Us</h3>
+                <p className="text-muted-foreground mb-4">
+                  When you use the contact form, we keep your message and the email address you give, if any.
+                  We also keep the page you came from, your browser and your screen size. We use them only to
+                  answer you and to fix problems. They are deleted when you delete your account, or when you ask us.
+                </p>
               </section>
 
               <section className="mb-8">
