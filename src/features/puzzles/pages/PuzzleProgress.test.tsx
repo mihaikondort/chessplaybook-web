@@ -17,6 +17,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import PuzzleProgress from './PuzzleProgress';
 import type { PuzzleProgressData } from '../services/ProgressService';
+import { expectationLabel, strongestWeakness } from '../services/trainingRecord';
 
 vi.mock('../services/ProgressService', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../services/ProgressService')>();
@@ -290,8 +291,8 @@ describe('PuzzleProgress — the confidence gate (C8)', () => {
 
 describe('PuzzleProgress — strengths, weak spots, history, one click to train (C9)', () => {
   const motif = (over: Partial<import('../services/ProgressService').MotifProgress>) => ({
-    motif: 'fork', attempts: 20, solved: 18, accuracy: 0.9,
-    confidence: 'established' as const, lastAttemptAt: '2026-08-04 10:00:00', ...over,
+    motif: 'fork', attempts: 40, missed: 0, rated: 40, solvedRate: 0.9, usualRate: 0.6, z: 1.2,
+    verdict: 'no_clear_difference' as const, lastAttemptAt: '2026-08-04 10:00:00', ...over,
   });
 
   const populated = (over: Partial<PuzzleProgressData> = {}) => makeData({
@@ -304,24 +305,29 @@ describe('PuzzleProgress — strengths, weak spots, history, one click to train 
     ...over,
   });
 
-  it('names no weakness, even when the server sends motifs with accuracy', async () => {
+  it('a large raw gap with no verdict names no weakness (#109)', async () => {
     /*
-      #107: the raw-accuracy strengths-and-weak-spots list is gone. At puzzle
-      sample sizes the lowest accuracy is mostly noise and the difficulty of
-      what was served, so ranking it named weaknesses that were not there.
-      Weakness claims return behind an evidence rule (#109).
+      At puzzle sample sizes the lowest raw accuracy is mostly noise and the
+      difficulty of what was served. Only the server's evidence verdict may
+      call a pattern weak; a row without one reads "Not clear yet".
     */
     vi.mocked(fetchPuzzleProgress).mockResolvedValue(populated({
       motifs: [
-        motif({ motif: 'fork', accuracy: 0.9 }),
-        motif({ motif: 'pin', accuracy: 0.2 }),
+        motif({ motif: 'fork', solvedRate: 0.9 }),
+        motif({ motif: 'pin', rated: 20, solvedRate: 0.2, usualRate: 0.6, z: -3.6, verdict: 'too_few_to_judge' }),
       ],
     }));
     renderPage();
-    await waitFor(() => expect(screen.getByText(/by area/i)).toBeInTheDocument());
-    expect(screen.queryByText('Pin')).not.toBeInTheDocument();
-    expect(screen.queryByText(/weak/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/strong/i)).not.toBeInTheDocument();
+    const patterns = await screen.findByRole('region', { name: /patterns/i });
+    expect(within(patterns).getByText('Pin')).toBeInTheDocument();
+    expect(within(patterns).getByText('No clear weak area yet.')).toBeInTheDocument();
+    // Below is said only past the bar: 20% against 60% on 20 puzzles is "Not clear yet".
+    expect(within(patterns).getByText('Not clear yet')).toBeInTheDocument();
+    expect(screen.queryByText(/below expectation/i)).not.toBeInTheDocument();
+    // Option A (owner, 2026-10-15): ahead by any margin over a point is said.
+    expect(within(patterns).getByText('Above expectation')).toBeInTheDocument();
+    // z of -3.6 on 20 puzzles is under the 30-puzzle bar: the page must not decide otherwise.
+    expect(screen.queryByRole('link', { name: 'Solve pin puzzles' })).not.toBeInTheDocument();
   });
 
   it('an area trains by AREA, never by the middlegame theme', async () => {
@@ -524,5 +530,137 @@ describe('PuzzleProgress — the next step (#107)', () => {
     const views = vi.mocked(logGA4Event).mock.calls.filter(([e]) => e.name === 'training_record_viewed');
     expect(views).toHaveLength(1);
     expect(views[0][0].params).toMatchObject({ next_step: 'none', other_steps: 0, signed_in: false });
+  });
+});
+
+describe('PuzzleProgress - patterns and the evidence rule (#109)', () => {
+  const recent = new Date(Date.now() - 2 * 86_400_000).toISOString();
+  const trained = (name: 'tactics' | 'middlegame' | 'endgame') => ({
+    area: name, attempts: 40, solved: 24, rated: 40, ratedSolved: 24, averageRatingFaced: 1500,
+    accuracy: 0.6, performance: 1550, confidence: 'established' as const, lastAttemptAt: recent,
+  });
+  const pattern = (over: Partial<import('../services/ProgressService').MotifProgress>) => ({
+    motif: 'fork', attempts: 40, missed: 0, rated: 34, solvedRate: 0.41, usualRate: 0.58, z: -2.3,
+    verdict: 'below' as const, lastAttemptAt: recent, ...over,
+  });
+  const record = (over: Partial<PuzzleProgressData> = {}) => makeData({
+    summary: {
+      totalAttempts: 120, totalSolved: 70, unrated: 0, unratedReasons: {},
+      firstAttemptAt: recent, lastAttemptAt: recent, untouchedAreas: [],
+    },
+    areas: [trained('tactics'), trained('middlegame'), trained('endgame')],
+    ...over,
+  });
+  const noVerdict = { rated: 0, solvedRate: null, usualRate: null, z: null, verdict: 'not_enough' as const };
+
+  it('a weakness the server found is the next step, with its numbers, when nothing else applies', async () => {
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record({ motifs: [pattern({})] }));
+    renderPage();
+    const next = await screen.findByRole('region', { name: /next step/i });
+    expect(within(next).getByText('You solve fork puzzles below expectation.')).toBeInTheDocument();
+    expect(within(next).getByText('You solved 41% of 34. 58% was expected for puzzles this hard.')).toBeInTheDocument();
+    expect(within(next).getByRole('link', { name: 'Solve fork puzzles' })).toHaveAttribute('href', '/puzzles?theme=fork');
+    const patterns = screen.getByRole('region', { name: /patterns/i });
+    expect(within(patterns).getByText('Below expectation')).toBeInTheDocument();
+    expect(within(patterns).getByText('· expected 58%')).toBeInTheDocument();
+    expect(within(patterns).queryByText('No clear weak area yet.')).not.toBeInTheDocument();
+  });
+
+  it('missed puzzles still come before a weakness', async () => {
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record({ motifs: [pattern({})], missedToReplay: 3 }));
+    renderPage();
+    const next = await screen.findByRole('region', { name: /next step/i });
+    expect(within(next).getByText('3 puzzles you missed are waiting.')).toBeInTheDocument();
+    expect(within(next).getByRole('link', { name: 'Solve fork puzzles' })).toBeInTheDocument();
+  });
+
+  it('the clearest weakness wins when an area and a motif are both below', async () => {
+    const evidence = {
+      areas: {
+        tactics: { rated: 40, solvedRate: 0.5, usualRate: 0.6, z: -1.0, verdict: 'no_clear_difference' as const },
+        middlegame: { rated: 40, solvedRate: 0.5, usualRate: 0.6, z: -1.0, verdict: 'no_clear_difference' as const },
+        endgame: { rated: 60, solvedRate: 0.3, usualRate: 0.6, z: -3.1, verdict: 'below' as const },
+      },
+      pool: 140, unrecorded: 140, themeFiltered: 0,
+    };
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record({ motifs: [pattern({})], evidence }));
+    renderPage();
+    const next = await screen.findByRole('region', { name: /next step/i });
+    expect(within(next).getByText('You solve endgame puzzles below expectation.')).toBeInTheDocument();
+    expect(within(next).getByRole('link', { name: 'Solve endgame puzzles' })).toHaveAttribute('href', '/puzzles?area=endgame');
+  });
+
+  it('a pattern with misses links to a replay run of that pattern only', async () => {
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record({
+      motifs: [pattern({ verdict: 'no_clear_difference', missed: 3, motif: 'discoveredAttack' })],
+    }));
+    renderPage();
+    const link = await screen.findByRole('link', { name: 'Replay 3 missed discovered attack puzzles' });
+    expect(link).toHaveAttribute('href', '/puzzles?run=missed&theme=discoveredAttack');
+  });
+
+  it('below ten rated puzzles a pattern shows no figures and no verdict', async () => {
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record({
+      motifs: [pattern({ rated: 6, solvedRate: null, usualRate: null, z: null, verdict: 'not_enough' })],
+    }));
+    renderPage();
+    const patterns = await screen.findByRole('region', { name: /patterns/i });
+    expect(within(patterns).getByText('Not enough yet')).toBeInTheDocument();
+    expect(within(patterns).queryByText(/%/)).not.toBeInTheDocument();
+  });
+
+  it('says older puzzles all count when the record predates theme recording', async () => {
+    const evidence = {
+      areas: { tactics: noVerdict, middlegame: noVerdict, endgame: noVerdict },
+      pool: 34, unrecorded: 20, themeFiltered: 0,
+    };
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record({ motifs: [pattern({})], evidence }));
+    renderPage();
+    const patterns = await screen.findByRole('region', { name: /patterns/i });
+    expect(within(patterns).getByText(/before 15 October all count/)).toBeInTheDocument();
+  });
+
+  it('a long list shows eight patterns until asked for all', async () => {
+    const motifs = Array.from({ length: 11 }, (_, i) => pattern({ motif: 'motif' + i, verdict: 'no_clear_difference' }));
+    vi.mocked(fetchPuzzleProgress).mockResolvedValue(record({ motifs }));
+    renderPage();
+    const patterns = await screen.findByRole('region', { name: /patterns/i });
+    expect(within(patterns).getAllByText('Not clear yet')).toHaveLength(8);
+    within(patterns).getByRole('button', { name: 'Show all 11 patterns' }).click();
+    await waitFor(() => expect(within(patterns).getAllByText('Not clear yet')).toHaveLength(11));
+  });
+});
+
+describe('PuzzleProgress - the expectation label is one-sided (#109, option A)', () => {
+  const row = (solvedRate: number | null, usualRate: number | null, verdict: import('../services/ProgressService').Verdict = 'too_few_to_judge') =>
+    ({ solvedRate, usualRate, verdict });
+
+  it('ahead by more than a point says Above expectation, even unproven', () => {
+    expect(expectationLabel(row(0.58, 0.54))).toBe('Above expectation');
+    expect(expectationLabel(row(0.58, 0.46, 'no_clear_difference'))).toBe('Above expectation');
+  });
+
+  it('within a point either way says Within expectation, judged on the figures shown', () => {
+    expect(expectationLabel(row(0.52, 0.518))).toBe('Within expectation');
+    expect(expectationLabel(row(0.51, 0.52))).toBe('Within expectation');
+    expect(expectationLabel(row(0.53, 0.52))).toBe('Within expectation');
+  });
+
+  it('behind without clearing the bar is never called Below', () => {
+    expect(expectationLabel(row(0.18, 0.53))).toBe('Not clear yet');
+    expect(expectationLabel(row(0.40, 0.49, 'no_clear_difference'))).toBe('Not clear yet');
+  });
+
+  it('the cleared verdicts from the server win', () => {
+    expect(expectationLabel(row(0.24, 0.51, 'below'))).toBe('Below expectation');
+    expect(expectationLabel(row(0.70, 0.50, 'above'))).toBe('Above expectation');
+  });
+
+  it('no figures, no label', () => {
+    expect(expectationLabel(row(null, null, 'not_enough'))).toBeNull();
+  });
+
+  it('a small-margin Above never becomes a next step: rule 4 reads the server verdict only', () => {
+    expect(strongestWeakness([{ motif: 'fork', evidence: { rated: 20, solvedRate: 0.7, usualRate: 0.5, z: 1.5, verdict: 'too_few_to_judge' } }])).toBeNull();
   });
 });

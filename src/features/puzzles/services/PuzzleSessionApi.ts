@@ -55,6 +55,8 @@ export interface PuzzleSession {
   selection: SessionSelection;
   area: SessionArea | null;
   rated: boolean;
+  /** The pattern a replay run is limited to, or null (#109). */
+  theme?: string | null;
   status: SessionStatus;
   createdAt: string;
   endedAt: string | null;
@@ -124,6 +126,8 @@ export interface StartSessionInput {
   selection?: SessionSelection;
   area?: SessionArea | null;
   rated?: boolean;
+  /** A motif, for a `failed_review` run only (#109). */
+  theme?: string | null;
 }
 
 export function startSession(input: StartSessionInput): Promise<PuzzleSession> {

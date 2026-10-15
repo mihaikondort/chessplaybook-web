@@ -29,6 +29,9 @@ import {
   fetchPuzzleProgress,
   AREA_LABELS,
   type AreaProgress,
+  type EvidenceSummary,
+  type MotifProgress,
+  type Verdict,
   type PuzzleProgressData,
   type PuzzleArea,
 } from '../services/ProgressService';
@@ -37,6 +40,9 @@ import {
   orderAreasByFact,
   lastTrainedLabel,
   ratedPuzzlesStillNeeded,
+  patternName,
+  strongestWeakness,
+  expectationLabel,
   UNRATED_REASON_LABELS,
   type NextStep,
 } from '../services/trainingRecord';
@@ -442,6 +448,94 @@ function AreaRow({ area, preference, onPreference }: {
  * a link promising middlegame training would have served puzzles the player's
  * own record counts as something else.
  */
+const PATTERN_GRID =
+  'grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 items-baseline sm:grid-cols-[minmax(8rem,1fr)_4rem_12.5rem_9.5rem_6.5rem]';
+
+/** Rows shown before "Show all", so a long record does not bury what follows. */
+const PATTERNS_SHOWN = 8;
+
+const pct = (rate: number) => `${Math.round(rate * 100)}%`;
+
+function PatternRow({ pattern }: { pattern: MotifProgress }) {
+  const name = patternName(pattern.motif);
+  const judged = pattern.solvedRate != null && pattern.usualRate != null;
+  const label = expectationLabel(pattern);
+  const marked = label === 'Below expectation' || label === 'Above expectation';
+  return (
+    <div className={`${PATTERN_GRID} px-4 py-3`}>
+      <div className="font-medium">{name}</div>
+      <div className="text-sm text-muted-foreground tabular-nums text-right">
+        {pattern.attempts}<span className="sm:hidden"> puzzles</span>
+      </div>
+      <div className="text-sm tabular-nums whitespace-nowrap col-span-2 sm:col-span-1">
+        {judged
+          ? <><span className="sm:hidden">Solved </span>{pct(pattern.solvedRate!)} <span className="text-muted-foreground">· expected {pct(pattern.usualRate!)}</span></>
+          : <span className="text-muted-foreground">Not enough yet</span>}
+      </div>
+      <div className={`text-sm whitespace-nowrap ${marked ? 'font-medium' : 'text-muted-foreground'}`}>
+        {label}
+      </div>
+      <div className="text-right">
+        {pattern.missed > 0 && (
+          <Link
+            to={`/puzzles?run=missed&theme=${encodeURIComponent(pattern.motif)}`}
+            aria-label={`Replay ${pattern.missed} missed ${name.toLowerCase()} ${pattern.missed === 1 ? 'puzzle' : 'puzzles'}`}
+            onClick={() => logGA4Event({ name: 'training_record_pattern_replay', params: { motif: pattern.motif, missed: pattern.missed } })}
+            className="text-xs font-medium text-link hover:underline whitespace-nowrap"
+          >
+            Replay {pattern.missed} →
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Every pattern the player has met, most frequent first (§7 E, #109). Only a
+ * pattern the server's evidence rule judged past the bar is called below or
+ * above; at today's volumes almost every row says "No clear difference", and
+ * that is the honest answer.
+ */
+function Patterns({ patterns, evidence }: { patterns: MotifProgress[]; evidence?: EvidenceSummary }) {
+  const [showAll, setShowAll] = useState(false);
+  if (patterns.length === 0) return null;
+  const shown = showAll ? patterns : patterns.slice(0, PATTERNS_SHOWN);
+  const anyBelow = patterns.some(p => p.verdict === 'below')
+    || Object.values(evidence?.areas ?? {}).some(a => a.verdict === 'below');
+  return (
+    <section aria-labelledby="patterns-heading" role="region">
+      <h2 id="patterns-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
+        Patterns
+      </h2>
+      {!anyBelow && <p className="text-sm mb-3">No clear weak area yet.</p>}
+      <div className="rounded-lg border border-border bg-card divide-y divide-border">
+        <div className={`${PATTERN_GRID} hidden sm:grid px-4 pt-3 pb-2 text-xs text-muted-foreground`} aria-hidden="true">
+          <span>Pattern</span>
+          <span className="text-right">Puzzles</span>
+          <span>Solved</span>
+          <span>Against expectation</span>
+          <span />
+        </div>
+        {shown.map(p => <PatternRow key={p.motif} pattern={p} />)}
+      </div>
+      {patterns.length > PATTERNS_SHOWN && (
+        <button
+          type="button"
+          onClick={() => setShowAll(v => !v)}
+          className="mt-3 text-sm text-link hover:underline"
+        >
+          {showAll ? 'Show fewer' : `Show all ${patterns.length} patterns`}
+        </button>
+      )}
+      <p className="text-xs text-muted-foreground mt-3">
+        Only rated puzzles count here, and not ones solved with a theme picked. The theme gives the pattern away.
+        {evidence && evidence.unrecorded > 0 && ' Puzzles from before 15 October all count, because we did not record theme choices then.'}
+      </p>
+    </section>
+  );
+}
+
 function TrainLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
@@ -567,6 +661,15 @@ function stepCopy(step: NextStep): { heading: string; detail?: string; action: s
         to: `/puzzles?area=${step.area}`,
       };
     }
+    case 'weakness': {
+      const name = step.area ? AREA_LABELS[step.area] : patternName(step.motif!);
+      return {
+        heading: `You solve ${name.toLowerCase()} puzzles below expectation.`,
+        detail: `You solved ${Math.round(step.solvedRate * 100)}% of ${step.rated}. ${Math.round(step.usualRate * 100)}% was expected for puzzles this hard.`,
+        action: `Solve ${name.toLowerCase()} puzzles`,
+        to: step.area ? `/puzzles?area=${step.area}` : `/puzzles?theme=${encodeURIComponent(step.motif!)}`,
+      };
+    }
     case 'none':
       return {
         heading: 'Nothing urgent.',
@@ -656,9 +759,8 @@ function Totals({ summary }: { summary: PuzzleProgressData['summary'] }) {
 /**
  * The record, top to bottom (TRAINING_RECORD_ANALYSIS §7): what to do next,
  * the rating, the areas in the order a player should look at them, recent
- * weeks, and the totals. There is no strengths-and-weaknesses list on purpose:
- * accuracy per motif at these sample sizes ranks noise, and a weakness claim
- * waits for the evidence rule (#109).
+ * weeks, the patterns, and the totals. A pattern or an area is called weak only
+ * when the server's evidence rule says so (#109); raw accuracy is never ranked.
  */
 function RecordShell({ data, plan, signedIn }: {
   data: PuzzleProgressData;
@@ -688,8 +790,16 @@ function RecordShell({ data, plan, signedIn }: {
 
   const steps = useMemo(() => {
     const { nextItem, nextDayTotal } = deriveNext(plan);
-    return nextSteps(data.areas, { plan, nextItem, nextDayTotal }, new Date(), data.missedToReplay ?? 0);
-  }, [data.areas, plan, data.missedToReplay]);
+    /* Rule 4 (#109): only what the server's evidence rule called below. */
+    const weakness = strongestWeakness([
+      ...Object.entries(data.evidence?.areas ?? {}).map(([area, evidence]) => ({ area: area as PuzzleArea, evidence })),
+      ...(data.motifs ?? []).map(m => ({
+        motif: m.motif,
+        evidence: { rated: m.rated, solvedRate: m.solvedRate, usualRate: m.usualRate, z: m.z, verdict: m.verdict },
+      })),
+    ]);
+    return nextSteps(data.areas, { plan, nextItem, nextDayTotal }, new Date(), data.missedToReplay ?? 0, weakness);
+  }, [data.areas, data.evidence, data.motifs, plan, data.missedToReplay]);
   const areas = useMemo(() => orderAreasByFact(data.areas), [data.areas]);
 
   /* Once per page load: the denominator for the next-step click rate. */
@@ -741,6 +851,8 @@ function RecordShell({ data, plan, signedIn }: {
           your play as a whole.
         </p>
       </section>
+
+      <Patterns patterns={data.motifs ?? []} evidence={data.evidence} />
 
       <Totals summary={summary} />
     </div>

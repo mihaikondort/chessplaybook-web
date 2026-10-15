@@ -5,10 +5,11 @@
  * tried, an area not trained for a while. None of them reads accuracy. At the
  * sample sizes a puzzle player reaches, a difference in accuracy between two
  * areas is mostly noise and the difficulty of what was served, so a page that
- * called the lower one a weakness would usually be wrong. Weakness claims come
- * later, behind an evidence rule (TRAINING_RECORD_ANALYSIS §6).
+ * called the lower one a weakness would usually be wrong. The one weakness rule
+ * here reads the server's evidence verdict (TRAINING_RECORD_ANALYSIS §6, #109)
+ * and never computes one itself.
  */
-import type { AreaProgress, PuzzleArea, RatingPoint, TrainingDay } from './ProgressService';
+import type { AreaProgress, GroupEvidence, MotifProgress, PuzzleArea, RatingPoint, TrainingDay } from './ProgressService';
 import type { PlanItem, TrainingPlan } from './PlanApi';
 
 /**
@@ -26,7 +27,67 @@ export type NextStep =
   | { kind: 'plan'; item: PlanItem; total: number }
   | { kind: 'untried'; area: PuzzleArea }
   | { kind: 'stale'; area: PuzzleArea; lastTrained: Date }
+  | {
+      kind: 'weakness';
+      /** An area or a motif; exactly one is set. */
+      area?: PuzzleArea;
+      motif?: string;
+      rated: number;
+      solvedRate: number;
+      usualRate: number;
+    }
   | { kind: 'none' };
+
+/** An area or a motif the evidence rule called below the player's level. */
+export interface WeaknessCandidate {
+  area?: PuzzleArea;
+  motif?: string;
+  evidence: GroupEvidence;
+}
+
+/**
+ * The one weakness worth naming, or null (rule 4, §7 A). Only what the server
+ * called `below`; the clearest one (lowest z) when there are several.
+ */
+export function strongestWeakness(candidates: WeaknessCandidate[]): Extract<NextStep, { kind: 'weakness' }> | null {
+  const below = candidates.filter(c =>
+    c.evidence.verdict === 'below' && c.evidence.z != null
+    && c.evidence.solvedRate != null && c.evidence.usualRate != null);
+  if (below.length === 0) return null;
+  const pick = below.reduce((a, b) => (b.evidence.z! < a.evidence.z! ? b : a));
+  return {
+    kind: 'weakness',
+    ...(pick.area ? { area: pick.area } : { motif: pick.motif }),
+    rated: pick.evidence.rated,
+    solvedRate: pick.evidence.solvedRate!,
+    usualRate: pick.evidence.usualRate!,
+  };
+}
+
+/** Words that a plain split of the tag name gets wrong. */
+const PATTERN_NAMES: Record<string, string> = {
+  xRayAttack: 'X-ray attack',
+  attackingF2F7: 'Attack on f2 or f7',
+  mateIn1: 'Mate in 1',
+  mateIn2: 'Mate in 2',
+  mateIn3: 'Mate in 3',
+  mateIn4: 'Mate in 4',
+  mateIn5: 'Mate in 5',
+  enPassant: 'En passant',
+  underPromotion: 'Underpromotion',
+  morphysMate: "Morphy's mate",
+  pillsburysMate: "Pillsbury's mate",
+  swallowstailMate: "Swallow's tail mate",
+  killBoxMate: 'Kill box mate',
+  collinear: 'Collinear move',
+};
+
+/** "discoveredAttack" -> "Discovered attack". */
+export function patternName(motif: string): string {
+  if (PATTERN_NAMES[motif]) return PATTERN_NAMES[motif];
+  const words = motif.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
 
 /**
  * The server writes timestamps as SQLite text in UTC ("2026-10-14 08:30:00"),
@@ -61,14 +122,15 @@ function localDay(now: Date): string {
  *
  * Order: missed puzzles waiting (the fastest fix there is), then an owed plan
  * day (the player chose it), then an area never tried, then the area left
- * longest past the stale line. `none` only when nothing applies. Evidence-backed
- * weaknesses join this list later (#109).
+ * longest past the stale line, then a weakness the evidence rule found (#109,
+ * rare today by design). `none` only when nothing applies.
  */
 export function nextSteps(
   areas: AreaProgress[],
   plan: { plan: TrainingPlan | null; nextItem: PlanItem | null; nextDayTotal: number },
   now: Date = new Date(),
   missedToReplay = 0,
+  weakness: Extract<NextStep, { kind: 'weakness' }> | null = null,
 ): NextStep[] {
   const steps: NextStep[] = [];
 
@@ -91,6 +153,8 @@ export function nextSteps(
       a.last != null && daysBetween(a.last, now) >= STALE_AFTER_DAYS)
     .sort((x, y) => x.last.getTime() - y.last.getTime());
   for (const s of stale) steps.push({ kind: 'stale', area: s.area, lastTrained: s.last });
+
+  if (weakness) steps.push(weakness);
 
   return steps.length > 0 ? steps : [{ kind: 'none' }];
 }
@@ -193,3 +257,23 @@ export const UNRATED_REASON_LABELS: Record<string, string> = {
   band: 'Outside your rating range',
   unrecorded: 'Reason not recorded',
 };
+
+/**
+ * What a pattern row says against its expectation, DELIBERATELY ONE-SIDED
+ * (owner, 2026-10-15, option A).
+ *
+ * Below is said only when the server's evidence rule cleared the bar, so a
+ * player is never told they are behind on noise (decision 1). Above is said
+ * on any margin over 1 point, because players should see where they are
+ * ahead; that label is the PAGE'S, never a verdict: rule 4 and #110 read only
+ * the server's `below`/`above`. Compared on the rounded figures the row
+ * shows, so "52% · expected 52%" can only read "Within expectation".
+ */
+export function expectationLabel(p: Pick<MotifProgress, 'solvedRate' | 'usualRate' | 'verdict'>): string | null {
+  if (p.solvedRate == null || p.usualRate == null) return null;
+  if (p.verdict === 'below') return 'Below expectation';
+  if (p.verdict === 'above') return 'Above expectation';
+  const gap = Math.round(p.solvedRate * 100) - Math.round(p.usualRate * 100);
+  if (Math.abs(gap) <= 1) return 'Within expectation';
+  return gap > 0 ? 'Above expectation' : 'Not clear yet';
+}

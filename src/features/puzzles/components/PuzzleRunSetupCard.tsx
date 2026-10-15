@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Flag, ListChecks, Play } from 'lucide-react';
 import type { SelectionOption, SessionArea, SessionSelection } from '../services/PuzzleSessionApi';
 import { CardListbox, LABEL_INSET_X } from './CardListbox';
+import { patternName } from '../services/trainingRecord';
 
 /**
  * SET UP A RUN, on the rebuilt page.
@@ -133,6 +134,14 @@ export interface PuzzleRunSetupCardProps {
   runStatus?: 'active' | 'completed' | 'abandoned';
   runSelection?: SessionSelection;
   runArea?: SessionArea | null;
+  /**
+   * The pattern a "Missed before" run is limited to, from a Patterns row's
+   * Replay link (#109), and the running run's own. Shown IN "Where from", so
+   * the card gains no row: "Fork only" is where the puzzles come from.
+   */
+  theme?: string | null;
+  onThemeClear?: () => void;
+  runTheme?: string | null;
   runTotal?: number;
   runRated?: boolean;
   /** Recorded attempts in the run. The count is the server's. */
@@ -173,7 +182,7 @@ export function PuzzleRunSetupCard({
   options, areas,
   selection, onSelectionChange, area, onAreaChange, total, onTotalChange,
   running = false, finished = false, runStatus,
-  runSelection, runArea, runTotal, runRated,
+  runSelection, runArea, runTheme = null, theme = null, onThemeClear, runTotal, runRated,
   completed = 0, puzzleId = null, attemptRecorded = false,
   servedByRun = true, planArea = null,
   busy = false, loading = false, onStart, onStop,
@@ -197,6 +206,9 @@ export function PuzzleRunSetupCard({
   const locked = running || loading;
   const shownSelection = running && runSelection ? runSelection : selection;
   const shownArea = running ? (runArea ?? null) : area;
+  /* The pattern limit applies to "Missed before" only, as the server does. */
+  const shownTheme = running ? runTheme : (shownSelection === 'failed_review' ? theme : null);
+  const THEME_VALUE = 'pattern';
   const shownTotal = running && runTotal ? runTotal : total;
   /*
     AND THE ENDED RUN'S OWN LENGTH, not the picker's.
@@ -328,19 +340,25 @@ export function PuzzleRunSetupCard({
                 say so through `title`, which the trigger never set, so a locked
                 picker read "All areas", which is false (C6, D27). Once the run
                 is going, the run's own area is shown: the server's actual pick. */}
-            <CardListbox<SessionArea | null>
+            <CardListbox<string | null>
               id="run-area"
               label="Where from"
-              value={areaChosenForYou && !running ? null : shownArea}
+              value={shownTheme ? THEME_VALUE : areaChosenForYou && !running ? null : shownArea}
               disabled={areaChosenForYou || locked || awaitingOptions}
               options={[
+                ...(shownTheme ? [{ value: THEME_VALUE, label: `${patternName(shownTheme)} only` }] : []),
                 { value: null, label: areaChosenForYou && !running ? 'Your weakest area' : 'All areas' },
                 ...shownAreas.map(a => ({
                   value: a as SessionArea,
                   label: AREA_LABEL[a] ?? a,
                 })),
               ]}
-              onChange={onAreaChange}
+              onChange={value => {
+                if (value === THEME_VALUE) return;
+                // Choosing an area drops the pattern limit: one scope at a time.
+                onThemeClear?.();
+                onAreaChange(value as SessionArea | null);
+              }}
             />
           </div>
         </div>

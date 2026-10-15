@@ -13,7 +13,7 @@ import { PuzzleRunSetupCard } from './PuzzleRunSetupCard';
 import { usePuzzleSettings } from '../hooks/usePuzzleSettings';
 import { usePuzzleRecord } from '../hooks/usePuzzleRecord';
 import { usePuzzleRun } from '../hooks/usePuzzleRun';
-import { resolveLinkedFilters, linkedRunSelection } from '../lib/linkedFilters';
+import { resolveLinkedFilters, linkedRunSelection, linkedRunTheme } from '../lib/linkedFilters';
 import { usePlan } from '../hooks/usePlan';
 import { usePlanOffer } from '../hooks/usePlanOffer';
 import { PuzzlePlanCard } from './PuzzlePlanCard';
@@ -65,7 +65,9 @@ export default function TrainerLayoutSkeleton() {
   const settings = usePuzzleSettings();
   /* "Replay them" on the training record opens the run card on "Missed before" (#108). */
   const [linkedRun] = useState(() => linkedRunSelection(new URLSearchParams(window.location.search)));
-  const run = usePuzzleRun(linkedRun);
+  /* ...and a Patterns row's "Replay" limits that run to its pattern (#109). */
+  const [linkedTheme] = useState(() => linkedRunTheme(new URLSearchParams(window.location.search)));
+  const run = usePuzzleRun(linkedRun, linkedTheme);
   /*
     A LINK THAT NAMES A FILTER WINS OVER THE REMEMBERED ONE (C9).
 
@@ -591,6 +593,9 @@ export default function TrainerLayoutSkeleton() {
                 runStatus={run.session?.status}
                 runSelection={run.session?.selection}
                 runArea={run.session?.area ?? null}
+                theme={run.theme}
+                onThemeClear={() => run.setTheme(null)}
+                runTheme={run.session?.theme ?? null}
                 runTotal={run.session?.total}
                 runRated={run.session?.rated}
                 completed={run.session?.progress.completed ?? 0}

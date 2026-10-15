@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolveLinkedFilters, linkedRunSelection } from './linkedFilters';
+import { resolveLinkedFilters, linkedRunSelection, linkedRunTheme } from './linkedFilters';
 
 const q = (s: string) => new URLSearchParams(s);
 
@@ -45,5 +45,15 @@ describe('linkedRunSelection (#108)', () => {
     expect(linkedRunSelection(q('run=missed'))).toBe('failed_review');
     expect(linkedRunSelection(q('run=weak_areas'))).toBeNull();
     expect(linkedRunSelection(q(''))).toBeNull();
+  });
+});
+
+describe('linkedRunTheme (#109)', () => {
+  it('a Patterns row link limits the replay run to its pattern', () => {
+    expect(linkedRunTheme(q('run=missed&theme=fork'))).toBe('fork');
+  });
+  it('a theme without run=missed is the free-solving filter, not a run limit', () => {
+    expect(linkedRunTheme(q('theme=fork'))).toBeNull();
+    expect(linkedRunTheme(q('run=missed'))).toBeNull();
   });
 });

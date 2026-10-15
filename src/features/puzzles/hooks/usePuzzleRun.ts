@@ -25,13 +25,15 @@ import type { PuzzleDraw } from './usePuzzleBoard';
  * mind. Collapsing a block moves WHEN its data is fetched, not just where it
  * sits - and the same is true of moving one into a component.
  */
-export function usePuzzleRun(initialSelection: SessionSelection | null = null) {
+export function usePuzzleRun(initialSelection: SessionSelection | null = null, initialTheme: string | null = null) {
   const { session, loading, start, end, refresh, reload } = usePuzzleSession();
   const [options, setOptions] = useState<SelectionOption[] | undefined>();
   const [areas, setAreas] = useState<readonly string[] | undefined>();
   /* A link can pick the mode (`?run=missed`, #108); otherwise the default. */
   const [selection, setSelection] = useState<SessionSelection>(initialSelection ?? 'adaptive');
   const [area, setArea] = useState<SessionArea | null>(null);
+  /* A Patterns row's Replay link limits a "Missed before" run to one pattern (#109). */
+  const [theme, setTheme] = useState<string | null>(initialTheme);
   const [total, setTotal] = useState(10);
   const [starting, setStarting] = useState(false);
 
@@ -71,9 +73,13 @@ export function usePuzzleRun(initialSelection: SessionSelection | null = null) {
     setStarting(true);
     /* `rated` is the SETTINGS card's switch, read at the moment the run starts.
        There is one control for it and it is not this card. */
-    await start({ ...input, rated });
+    await start({
+      ...input,
+      rated,
+      ...(input.selection === 'failed_review' && theme ? { theme } : {}),
+    });
     setStarting(false);
-  }, [start]);
+  }, [start, theme]);
 
   /*
     A RUN'S AXES GOVERN WHAT IS SERVED, or they are decoration (D4b) - and only
@@ -90,7 +96,7 @@ export function usePuzzleRun(initialSelection: SessionSelection | null = null) {
   return {
     session, loading, running, ended, starting,
     options, areas,
-    selection, setSelection, area, setArea, total, setTotal,
+    selection, setSelection, area, setArea, total, setTotal, theme, setTheme,
     startRun, stopRun: end, refresh, reload,
     draw,
   };

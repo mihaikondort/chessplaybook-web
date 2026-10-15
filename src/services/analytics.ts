@@ -368,10 +368,12 @@ type GA4Event =
   */
   | { name: 'training_record_viewed'; params: { next_step: TrainingRecordStep; other_steps: number; signed_in: boolean } }
   | { name: 'training_record_next_step'; params: { step: TrainingRecordStep; primary: boolean } }
+  /* #109: a pattern row's Replay link. Its run's own events say whether it was played. */
+  | { name: 'training_record_pattern_replay'; params: { motif: string; missed: number } }
   | { name: 'signed_in'; params: { provider: 'google' | 'cognito' } };
 
 /** The kinds of advice the training record gives. Mirrors `NextStep['kind']`. */
-export type TrainingRecordStep = 'replay' | 'plan' | 'untried' | 'stale' | 'none';
+export type TrainingRecordStep = 'replay' | 'plan' | 'untried' | 'stale' | 'weakness' | 'none';
 
 /** Where a plan event happened. See the `surface` note on the plan events. */
 export type PlanSurface = 'card' | 'plan_page';

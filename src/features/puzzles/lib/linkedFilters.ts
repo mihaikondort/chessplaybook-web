@@ -40,6 +40,16 @@ export function linkedRunSelection(params: URLSearchParams): 'failed_review' | n
 }
 
 /**
+ * The pattern a linked replay run is limited to (#109): a Patterns row's
+ * "Replay" link is `?run=missed&theme=fork`. Only with `run=missed`; the
+ * server refuses a theme that is not a motif, so nothing is checked here.
+ */
+export function linkedRunTheme(params: URLSearchParams): string | null {
+  if (params.get('run') !== 'missed') return null;
+  return params.get('theme') || null;
+}
+
+/**
  * @param params  the URL's query string
  * @param savedTheme  the player's remembered theme, or '' if none
  */

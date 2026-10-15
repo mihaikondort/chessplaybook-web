@@ -31,13 +31,46 @@ export interface AreaProgress {
   lastAttemptAt: string | null;
 }
 
+/**
+ * The evidence rule's answer for an area or a motif (#109). The server decides
+ * it; `below` and `above` need 30+ rated puzzles and a clear difference from
+ * the player's usual score, and are rare today by design.
+ */
+export type Verdict = 'not_enough' | 'too_few_to_judge' | 'no_clear_difference' | 'below' | 'above';
+
+export interface GroupEvidence {
+  rated: number;
+  solvedRate: number | null;
+  /** What this player usually solves on puzzles this hard, 0-1. */
+  usualRate: number | null;
+  z: number | null;
+  verdict: Verdict;
+}
+
+/** One row of the Patterns list. Raw accuracy is gone on purpose (#109). */
 export interface MotifProgress {
   motif: string;
+  /** Every attempt with this motif, rated or not. */
   attempts: number;
-  solved: number;
-  accuracy: number | null;
-  confidence: Confidence;
+  /** Puzzles with this motif whose latest attempt was a miss. */
+  missed: number;
+  /** Rated puzzles from mixed sets: what the figures are from. */
+  rated: number;
+  solvedRate: number | null;
+  usualRate: number | null;
+  z: number | null;
+  verdict: Verdict;
   lastAttemptAt: string | null;
+}
+
+export interface EvidenceSummary {
+  areas: Record<PuzzleArea, GroupEvidence>;
+  /** Rated puzzles from mixed sets. */
+  pool: number;
+  /** Of those, how many are from before theme choices were recorded. */
+  unrecorded: number;
+  /** Rated puzzles left out because a theme was picked. */
+  themeFiltered: number;
 }
 
 export interface ProgressSummary {
@@ -99,6 +132,8 @@ export interface PuzzleProgressData {
   ratingSeries?: { points: RatingPoint[]; peak: RatingPoint | null };
   /** Days with at least one attempt in the last 12 weeks, on the player's calendar. */
   trainingDays?: TrainingDay[];
+  /** #109: the evidence rule per area. Optional, like the fields above. */
+  evidence?: EvidenceSummary;
 }
 
 export interface RatingPoint {
