@@ -5,6 +5,7 @@ import {
   ratingWindow, calendarWeeks, daysTrainedByWeek,
   MIN_RATED_FOR_PERFORMANCE,
   STALE_AFTER_DAYS,
+  missedOnLabel,
 } from './trainingRecord';
 import type { AreaProgress, PuzzleArea } from './ProgressService';
 import type { PlanItem, TrainingPlan } from './PlanApi';
@@ -212,5 +213,18 @@ describe.skipIf(!existsSync('backend'))('STALE_AFTER_DAYS agrees with the server
     const m = src.match(/const STALE_AFTER_DAYS\s*=\s*(\d+)/);
     expect(m, 'could not find STALE_AFTER_DAYS in the backend').not.toBeNull();
     expect(Number(m![1])).toBe(STALE_AFTER_DAYS);
+  });
+});
+
+describe('missedOnLabel (#116)', () => {
+  it('reads day before month, as the owner chose it', () => {
+    expect(missedOnLabel('2026-10-03 10:00:00', NOW)).toBe('Missed on 3 Oct');
+  });
+  it('adds the year only when it is not this year', () => {
+    expect(missedOnLabel('2025-12-30 10:00:00', NOW)).toBe('Missed on 30 Dec 2025');
+  });
+  it('says nothing for a puzzle that was not drawn as a replay', () => {
+    expect(missedOnLabel(undefined, NOW)).toBeNull();
+    expect(missedOnLabel(null, NOW)).toBeNull();
   });
 });

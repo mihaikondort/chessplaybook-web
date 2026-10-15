@@ -169,6 +169,18 @@ export function orderAreasByFact(areas: AreaProgress[]): AreaProgress[] {
   return [...areas].sort((a, b) => rank(a) - rank(b) || last(a) - last(b));
 }
 
+/**
+ * The live card's badge on a replayed puzzle (#116): "Missed on 3 Oct", with the
+ * year only when it is not this year. Day before month, as the owner chose it.
+ */
+export function missedOnLabel(missedAt: string | null | undefined, now: Date = new Date()): string | null {
+  const at = parseServerTime(missedAt ?? null);
+  if (!at) return null;
+  const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
+  if (at.getFullYear() !== now.getFullYear()) opts.year = 'numeric';
+  return `Missed on ${at.toLocaleDateString('en-GB', opts)}`;
+}
+
 /** "today", "yesterday", "5 days ago", then a date once it is more than a week back. */
 export function lastTrainedLabel(lastAttemptAt: string | null, now: Date = new Date()): string | null {
   const last = parseServerTime(lastAttemptAt);

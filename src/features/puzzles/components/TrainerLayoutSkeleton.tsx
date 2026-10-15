@@ -14,6 +14,7 @@ import { usePuzzleSettings } from '../hooks/usePuzzleSettings';
 import { usePuzzleRecord } from '../hooks/usePuzzleRecord';
 import { usePuzzleRun } from '../hooks/usePuzzleRun';
 import { resolveLinkedFilters, linkedRunSelection, linkedRunTheme } from '../lib/linkedFilters';
+import { missedOnLabel } from '../services/trainingRecord';
 import { usePlan } from '../hooks/usePlan';
 import { usePlanOffer } from '../hooks/usePlanOffer';
 import { PuzzlePlanCard } from './PuzzlePlanCard';
@@ -533,6 +534,7 @@ export default function TrainerLayoutSkeleton() {
                 message={puzzle.puzzleState.message}
                 rating={puzzle.puzzleState.puzzle?.rating}
                 isDailyPuzzle={puzzle.isDaily}
+                missedLabel={missedOnLabel(puzzle.puzzleState.puzzle?.missedAt)}
                 prompt={puzzle.puzzleState.puzzle?.prompt}
                 exploring={Boolean(puzzle.exploreAt)}
                 isMidSolve={puzzle.isMidSolve}

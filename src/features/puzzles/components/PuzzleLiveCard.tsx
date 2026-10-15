@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronRight, Compass, Eye, Signal, Target, WifiOff, XCircle } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Compass, Eye, RotateCcw, Signal, Target, WifiOff, XCircle } from 'lucide-react';
 import { Action, LiveStatus } from './TrainerUI';
 
 /**
@@ -35,6 +35,12 @@ export interface PuzzleLiveCardProps {
   rating?: number | null;
   prompt?: string | null;
   isDailyPuzzle?: boolean;
+  /**
+   * "Missed on 3 Oct" on a puzzle a "Missed before" run is replaying (#116,
+   * owner). After the first puzzle a replay looked exactly like ordinary new
+   * puzzles; the badge sits where "Daily Puzzle" does, so it costs no height.
+   */
+  missedLabel?: string | null;
   exploring: boolean;
   isMidSolve: boolean;
   announcement?: string;
@@ -91,7 +97,7 @@ export interface PuzzleLiveCardProps {
 }
 
 export function PuzzleLiveCard({
-  status, message, rating, prompt, isDailyPuzzle = false,
+  status, message, rating, prompt, isDailyPuzzle = false, missedLabel = null,
   exploring, isMidSolve, announcement, loading, sessionId,
   filterFoundNothing = false, onClearFilter, runOutcome = null,
   serverUnreachable = false,
@@ -115,6 +121,12 @@ export function PuzzleLiveCard({
               <span className="inline-flex items-center gap-[0.35em] font-medium text-link">
                 <Target className="w-[1em] h-[1em]" />
                 Daily Puzzle
+              </span>
+            )}
+            {missedLabel && (
+              <span className="inline-flex items-center gap-[0.35em] font-medium text-link">
+                <RotateCcw className="w-[1em] h-[1em]" />
+                {missedLabel}
               </span>
             )}
             {rating != null && (

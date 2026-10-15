@@ -29,6 +29,8 @@ export interface PuzzleData {
   prompt?: string;
   nbPlays?: number;
   popularity?: number;
+  /** When this player last missed it; only on a "Missed before" draw (#116). */
+  missedAt?: string;
 }
 
 import env from '@/config/env';

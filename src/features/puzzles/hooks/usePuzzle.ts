@@ -46,6 +46,8 @@ export interface Puzzle {
   /** Pre-move line from the server's expression layer (C1 / PZ-017). Optional:
    *  the offline fallback puzzles and the saved last-puzzle record have none. */
   prompt?: string;
+  /** When this player last missed it; only on a "Missed before" draw (#116). */
+  missedAt?: string;
 }
 
 export type PuzzleStatus = 'loading' | 'ready' | 'playing' | 'correct' | 'failed' | 'solution';
