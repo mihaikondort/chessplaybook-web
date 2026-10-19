@@ -1,15 +1,15 @@
 {
-  "pipelineVersion": "4.7.1",
+  "pipelineVersion": "4.7.2",
   "bakedAt": "",
   "byFen": {
     "2rr2k1/1b3ppp/pb2p3/1p2P3/1P2BPnq/P1N3P1/1B2Q2P/R4R1K b - - 0 22": {
-      "action": "Black has a forced combination starting with Rxc3 that wins material. It is an exchange sacrifice for lasting positional pressure.",
+      "action": "Black has a forced combination starting with Rxc3 that wins material.",
       "structured": {
         "verdict": {
           "eval": "Black is winning",
           "phase": "middlegame"
         },
-        "action": "Black has a forced combination starting with Rxc3 that wins material. It is an exchange sacrifice for lasting positional pressure.",
+        "action": "Black has a forced combination starting with Rxc3 that wins material.",
         "sections": {
           "threats_and_tactics": {
             "summary": "Black's sacrifice on c3 resolves with Rxc3 Bxb7 Rxg3 Rac1 Rh3, leaving Black up a pawn and clearly better.",
