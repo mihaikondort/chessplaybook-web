@@ -1,15 +1,15 @@
 {
-  "pipelineVersion": "4.6.0",
+  "pipelineVersion": "4.6.1",
   "bakedAt": "",
   "byFen": {
     "2rr2k1/1b3ppp/pb2p3/1p2P3/1P2BPnq/P1N3P1/1B2Q2P/R4R1K b - - 0 22": {
-      "action": "Black has a forced combination starting with Rxc3 that wins material — an exchange sacrifice for lasting positional pressure.",
+      "action": "Black has a forced combination starting with Rxc3 that wins material. It is an exchange sacrifice for lasting positional pressure.",
       "structured": {
         "verdict": {
           "eval": "Black is winning",
           "phase": "middlegame"
         },
-        "action": "Black has a forced combination starting with Rxc3 that wins material — an exchange sacrifice for lasting positional pressure.",
+        "action": "Black has a forced combination starting with Rxc3 that wins material. It is an exchange sacrifice for lasting positional pressure.",
         "sections": {
           "threats_and_tactics": {
             "summary": "Black's sacrifice on c3 resolves with Rxc3 Bxb7 Rxg3 Rac1 Rh3, leaving Black up a pawn and clearly better.",
@@ -27,7 +27,7 @@
                 "tag": "asset"
               },
               {
-                "text": "The trade on e4 is an even swap, but it dissolves Black's pressure — exchanges favour White.",
+                "text": "The trade on e4 is an even swap, but it dissolves Black's pressure. Exchanges favour White.",
                 "side": "white",
                 "priority": 75,
                 "tag": "warning"
@@ -35,10 +35,10 @@
             ]
           },
           "king_safety": {
-            "summary": "The knight on g4, the queen on h4, and the bishop on b6 are aimed at White's king — three attackers in the zone.",
+            "summary": "The knight on g4, the queen on h4, and the bishop on b6 are aimed at White's king, three attackers in the zone.",
             "items": [
               {
-                "text": "The knight on g4, the queen on h4, and the bishop on b6 are aimed at White's king — three attackers in the zone.",
+                "text": "The knight on g4, the queen on h4, and the bishop on b6 are aimed at White's king, three attackers in the zone.",
                 "side": "white",
                 "priority": 80
               },
@@ -88,7 +88,7 @@
                 "priority": 60
               },
               {
-                "text": "Black's rook on d8 controls the open d-file — a clear lane toward the back rank.",
+                "text": "Black's rook on d8 controls the open d-file, a clear lane toward the back rank.",
                 "side": "black",
                 "priority": 60
               },
@@ -113,7 +113,7 @@
                 "priority": 70
               },
               {
-                "text": "White's a-pawn on a3 is backward — it cannot advance safely and is a long-term weakness.",
+                "text": "White's a-pawn on a3 is backward: it cannot advance safely and is a long-term weakness.",
                 "side": "white",
                 "priority": 50
               },
@@ -153,19 +153,19 @@
                 "tag": "asset"
               },
               {
-                "text": "After Re7+ Kb8 Qxd4 Rd7 Rxd7, White is up a pawn and clearly better.",
+                "text": "After Re7+ Kb8 Qxd4 Nd7 Bxd7, White is up a pawn and clearly better.",
                 "side": "white",
                 "priority": 85.5,
                 "tag": "asset"
               },
               {
-                "text": "Black's pawn on d4 has no defender — a target if attacked.",
+                "text": "Black's pawn on d4 has no defender, a target if attacked.",
                 "side": "black",
                 "priority": 80,
                 "tag": "problem"
               },
               {
-                "text": "The trade on d6 is an even swap, but it dissolves White's pressure — exchanges favour Black.",
+                "text": "The trade on d6 is an even swap, but it dissolves White's pressure. Exchanges favour Black.",
                 "side": "black",
                 "priority": 75,
                 "tag": "warning"
@@ -173,10 +173,10 @@
             ]
           },
           "king_safety": {
-            "summary": "The bishop on h3, the knight on a5, and the pawn on d5 are aimed at Black's king — three attackers in the zone.",
+            "summary": "The bishop on h3, the knight on a5, and the pawn on d5 are aimed at Black's king, three attackers in the zone.",
             "items": [
               {
-                "text": "The bishop on h3, the knight on a5, and the pawn on d5 are aimed at Black's king — three attackers in the zone.",
+                "text": "The bishop on h3, the knight on a5, and the pawn on d5 are aimed at Black's king, three attackers in the zone.",
                 "side": "black",
                 "priority": 80
               },
@@ -231,7 +231,7 @@
                 "priority": 60
               },
               {
-                "text": "The central pawn structure is atypical — White has a pawn on d5, Black has a pawn on d4.",
+                "text": "The central pawn structure is atypical: White has a pawn on d5, Black has a pawn on d4.",
                 "side": "both",
                 "priority": 50
               },
@@ -241,7 +241,7 @@
                 "priority": 50
               },
               {
-                "text": "White's passed pawn on d5 cannot advance while the queen stands in its path — textbook blockade technique.",
+                "text": "White's passed pawn on d5 cannot advance while the queen stands in its path. This is textbook blockade technique.",
                 "side": "white",
                 "priority": 50
               }
@@ -251,13 +251,13 @@
       }
     },
     "5k2/p1p4R/1pr5/3p1pP1/P2P1P2/2P2K2/8/8 w - - 0 35": {
-      "action": "White has a passed pawn on g5 that could become dangerous. Kg3 — White's king should head toward the kingside, supporting the passed pawn. Activate the king as a fighting piece in the endgame.",
+      "action": "White has a passed pawn on g5 that could become dangerous. Kg3: White's king should head toward the kingside, supporting the passed pawn. Activate the king as a fighting piece in the endgame.",
       "structured": {
         "verdict": {
           "eval": "White has a decisive advantage",
           "phase": "endgame"
         },
-        "action": "White has a passed pawn on g5 that could become dangerous. Kg3 — White's king should head toward the kingside, supporting the passed pawn. Activate the king as a fighting piece in the endgame.",
+        "action": "White has a passed pawn on g5 that could become dangerous. Kg3: White's king should head toward the kingside, supporting the passed pawn. Activate the king as a fighting piece in the endgame.",
         "sections": {
           "threats_and_tactics": {
             "summary": "White is to move and has the initiative.",
@@ -270,20 +270,20 @@
             ]
           },
           "king_safety": {
-            "summary": "Two pieces converge on Black's king — the pawn on g5 and the rook on h7 are pressing in.",
+            "summary": "Two pieces converge on Black's king: the pawn on g5 and the rook on h7 are pressing in.",
             "items": [
               {
-                "text": "Two pieces converge on Black's king — the pawn on g5 and the rook on h7 are pressing in.",
+                "text": "Two pieces converge on Black's king: the pawn on g5 and the rook on h7 are pressing in.",
                 "side": "black",
                 "priority": 80
               },
               {
-                "text": "Black's king walks the tighter tightrope — White's king is exposed too, but has more room to manoeuvre if things get sharp.",
+                "text": "Black's king walks the tighter tightrope. White's king is exposed too, but has more room to manoeuvre if things get sharp.",
                 "side": "black",
                 "priority": 55
               },
               {
-                "text": "The pawn cover in front of both kings is gone — king safety factors into every calculation, not just the distant ones.",
+                "text": "The pawn cover in front of both kings is gone. King safety factors into every calculation, not just the distant ones.",
                 "side": "both",
                 "priority": 60
               }
@@ -300,10 +300,10 @@
             ]
           },
           "pieces": {
-            "summary": "White's rook has infiltrated to the seventh rank — a classic positional achievement.",
+            "summary": "White's rook has infiltrated to the seventh rank, a classic positional achievement.",
             "items": [
               {
-                "text": "White's rook has infiltrated to the seventh rank — a classic positional achievement.",
+                "text": "White's rook has infiltrated to the seventh rank, a classic positional achievement.",
                 "side": "white",
                 "priority": 65
               },
@@ -315,20 +315,20 @@
             ]
           },
           "pawn_structure": {
-            "summary": "White's outside passed pawn on g5 is a king-deflection theme — the opposing king must consider chasing it.",
+            "summary": "White's outside passed pawn on g5 is a king-deflection theme: the opposing king must consider chasing it.",
             "items": [
               {
-                "text": "White's outside passed pawn on g5 is a king-deflection theme — the opposing king must consider chasing it.",
+                "text": "White's outside passed pawn on g5 is a king-deflection theme: the opposing king must consider chasing it.",
                 "side": "white",
                 "priority": 75
               },
               {
-                "text": "White has pawns on both sides of the board — a structural asset in the endgame.",
+                "text": "White has pawns on both sides of the board, a structural asset in the endgame.",
                 "side": "white",
                 "priority": 62
               },
               {
-                "text": "White holds a two vs one pawn majority on the kingside — mobilizing these pawns is a key long-term plan.",
+                "text": "White holds a two vs one pawn majority on the kingside. Mobilizing these pawns is a key long-term plan.",
                 "side": "white",
                 "priority": 55
               },
@@ -338,7 +338,7 @@
                 "priority": 50
               },
               {
-                "text": "Black's pawn on f5 stands alone on the f-file — an isolani that must be defended by pieces.",
+                "text": "Black's pawn on f5 stands alone on the f-file, an isolani that must be defended by pieces.",
                 "side": "black",
                 "priority": 50
               }
@@ -367,10 +367,10 @@
             ]
           },
           "king_safety": {
-            "summary": "Both sides have castled kingside — the kings sit on the same wing, which takes the mutual pawn-storm race off the table.",
+            "summary": "Both sides have castled kingside: the kings sit on the same wing, which takes the mutual pawn-storm race off the table.",
             "items": [
               {
-                "text": "Both sides have castled kingside — the kings sit on the same wing, which takes the mutual pawn-storm race off the table.",
+                "text": "Both sides have castled kingside: the kings sit on the same wing, which takes the mutual pawn-storm race off the table.",
                 "side": "neutral",
                 "priority": 50
               },
@@ -392,10 +392,10 @@
             ]
           },
           "pieces": {
-            "summary": "White has a rook on c1 on the half-open c-file — the c5 pawn is the natural target.",
+            "summary": "White has a rook on c1 on the half-open c-file. The c5 pawn is the natural target.",
             "items": [
               {
-                "text": "White has a rook on c1 on the half-open c-file — the c5 pawn is the natural target.",
+                "text": "White has a rook on c1 on the half-open c-file. The c5 pawn is the natural target.",
                 "side": "white",
                 "priority": 60
               },
@@ -412,10 +412,10 @@
             ]
           },
           "pawn_structure": {
-            "summary": "Half-open d-file in Black's favour — Black's central pawn is the structural reference point, White plays around it.",
+            "summary": "Half-open d-file in Black's favour: Black's central pawn is the structural reference point, White plays around it.",
             "items": [
               {
-                "text": "Half-open d-file in Black's favour — Black's central pawn is the structural reference point, White plays around it.",
+                "text": "Half-open d-file in Black's favour: Black's central pawn is the structural reference point, White plays around it.",
                 "side": "both",
                 "priority": 50
               },
@@ -425,7 +425,7 @@
                 "priority": 50
               },
               {
-                "text": "White's passed pawn on e5 is blockaded by the pawn — its advance is completely halted.",
+                "text": "White's passed pawn on e5 is blockaded by the pawn. Its advance is completely halted.",
                 "side": "white",
                 "priority": 50
               },
@@ -435,7 +435,7 @@
                 "priority": 50
               },
               {
-                "text": "Black's e-pawn on e6 is backward — it cannot advance safely and is a long-term weakness.",
+                "text": "Black's e-pawn on e6 is backward: it cannot advance safely and is a long-term weakness.",
                 "side": "black",
                 "priority": 50
               }
@@ -465,10 +465,10 @@
             ]
           },
           "king_safety": {
-            "summary": "Two pieces converge on White's king — the bishop on c5 and the bishop on f5 are pressing in.",
+            "summary": "Two pieces converge on White's king: the bishop on c5 and the bishop on f5 are pressing in.",
             "items": [
               {
-                "text": "Two pieces converge on White's king — the bishop on c5 and the bishop on f5 are pressing in.",
+                "text": "Two pieces converge on White's king: the bishop on c5 and the bishop on f5 are pressing in.",
                 "side": "white",
                 "priority": 80
               },
@@ -485,10 +485,10 @@
             ]
           },
           "material": {
-            "summary": "White is up a pawn, yet the material edge counts for little here — Black stands fine on positional grounds.",
+            "summary": "White is up a pawn, yet the material edge counts for little here. Black stands fine on positional grounds.",
             "items": [
               {
-                "text": "White is up a pawn, yet the material edge counts for little here — Black stands fine on positional grounds.",
+                "text": "White is up a pawn, yet the material edge counts for little here. Black stands fine on positional grounds.",
                 "side": "both",
                 "priority": 80
               }
@@ -503,7 +503,7 @@
                 "priority": 60
               },
               {
-                "text": "Black has the initiative — the opponent must respond to the threats before pursuing their own plans.",
+                "text": "Black has the initiative. The opponent must respond to the threats before pursuing their own plans.",
                 "side": "black",
                 "priority": 58
               },
@@ -513,7 +513,7 @@
                 "priority": 56
               },
               {
-                "text": "The c-file has no pawns on it — a natural avenue for rook activity.",
+                "text": "The c-file has no pawns on it, a natural avenue for rook activity.",
                 "side": "neutral",
                 "priority": 35
               }
@@ -528,7 +528,7 @@
                 "priority": 88
               },
               {
-                "text": "The central tension lives on the d-file: White has the pawn there, Black does not — typical Catalan / French exchange shape.",
+                "text": "The central tension lives on the d-file: White has the pawn there, Black does not, a typical Catalan / French exchange shape.",
                 "side": "both",
                 "priority": 50
               },
@@ -548,13 +548,13 @@
       }
     },
     "4b2r/p3k3/2p1pR2/2r3pp/8/P3P3/1PB3PP/2K2R2 b - - 5 28": {
-      "action": "Rd5 — Black's rook centralizes on d5.",
+      "action": "Rd5: Black's rook centralizes on d5.",
       "structured": {
         "verdict": {
           "eval": "Equal position",
           "phase": "middlegame"
         },
-        "action": "Rd5 — Black's rook centralizes on d5.",
+        "action": "Rd5: Black's rook centralizes on d5.",
         "sections": {
           "threats_and_tactics": {
             "summary": "Nothing is hanging on either side.",
@@ -567,10 +567,10 @@
             ]
           },
           "king_safety": {
-            "summary": "Two pieces converge on Black's king — the rook on f1 and the rook on f6 are pressing in.",
+            "summary": "Two pieces converge on Black's king: the rook on f1 and the rook on f6 are pressing in.",
             "items": [
               {
-                "text": "Two pieces converge on Black's king — the rook on f1 and the rook on f6 are pressing in.",
+                "text": "Two pieces converge on Black's king: the rook on f1 and the rook on f6 are pressing in.",
                 "side": "black",
                 "priority": 80
               },
@@ -615,7 +615,7 @@
                 "priority": 55
               },
               {
-                "text": "Black has a half-open b-file available — placing a rook here would create pressure.",
+                "text": "Black has a half-open b-file available. Placing a rook here would create pressure.",
                 "side": "black",
                 "priority": 35
               },
@@ -640,17 +640,17 @@
                 "priority": 50
               },
               {
-                "text": "White's pawn on e3 stands alone on the e-file — an isolani that must be defended by pieces.",
+                "text": "White's pawn on e3 stands alone on the e-file, an isolani that must be defended by pieces.",
                 "side": "white",
                 "priority": 50
               },
               {
-                "text": "Black's isolated c-pawn on c6 is a long-term target — no friendly pawn can ever come to its defense.",
+                "text": "Black's isolated c-pawn on c6 is a long-term target. No friendly pawn can ever come to its defense.",
                 "side": "black",
                 "priority": 50
               },
               {
-                "text": "Black's isolated pawn on e6 gives the opponent a clear target — it can never be supported by a neighboring pawn.",
+                "text": "Black's isolated pawn on e6 gives the opponent a clear target. It can never be supported by a neighboring pawn.",
                 "side": "black",
                 "priority": 50
               },
