@@ -20,7 +20,7 @@ import { ReactNode } from 'react';
 import { Card } from '@/components/ui/card';
 import {
   ScrollText, ArrowLeft, Loader2, AlertCircle, Lightbulb, BookOpen,
-  Zap, Shield, Scale, Rocket, Blocks, Grip, Compass,
+  Zap, Shield, Scale, Blocks, Grip, Compass,
 } from 'lucide-react';
 import { SectionBlock } from './SectionBlock';
 import { CoachBriefingEvalRail } from './CoachBriefingEvalRail';
@@ -49,7 +49,6 @@ const SECTION_META: Record<
   threats_and_tactics: { title: 'Threats & Tactics', icon: <Zap className="h-4 w-4" /> },
   king_safety:         { title: 'King Safety',       icon: <Shield className="h-4 w-4" /> },
   material:            { title: 'Material',          icon: <Scale className="h-4 w-4" /> },
-  development:         { title: 'Development',       icon: <Rocket className="h-4 w-4" /> },
   pieces:              { title: 'Pieces',            icon: <Blocks className="h-4 w-4" /> },
   pawn_structure:      { title: 'Pawn Structure',    icon: <Grip className="h-4 w-4" /> },
   plan:                { title: 'Plan',              icon: <Compass className="h-4 w-4" /> },

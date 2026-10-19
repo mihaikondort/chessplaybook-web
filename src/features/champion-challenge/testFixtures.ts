@@ -95,10 +95,6 @@ export const longExplanationFixture: StructuredExplanation = {
       summary: 'Material is equal and no exchange is forced.',
       items: [{ text: 'The bishop pair is a long-term asset in an open centre.', side: 'white', priority: 2, tag: 'asset' }],
     },
-    development: {
-      summary: 'Development is complete, so piece quality matters more than piece count.',
-      items: [{ text: 'The a-rook is the least active piece.', side: 'black', priority: 1, tag: 'problem' }],
-    },
     pieces: {
       summary: 'The central knight is stable but blocks a rook file.',
       items: [

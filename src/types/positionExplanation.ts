@@ -46,7 +46,17 @@ export interface StructuredExplanation {
     threats_and_tactics?: ThreatsAndTacticsSection;
     king_safety?: SectionContent;
     material?: SectionContent;
-    development?: SectionContent;
+    /*
+      NO `development` KEY (EX-012, 2026-08-11).
+
+      It mirrored a backend field that could never be populated — no theme could
+      route to it, and the corpus census found it on 0 of 15,006 explanations.
+      The section header below it therefore carried a title and an icon that
+      could never render.
+
+      Kept in step with `backend/src/services/v2/types.ts`, which is where the
+      shape is decided.
+    */
     pieces?: SectionContent;
     pawn_structure?: SectionContent;
     plan?: SectionContent;
@@ -58,7 +68,6 @@ export const SECTION_DISPLAY_ORDER: Array<keyof StructuredExplanation['sections'
   'threats_and_tactics',
   'king_safety',
   'material',
-  'development',
   'pieces',
   'pawn_structure',
   'plan',
