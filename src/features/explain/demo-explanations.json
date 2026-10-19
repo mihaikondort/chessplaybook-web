@@ -1,5 +1,5 @@
 {
-  "pipelineVersion": "4.6.1",
+  "pipelineVersion": "4.7.0",
   "bakedAt": "",
   "byFen": {
     "2rr2k1/1b3ppp/pb2p3/1p2P3/1P2BPnq/P1N3P1/1B2Q2P/R4R1K b - - 0 22": {
@@ -53,7 +53,7 @@
                 "priority": 50
               },
               {
-                "text": "The pawns in front of Black's king are unmoved.",
+                "text": "The pawns in front of Black's king are intact.",
                 "side": "black",
                 "priority": 45
               }
@@ -113,11 +113,6 @@
                 "priority": 70
               },
               {
-                "text": "White's a-pawn on a3 is backward: it cannot advance safely and is a long-term weakness.",
-                "side": "white",
-                "priority": 50
-              },
-              {
                 "text": "The pawn chain e5-f4-g3-h2 gives White a sturdy connected structure with no weak link.",
                 "side": "white",
                 "priority": 50
@@ -159,9 +154,9 @@
                 "tag": "asset"
               },
               {
-                "text": "Black's pawn on d4 has no defender, a target if attacked.",
-                "side": "black",
-                "priority": 80,
+                "text": "White's queen on f4 threatens to capture Black's hanging pawn on d4.",
+                "side": "white",
+                "priority": 85,
                 "tag": "problem"
               },
               {
@@ -223,13 +218,8 @@
             ]
           },
           "pawn_structure": {
-            "summary": "The IQP on d4 is a classic dilemma: it fuels Black's piece activity but is also a permanent structural weakness.",
+            "summary": "The central pawn structure is atypical: White has a pawn on d5, Black has a pawn on d4.",
             "items": [
-              {
-                "text": "The IQP on d4 is a classic dilemma: it fuels Black's piece activity but is also a permanent structural weakness.",
-                "side": "black",
-                "priority": 60
-              },
               {
                 "text": "The central pawn structure is atypical: White has a pawn on d5, Black has a pawn on d4.",
                 "side": "both",

@@ -38,6 +38,26 @@ export const COMMENTARY_MOVETIME_MS = 6000;
 /** Safety slack on top of movetime before the wait times out. */
 const COMMENTARY_MOVETIME_SLACK_MS = 4000;
 
+/**
+ * A search bounded by nodes instead of time, for offline bakes (D-9).
+ *
+ * `go movetime` stops after a fixed TIME, so how deep it reaches depends on how busy the machine
+ * is. Measured 2026-10-19 on the Capablanca-Tartakower demo: idle, depth 28 and +2.13; with every
+ * core busy, depth 27 and +2.28, and the explanation's headline changed with it. A bake must give
+ * the same answer twice, so it searches a fixed number of NODES: single-threaded, with the hash
+ * cleared by `ucinewgame` before each search, that is the same search on any machine at any load.
+ * The browser keeps `movetime`, because a visitor waits on wall-clock time, not on nodes.
+ */
+export interface SearchBudget {
+  nodes: number;
+}
+
+/** About what 6s reaches on the bake machine when idle (7.5M-9.2M measured on six demos). */
+export const BAKE_SEARCH_BUDGET: SearchBudget = { nodes: 8_000_000 };
+
+/** A node budget's wait is generous on purpose: it must never cut a search short on a busy box. */
+const NODES_PER_MS_FLOOR = 100;
+
 /** MultiPV for the null-move search (opponent's top threats). */
 const NULLMOVE_MULTIPV = 3;
 
@@ -235,6 +255,7 @@ export async function runMainSearch(
   fen: string,
   transport: SearchTransport,
   onDepth?: (depth: number) => void,
+  budget?: SearchBudget,
 ): Promise<{ lines: string[]; parsed: ParsedPv; wallMs: number }> {
   const sideToMove = (fen.split(' ')[1] as 'w' | 'b') ?? 'w';
   const t0 = Date.now();
@@ -275,10 +296,12 @@ export async function runMainSearch(
   const waitPromise = waitForLine(
     transport,
     (l) => l.startsWith('bestmove'),
-    COMMENTARY_MOVETIME_MS + COMMENTARY_MOVETIME_SLACK_MS,
+    budget
+      ? Math.ceil(budget.nodes / NODES_PER_MS_FLOOR) + COMMENTARY_MOVETIME_SLACK_MS
+      : COMMENTARY_MOVETIME_MS + COMMENTARY_MOVETIME_SLACK_MS,
     'bestmove (main search)',
   );
-  transport.send(`go movetime ${COMMENTARY_MOVETIME_MS}`);
+  transport.send(budget ? `go nodes ${budget.nodes}` : `go movetime ${COMMENTARY_MOVETIME_MS}`);
   let lines: string[];
   try {
     lines = await waitPromise;
@@ -334,8 +357,9 @@ export async function getCommentarySearchData(
   fen: string,
   transport: SearchTransport,
   onDepth?: (depth: number) => void,
+  budget?: SearchBudget,
 ): Promise<CommentarySearchData> {
-  const main = await runMainSearch(fen, transport, onDepth);
+  const main = await runMainSearch(fen, transport, onDepth, budget);
   const searchOutput = main.lines.join('\n');
 
   const nullMoveSearchOutput = await runNullMoveSearch(fen, transport);

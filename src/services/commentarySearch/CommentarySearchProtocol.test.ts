@@ -9,7 +9,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { parseMainSearch } from './CommentarySearchProtocol';
+import { BAKE_SEARCH_BUDGET, parseMainSearch, runMainSearch } from './CommentarySearchProtocol';
+import type { SearchTransport } from './SearchTransport';
 
 describe('parseMainSearch', () => {
   it('parses a standard MultiPV=1 search output with cp score (white to move)', () => {
@@ -161,5 +162,41 @@ describe('parseMainSearch', () => {
     expect(parsed.searchedEval).toBeGreaterThanOrEqual(3.5);
     expect(parsed.finalDepth).toBeGreaterThanOrEqual(20);
     expect(parsed.isMate).toBe(false);
+  });
+});
+
+/** A fake engine: answers isready and go, and records what it was told. */
+function recordingTransport(): { transport: SearchTransport; sent: string[] } {
+  const sent: string[] = [];
+  const listeners = new Set<(l: string) => void>();
+  const emit = (l: string) => setTimeout(() => listeners.forEach(fn => fn(l)), 0);
+  const transport: SearchTransport = {
+    send(cmd) {
+      sent.push(cmd);
+      if (cmd === 'isready') emit('readyok');
+      if (cmd.startsWith('go ')) { emit('info depth 1 score cp 10 pv e2e4'); emit('bestmove e2e4'); }
+    },
+    onLine(fn) { listeners.add(fn); return () => listeners.delete(fn); },
+    dispose() {},
+  };
+  return { transport, sent };
+}
+
+const START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+describe('runMainSearch budget (D-9)', () => {
+  it('a bake searches a fixed number of nodes, after clearing the hash', async () => {
+    const { transport, sent } = recordingTransport();
+    await runMainSearch(START, transport, undefined, BAKE_SEARCH_BUDGET);
+    expect(sent).toContain(`go nodes ${BAKE_SEARCH_BUDGET.nodes}`);
+    expect(sent.some(c => c.startsWith('go movetime'))).toBe(false);
+    expect(sent.indexOf('ucinewgame')).toBeLessThan(sent.indexOf(`go nodes ${BAKE_SEARCH_BUDGET.nodes}`));
+  });
+
+  it('the browser, with no budget, keeps the time limit', async () => {
+    const { transport, sent } = recordingTransport();
+    await runMainSearch(START, transport);
+    expect(sent.some(c => c.startsWith('go movetime'))).toBe(true);
+    expect(sent.some(c => c.startsWith('go nodes'))).toBe(false);
   });
 });
