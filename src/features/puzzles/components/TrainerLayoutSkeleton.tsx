@@ -18,6 +18,8 @@ import { missedOnLabel } from '../services/trainingRecord';
 import { usePlan } from '../hooks/usePlan';
 import { usePlanOffer } from '../hooks/usePlanOffer';
 import { PuzzlePlanCard } from './PuzzlePlanCard';
+import { PuzzleExplanationPanel } from './PuzzleExplanationPanel';
+import { fetchPuzzleExplanation, type PuzzleExplanation } from '../services/PuzzleService';
 import type { PlanItem } from '../services/PlanApi';
 import { logGA4Event } from '@/services/analytics';
 import { StatGrid } from './TrainerUI';
@@ -183,7 +185,10 @@ export default function TrainerLayoutSkeleton() {
   }, []);
   useEffect(() => {
     if (!focusMode) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') leaveFocus(); };
+    const onKey = (e: KeyboardEvent) => {
+      /* With the explanation open, Escape closes that first. */
+      if (e.key === 'Escape' && !document.querySelector('[data-workspace-overlay]')) leaveFocus();
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [focusMode, leaveFocus]);
@@ -411,6 +416,62 @@ export default function TrainerLayoutSkeleton() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoAdvanceArmed]);
 
+  /*
+    THE EXPLANATION PANEL (owner, 2026-10-21): opened from the live card's
+    reserved row once the puzzle is resolved, drawn over the activity lane so
+    the board stays in view, and the board goes back to the position the
+    explanation describes, `linePly[1]` (stepTo(1)).
+
+    Open FOR A PUZZLE, so it closes by itself when the next one arrives. Fetched
+    on open and kept for that puzzle, never prefetched: most puzzles are never
+    explained, and the answer is cached at the edge for a day anyway.
+  */
+  const currentPuzzleId = puzzle.puzzleState.puzzle?.id ?? null;
+  const [explain, setExplain] = useState<{ id: string; openedAt: number } | null>(null);
+  const [fetchedExplanation, setFetchedExplanation] = useState<{ id: string; data: PuzzleExplanation } | null>(null);
+  const explainOpen = explain != null && explain.id === currentPuzzleId && puzzle.isResolved;
+  useEffect(() => {
+    if (explain && explain.id !== currentPuzzleId) setExplain(null);
+  }, [explain, currentPuzzleId]);
+
+  const openExplanation = useCallback(() => {
+    const id = currentPuzzleId;
+    if (!id) return;
+    setExplain({ id, openedAt: Date.now() });
+    puzzle.stepTo(1);
+    logGA4Event({
+      name: 'puzzle_explanation_opened',
+      params: {
+        outcome: puzzle.puzzleState.status === 'correct' ? 'solved' : 'revealed',
+        puzzle_rating: puzzle.puzzleState.puzzle?.rating ?? 0,
+        in_run: puzzle.servedRunId != null,
+      },
+    });
+    if (fetchedExplanation?.id === id && fetchedExplanation.data.status === 'ready') return;
+    setFetchedExplanation(null);
+    void fetchPuzzleExplanation(id).then((data) => {
+      setFetchedExplanation({ id, data });
+      logGA4Event({ name: 'puzzle_explanation_result', params: { status: data.status } });
+    });
+  }, [currentPuzzleId, fetchedExplanation, puzzle]);
+
+  const closeExplanation = useCallback((via: 'close' | 'next_puzzle') => {
+    if (!explain) return;
+    logGA4Event({ name: 'puzzle_explanation_closed', params: { ms_open: Date.now() - explain.openedAt, via } });
+    setExplain(null);
+    /* Focus back to the control that opened it, which is uncovered again. */
+    if (via === 'close') {
+      requestAnimationFrame(() => document.querySelector<HTMLElement>('[data-explain-trigger]')?.focus());
+    }
+  }, [explain]);
+
+  useEffect(() => {
+    if (!explainOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeExplanation('close'); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [explainOpen, closeExplanation]);
+
   const startPlanSession = useCallback(async (item: PlanItem) => {
     if (!await plan.start(item.id)) return;
     logGA4Event({
@@ -577,6 +638,8 @@ export default function TrainerLayoutSkeleton() {
                 loading={puzzle.loading}
                 onNextPuzzle={puzzle.nextPuzzle}
                 onShowSolution={puzzle.puzzleActions.showSolution}
+                /* Offline practice puzzles have no explanation to fetch. */
+                onExplain={puzzle.serverUnreachable ? undefined : openExplanation}
               />
             ), 2, true),
             slot('run-setup', 'puzzleRunSetup', (
@@ -657,6 +720,18 @@ export default function TrainerLayoutSkeleton() {
               orientation={puzzle.displayedOrientation}
             />
           )),
+          overlay: explainOpen ? {
+            label: 'Explanation',
+            content: (
+              <PuzzleExplanationPanel
+                explanation={fetchedExplanation?.id === currentPuzzleId ? fetchedExplanation.data : null}
+                onClose={() => closeExplanation('close')}
+                onNextPuzzle={() => { closeExplanation('next_puzzle'); void puzzle.nextPuzzle(); }}
+                nextLabel={run.running ? 'Next Puzzle' : 'New Puzzle'}
+                loading={puzzle.loading}
+              />
+            ),
+          } : null,
         }}
         context={{
           title: 'Your record',

@@ -276,6 +276,11 @@ type GA4Event =
   // `after_failure` is the field that matters: giving up mid-fight and never
   // engaging at all are different behaviours that the old number merged.
   | { name: 'puzzle_solution_revealed'; params: { after_failure: boolean; puzzle_rating: number } }
+  // The explanation panel on /puzzles (2026-10-21). `outcome` separates a
+  // solver checking why it worked from one who gave up.
+  | { name: 'puzzle_explanation_opened'; params: { outcome: 'solved' | 'revealed'; puzzle_rating: number; in_run: boolean } }
+  | { name: 'puzzle_explanation_result'; params: { status: 'ready' | 'pending' | 'unavailable' } }
+  | { name: 'puzzle_explanation_closed'; params: { ms_open: number; via: 'close' | 'next_puzzle' } }
   // ── Board workspace controls (2026-08-13) ───────────────────────────────
   // THESE HAD NO EVENTS AT ALL, which is why focus mode "never triggered": it
   // was never instrumented, so no usage level could have produced a row. The

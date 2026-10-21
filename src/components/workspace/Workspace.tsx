@@ -37,6 +37,13 @@ export interface WorkspaceLane {
   cards: ReactElement<WorkspaceCardProps>[];
   /** A card exactly the toolbar's height, ending the lane. */
   foot?: ReactElement<WorkspaceCardProps>;
+  /**
+   * A panel drawn OVER the lane's cards, leaving the foot visible. The cards
+   * keep their size and state underneath and are inert while it is up, so
+   * nothing in the grid moves when it opens or closes. It is the lane's second
+   * scroll exception: its content has no bound, so it scrolls inside itself.
+   */
+  overlay?: { label: string; content: ReactNode } | null;
 }
 
 export interface WorkspaceProps {
@@ -203,11 +210,24 @@ function Lane({ role, lane, focus }: { role: 'activity' | 'context'; lane?: Work
               data-keep-in-focus={keepInFocus || undefined}
               style={{ ['--share' as string]: share }}
               hidden={(focus && !keepInFocus) || undefined}
+              /* Under an overlay a card is covered, so it must not take focus
+                 or be read out either. */
+              {...(lane.overlay ? { inert: '' as unknown as boolean } : {})}
             >
               <div {...contentProps(type)}>{children}</div>
             </div>
           );
         })}
+        {lane.overlay && (
+          <div
+            className="workspace-lane-overlay surface-card rounded-lg"
+            role="region"
+            aria-label={lane.overlay.label}
+            data-workspace-overlay
+          >
+            {lane.overlay.content}
+          </div>
+        )}
       </div>
       {lane.foot && (
         <div className="workspace-foot surface-card rounded-lg" data-card-type={lane.foot.props.type}>

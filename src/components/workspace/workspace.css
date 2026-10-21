@@ -297,6 +297,28 @@
   flex-direction: column;
   row-gap: var(--gap-card);
   min-block-size: 0;
+  /* The containing block of a lane overlay. */
+  position: relative;
+}
+
+/*
+  A LANE OVERLAY covers the stack exactly, so it adds no box to the grid and
+  nothing moves when it opens or closes. It is the lane's second scroll
+  exception (`data-workspace-overlay`, checked by verify-workspace-contract):
+  its content has no bound.
+
+  A SCROLL THAT REACHES ITS END MUST CARRY ON TO THE PAGE. Stacked, the lane
+  can end below the screen, so the overlay's last part (its primary action
+  included) is reached only by scrolling the page region. With
+  `overscroll-behavior: contain` a finger on the overlay could never get there.
+*/
+.workspace-lane-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 /* A card divides its lane's stack by its share; its height never depends on

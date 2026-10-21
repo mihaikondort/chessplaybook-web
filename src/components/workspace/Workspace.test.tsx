@@ -58,4 +58,24 @@ describe('Workspace API (spec §9)', () => {
     const { container } = render(<Workspace board={board} toolbar={toolbar} focus={false} activity={{ title: 'A', cards: [card('a')] }} />);
     expect(container.querySelector('[data-lane="context"]')).not.toBeNull();
   });
+
+  it('draws an overlay over the lane cards without removing them, and makes them inert', () => {
+    const lane = (overlay: { label: string; content: JSX.Element } | null) => (
+      <Workspace board={board} toolbar={toolbar} focus={false}
+        activity={{ title: 'A', cards: [card('a'), card('b')], foot: card('foot'), overlay }} />
+    );
+    const { container, rerender } = render(lane(null));
+    const activity = container.querySelector('[data-lane="activity"]')!;
+    expect(activity.querySelector('[data-workspace-overlay]')).toBeNull();
+    expect(activity.querySelectorAll('.workspace-card[inert]')).toHaveLength(0);
+
+    rerender(lane({ label: 'Explanation', content: <p>why</p> }));
+    const overlay = activity.querySelector('[data-workspace-overlay]')!;
+    expect(overlay.getAttribute('aria-label')).toBe('Explanation');
+    expect(overlay.parentElement?.classList.contains('workspace-lane-stack')).toBe(true);
+    expect(activity.querySelectorAll('.workspace-lane-stack > .workspace-card')).toHaveLength(2);
+    expect(activity.querySelectorAll('.workspace-lane-stack > .workspace-card[inert]')).toHaveLength(2);
+    // The foot is outside the stack, so it stays uncovered and usable.
+    expect(activity.querySelector('.workspace-foot[inert]')).toBeNull();
+  });
 });

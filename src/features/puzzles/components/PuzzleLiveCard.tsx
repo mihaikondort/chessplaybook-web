@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronRight, Compass, Eye, RotateCcw, Signal, Target, WifiOff, XCircle } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Compass, Eye, Lightbulb, RotateCcw, Signal, Target, WifiOff, XCircle } from 'lucide-react';
 import { Action, LiveStatus } from './TrainerUI';
 
 /**
@@ -94,6 +94,12 @@ export interface PuzzleLiveCardProps {
   runOutcome?: { rating: number; realized: number; total: number } | null;
   onNextPuzzle: () => void;
   onShowSolution: () => void;
+  /**
+   * Opens the explanation. Given only on a RESOLVED puzzle with an
+   * explanation to fetch: it names the solution, so it must never be offered
+   * while the puzzle is being played.
+   */
+  onExplain?: () => void;
 }
 
 export function PuzzleLiveCard({
@@ -101,9 +107,13 @@ export function PuzzleLiveCard({
   exploring, isMidSolve, announcement, loading, sessionId,
   filterFoundNothing = false, onClearFilter, runOutcome = null,
   serverUnreachable = false,
-  onNextPuzzle, onShowSolution,
+  onNextPuzzle, onShowSolution, onExplain,
 }: PuzzleLiveCardProps) {
   const revealable = status === 'playing' || status === 'failed';
+  /* `correct` or `solution`: resolved, and neither ever reverts. Disjoint from
+     `revealable`, so the one slot never offers both. */
+  const explainable = Boolean(onExplain) && (status === 'correct' || status === 'solution');
+  const rowShown = revealable || explainable;
   const statusIcon = status === 'correct'
     ? <CheckCircle2 className="w-[1em] h-[1em] text-success" />
     : status === 'failed'
@@ -212,24 +222,41 @@ export function PuzzleLiveCard({
         </Action>
 
         <div
-          {...(!revealable ? { inert: '' as unknown as boolean } : {})}
-          className={`live-reveal-row flex items-center ${revealable ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          {...(!rowShown ? { inert: '' as unknown as boolean } : {})}
+          className={`live-reveal-row flex items-center ${rowShown ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         >
           {/*
-            44px, and it is the second place that number is a constant rather
-            than a ratio. This control ENDS the attempt and the outcomes are not
-            symmetrical (2026-08-13): revealing by accident costs the rating on
-            this puzzle. It must not be easy to hit by mistake, nor so small it
-            is hard to hit on purpose.
+            THE SAME RESERVED SLOT, A DIFFERENT CONTROL ONCE RESOLVED (owner,
+            2026-10-21). The row was empty after a solve or a reveal, so the
+            explanation takes it and no card changes size.
           */}
-          <button
-            type="button"
-            onClick={onShowSolution}
-            className="trainer-reveal flex-1 min-h-11 rounded-[0.4em] border border-border text-[length:var(--card-type,14px)] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground inline-flex items-center justify-center gap-[0.4em]"
-          >
-            <Eye className="w-[1em] h-[1em]" />
-            Show solution
-          </button>
+          {explainable ? (
+            <button
+              type="button"
+              onClick={onExplain}
+              data-explain-trigger
+              className="trainer-reveal flex-1 min-h-11 rounded-[0.4em] border border-border text-[length:var(--card-type,14px)] font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-[0.4em]"
+            >
+              <Lightbulb className="w-[1em] h-[1em]" />
+              Explain solution
+            </button>
+          ) : (
+            /*
+              44px, and it is the second place that number is a constant rather
+              than a ratio. This control ENDS the attempt and the outcomes are not
+              symmetrical (2026-08-13): revealing by accident costs the rating on
+              this puzzle. It must not be easy to hit by mistake, nor so small it
+              is hard to hit on purpose.
+            */
+            <button
+              type="button"
+              onClick={onShowSolution}
+              className="trainer-reveal flex-1 min-h-11 rounded-[0.4em] border border-border text-[length:var(--card-type,14px)] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground inline-flex items-center justify-center gap-[0.4em]"
+            >
+              <Eye className="w-[1em] h-[1em]" />
+              Show solution
+            </button>
+          )}
         </div>
       </div>
     </>
