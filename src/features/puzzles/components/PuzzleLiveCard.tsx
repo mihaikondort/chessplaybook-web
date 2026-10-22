@@ -34,6 +34,14 @@ export interface PuzzleLiveCardProps {
   message: string;
   rating?: number | null;
   prompt?: string | null;
+  /**
+   * "White to play and win a rook": the side and the goal, from SF (owner,
+   * 2026-10-22). It is the starting headline (usePuzzle sets it as `message`),
+   * so the detail row stays empty then; once the headline moves on ("Correct so
+   * far", "White to move. Keep going.") the goal stays visible in the detail
+   * row. When absent, the row keeps the neutral `prompt`.
+   */
+  opening?: string | null;
   isDailyPuzzle?: boolean;
   /**
    * "Missed on 3 Oct" on a puzzle a "Missed before" run is replaying (#116,
@@ -103,7 +111,7 @@ export interface PuzzleLiveCardProps {
 }
 
 export function PuzzleLiveCard({
-  status, message, rating, prompt, isDailyPuzzle = false, missedLabel = null,
+  status, message, rating, prompt, opening = null, isDailyPuzzle = false, missedLabel = null,
   exploring, isMidSolve, announcement, loading, sessionId,
   filterFoundNothing = false, onClearFilter, runOutcome = null,
   serverUnreachable = false,
@@ -173,7 +181,10 @@ export function PuzzleLiveCard({
           ? 'These are offline practice puzzles, so nothing here is scored.'
           : filterFoundNothing
           ? 'Nothing in your rating range carries it. The board still has your last puzzle.'
-          : status === 'playing' ? (prompt || 'Find the best move')
+          : status === 'playing'
+            ? (opening
+              ? (!isMidSolve && !exploring && message === opening ? null : opening)
+              : (prompt || 'Find the best move'))
             /*
               The slot is empty once a puzzle is resolved, which is exactly when
               a run has just ended.

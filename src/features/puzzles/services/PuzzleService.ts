@@ -27,6 +27,9 @@ export interface PuzzleData {
   openingTags?: string[];
   /** Pre-move line, built server-side from the shared expression layer. */
   prompt?: string;
+  /** "White to play and win a rook": the side and the goal, from SF, baked
+   *  server-side. Null or absent when SF saw no decisive goal. */
+  opening?: string | null;
   nbPlays?: number;
   popularity?: number;
   /** When this player last missed it; only on a "Missed before" draw (#116). */

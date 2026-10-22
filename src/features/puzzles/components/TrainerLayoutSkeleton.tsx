@@ -500,7 +500,7 @@ export default function TrainerLayoutSkeleton() {
     (owner, 2026-08-10, restored 2026-10-01).
   */
   const boardLabel = puzzle.puzzleState.puzzle && puzzle.puzzleState.status === 'playing'
-    ? `Puzzle board. ${puzzle.puzzleState.puzzle.prompt || 'Find the best move'}`
+    ? `Puzzle board. ${puzzle.puzzleState.puzzle.opening || puzzle.puzzleState.puzzle.prompt || 'Find the best move'}`
     : 'Puzzle board';
 
   return (
@@ -597,6 +597,7 @@ export default function TrainerLayoutSkeleton() {
                 isDailyPuzzle={puzzle.isDaily}
                 missedLabel={missedOnLabel(puzzle.puzzleState.puzzle?.missedAt)}
                 prompt={puzzle.puzzleState.puzzle?.prompt}
+                opening={puzzle.puzzleState.puzzle?.opening}
                 exploring={Boolean(puzzle.exploreAt)}
                 isMidSolve={puzzle.isMidSolve}
                 announcement={announcement}

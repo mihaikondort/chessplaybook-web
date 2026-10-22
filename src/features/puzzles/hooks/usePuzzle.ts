@@ -46,6 +46,9 @@ export interface Puzzle {
   /** Pre-move line from the server's expression layer (C1 / PZ-017). Optional:
    *  the offline fallback puzzles and the saved last-puzzle record have none. */
   prompt?: string;
+  /** The side and the goal from SF ("White to play and win a rook"), served.
+   *  It replaces "White to move" as the starting headline when present. */
+  opening?: string | null;
   /** When this player last missed it; only on a "Missed before" draw (#116). */
   missedAt?: string;
 }
@@ -302,7 +305,7 @@ export function usePuzzle(): [PuzzleState, PuzzleActions] {
       moveIndexRef.current = 1;
       setMoveIndex(1);
       setStatus('playing');
-      setMessage(`${userColor === 'white' ? 'White' : 'Black'} to move`);
+      setMessage(p.opening || `${userColor === 'white' ? 'White' : 'Black'} to move`);
 
       // The board is legally touchable exactly here — `dests` is gated on
       // status === 'playing' — which is NOT when it was painted. That gap is
@@ -422,7 +425,7 @@ export function usePuzzle(): [PuzzleState, PuzzleActions] {
       setMessage('Solution shown.');
     } else {
       setStatus('playing');
-      setMessage(`${userColor === 'white' ? 'White' : 'Black'} to move`);
+      setMessage(p.opening || `${userColor === 'white' ? 'White' : 'Black'} to move`);
     }
     return true;
   }, [clearPendingTimers]);
