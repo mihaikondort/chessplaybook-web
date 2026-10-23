@@ -1,5 +1,5 @@
 {
-  "pipelineVersion": "4.8.3",
+  "pipelineVersion": "4.8.4",
   "bakedAt": "",
   "byFen": {
     "2rr2k1/1b3ppp/pb2p3/1p2P3/1P2BPnq/P1N3P1/1B2Q2P/R4R1K b - - 0 22": {
@@ -496,11 +496,6 @@
                 "text": "Black has the initiative. The opponent must respond to the threats before pursuing their own plans.",
                 "side": "black",
                 "priority": 58
-              },
-              {
-                "text": "Black's queen on d8 is the loose piece here, while White's on d2 stands out of harm's way.",
-                "side": "black",
-                "priority": 56
               },
               {
                 "text": "The c-file has no pawns on it, a natural avenue for rook activity.",
