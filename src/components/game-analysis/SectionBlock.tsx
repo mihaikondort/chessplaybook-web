@@ -42,9 +42,22 @@ function formatNoteCount(n: number): string {
   return `${n} ${n === 1 ? 'note' : 'notes'}`;
 }
 
-/** Non-colour side marker: a letter chip. White = outline, Black = solid. */
+/**
+ * Non-colour side marker: a letter chip. White = outline, Black = solid, and a muted "=" for a
+ * line about both sides (an open centre, an open file). Every line carries one, so every line's
+ * text starts at the same place (owner, 2026-10-26: neutral lines had none and sat 23px left).
+ */
 function SideChip({ side }: { side: SectionItem['side'] }) {
-  if (side !== 'white' && side !== 'black') return null;
+  if (side !== 'white' && side !== 'black') {
+    return (
+      <span
+        className="mt-0.5 flex-shrink-0 grid place-items-center h-4 w-4 rounded-[3px] border border-border text-[11px] font-bold leading-none text-muted-foreground"
+        aria-label="Both sides"
+      >
+        =
+      </span>
+    );
+  }
   const tone = side === 'white'
     ? 'border-foreground/50 text-foreground/80'
     : 'border-foreground/50 bg-foreground/70 text-card';

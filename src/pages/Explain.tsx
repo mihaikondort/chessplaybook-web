@@ -87,6 +87,7 @@ function PayoffTeaser({ structured, className = '' }: { structured: StructuredEx
     <div className={`rounded-xl border border-border bg-card overflow-hidden ${className}`}>
       <div className="px-4 py-3 border-b border-border">
         <p className="font-serif text-lg leading-tight text-foreground">{structured.verdict.eval}</p>
+        {structured.verdict.reason && <p className="mt-1 text-sm text-muted-foreground">{structured.verdict.reason}</p>}
       </div>
       {structured.action && (
         <div className="m-3 rounded-lg p-3 bg-inverse text-inverse-foreground">

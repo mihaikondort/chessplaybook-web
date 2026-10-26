@@ -160,6 +160,7 @@ export function PositionExplanationCard({
           <div className="p-4 sm:p-5 flex flex-col gap-3">
             <Header onBackToStats={onBackToStats} />
             <h2 className="font-serif text-2xl sm:text-[1.9rem] leading-[1.08] text-foreground">{verdict.eval}</h2>
+            {verdict.reason && <p className="-mt-1 text-sm text-muted-foreground">{verdict.reason}</p>}
             {(verdict.opening || verdict.phase) && (
               <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
                 {verdict.opening && (

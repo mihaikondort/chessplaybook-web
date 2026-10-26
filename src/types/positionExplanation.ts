@@ -40,6 +40,8 @@ export interface StructuredExplanation {
     opening?: string;
     eco?: string;
     phase: 'opening' | 'middlegame' | 'endgame';
+    /** One line under the verdict: why the better side is better, when SF has one clear reason (2026-10-26). */
+    reason?: string;
   };
   action: string;
   sections: {
