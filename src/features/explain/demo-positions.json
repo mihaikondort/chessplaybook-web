@@ -2,42 +2,42 @@
   {
     "id": "rotlewi-rubinstein-1907",
     "title": "Rotlewi vs Rubinstein, 1907",
-    "subtitle": "Before 22…Rxc3 — the eliminating sacrifice that begins Rubinstein's immortal combination",
+    "subtitle": "Before 22…Rxc3: the eliminating sacrifice that begins Rubinstein's immortal combination",
     "fen": "2rr2k1/1b3ppp/pb2p3/1p2P3/1P2BPnq/P1N3P1/1B2Q2P/R4R1K b - - 0 22",
     "lastMoveClassification": ""
   },
   {
     "id": "kasparov-topalov-1999",
     "title": "Kasparov vs Topalov, 1999",
-    "subtitle": "After 24.Rxd4 cxd4 — a rook down, White unleashes the stunning 25.Re7+",
+    "subtitle": "After 24.Rxd4 cxd4: a rook down, White unleashes the stunning 25.Re7+",
     "fen": "b2r3r/k4p1p/p2q1np1/Np1P4/3p1Q2/P4PPB/1PP4P/1K2R3 w - - 0 25",
     "lastMoveClassification": ""
   },
   {
     "id": "capablanca-tartakower-1924",
     "title": "Capablanca vs Tartakower, 1924",
-    "subtitle": "Before 35.Kg3 — the king march that defines active rook endings",
+    "subtitle": "Before 35.Kg3: the king march that defines active rook endings",
     "fen": "5k2/p1p4R/1pr5/3p1pP1/P2P1P2/2P2K2/8/8 w - - 0 35",
     "lastMoveClassification": ""
   },
   {
     "id": "fischer-spassky-1972-g6",
     "title": "Fischer vs Spassky, 1972 (Game 6)",
-    "subtitle": "Before 26.f5 — the central break that cracked Black's position",
+    "subtitle": "Before 26.f5: the central break that cracked Black's position",
     "fen": "1r3n1k/r3q1p1/4p2p/p1p1P3/2Bp1P2/1P5Q/P5PP/2R2RK1 w - - 0 26",
     "lastMoveClassification": ""
   },
   {
     "id": "karpov-kasparov-1985-g16",
     "title": "Karpov vs Kasparov, 1985 (Game 16)",
-    "subtitle": "Before 16…Nd3 — the octopus knight that decided the World Championship",
+    "subtitle": "Before 16…Nd3: the octopus knight that decided the World Championship",
     "fen": "r2qr1k1/5ppp/p4n2/1pbP1bB1/1n6/N1N2B2/PP1Q1PPP/3R1RK1 b - - 1 16",
     "lastMoveClassification": ""
   },
   {
     "id": "carlsen-anand-2013-g5",
     "title": "Carlsen vs Anand, 2013 (Game 5)",
-    "subtitle": "Before 28…h4 — the slow-burn endgame squeeze",
+    "subtitle": "Before 28…h4: the slow-burn endgame squeeze",
     "fen": "4b2r/p3k3/2p1pR2/2r3pp/8/P3P3/1PB3PP/2K2R2 b - - 5 28",
     "lastMoveClassification": ""
   }

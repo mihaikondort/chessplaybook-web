@@ -287,7 +287,7 @@ export default function Explain() {
                       See <span className="text-link">why</span> the position works.
                     </h1>
                     <p className="text-base sm:text-lg text-muted-foreground mt-4 max-w-md mx-auto lg:mx-0">
-                      Engine numbers say <span className="italic">who&rsquo;s</span> better. We say why —
+                      Engine numbers say <span className="italic">who&rsquo;s</span> better. We say why:
                       the plans, the threats, and the one move that matters.
                     </p>
                     <div className="mt-6">
