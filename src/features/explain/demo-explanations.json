@@ -1,5 +1,5 @@
 {
-  "pipelineVersion": "4.8.5",
+  "pipelineVersion": "4.8.7",
   "bakedAt": "",
   "byFen": {
     "2rr2k1/1b3ppp/pb2p3/1p2P3/1P2BPnq/P1N3P1/1B2Q2P/R4R1K b - - 0 22": {
@@ -83,12 +83,12 @@
                 "priority": 50
               },
               {
-                "text": "Black's rook on c8 sits on the open c-file, giving Black potential pressure along this line.",
+                "text": "Black's rook on d8 sits on the open d-file, giving Black potential pressure along this line.",
                 "side": "black",
                 "priority": 60
               },
               {
-                "text": "Black's rook on d8 controls the open d-file, a clear lane toward the back rank.",
+                "text": "Black's rook on c8 controls the open c-file, a clear lane toward the back rank.",
                 "side": "black",
                 "priority": 60
               },
@@ -203,36 +203,31 @@
             ]
           },
           "pieces": {
-            "summary": "White's knight occupies the a5 outpost, though its edge placement limits its influence.",
+            "summary": "White's rook on e1 stakes a claim on the open e-file.",
             "items": [
               {
-                "text": "White's knight occupies the a5 outpost, though its edge placement limits its influence.",
+                "text": "White's rook on e1 stakes a claim on the open e-file.",
                 "side": "white",
                 "priority": 60
               },
               {
-                "text": "White's rook on e1 stakes a claim on the open e-file.",
+                "text": "White's knight occupies the a5 outpost, though its edge placement limits its influence.",
                 "side": "white",
                 "priority": 60
               }
             ]
           },
           "pawn_structure": {
-            "summary": "The central pawn structure is atypical: White has a pawn on d5, Black has a pawn on d4.",
+            "summary": "White's passed pawn on d5 cannot advance while the queen stands in its path. This is textbook blockade technique.",
             "items": [
               {
-                "text": "The central pawn structure is atypical: White has a pawn on d5, Black has a pawn on d4.",
-                "side": "both",
+                "text": "White's passed pawn on d5 cannot advance while the queen stands in its path. This is textbook blockade technique.",
+                "side": "white",
                 "priority": 50
               },
               {
                 "text": "With three pawn islands, Black's pawns are more scattered and harder to protect than White's compact two-island structure.",
                 "side": "both",
-                "priority": 50
-              },
-              {
-                "text": "White's passed pawn on d5 cannot advance while the queen stands in its path. This is textbook blockade technique.",
-                "side": "white",
                 "priority": 50
               }
             ]
@@ -323,11 +318,6 @@
                 "priority": 55
               },
               {
-                "text": "With the centre settled, both sides manoeuvre for the break that suits them.",
-                "side": "neutral",
-                "priority": 50
-              },
-              {
                 "text": "Black's pawn on f5 stands alone on the f-file, an isolani that must be defended by pieces.",
                 "side": "black",
                 "priority": 50
@@ -402,18 +392,8 @@
             ]
           },
           "pawn_structure": {
-            "summary": "The d-file is half-open for White, whose rooks can press against Black's central pawn on it.",
+            "summary": "White's passed pawn on e5 is blockaded by the pawn. Its advance is completely halted.",
             "items": [
-              {
-                "text": "The d-file is half-open for White, whose rooks can press against Black's central pawn on it.",
-                "side": "both",
-                "priority": 50
-              },
-              {
-                "text": "With three pawn islands, Black's pawns are more scattered and harder to protect than White's compact two-island structure.",
-                "side": "both",
-                "priority": 50
-              },
               {
                 "text": "White's passed pawn on e5 is blockaded by the pawn. Its advance is completely halted.",
                 "side": "white",
@@ -427,6 +407,16 @@
               {
                 "text": "Black's e-pawn on e6 is backward: it cannot advance safely and is a long-term weakness.",
                 "side": "black",
+                "priority": 50
+              },
+              {
+                "text": "With three pawn islands, Black's pawns are more scattered and harder to protect than White's compact two-island structure.",
+                "side": "both",
+                "priority": 50
+              },
+              {
+                "text": "With the centre settled, both sides manoeuvre for the break that suits them.",
+                "side": "neutral",
                 "priority": 50
               }
             ]
@@ -513,19 +503,9 @@
                 "priority": 88
               },
               {
-                "text": "White keeps a central pawn on the d-file and Black has none there, a classic asymmetric centre.",
-                "side": "both",
-                "priority": 50
-              },
-              {
                 "text": "With three pawn islands, White's pawns are more scattered and harder to protect than Black's compact two-island structure.",
                 "side": "both",
                 "priority": 50
-              },
-              {
-                "text": "White occupies d5 in the centre, controlling key central squares.",
-                "side": "white",
-                "priority": 70
               }
             ]
           }
@@ -625,12 +605,7 @@
                 "priority": 50
               },
               {
-                "text": "White's pawn on e3 stands alone on the e-file, an isolani that must be defended by pieces.",
-                "side": "white",
-                "priority": 50
-              },
-              {
-                "text": "Black's isolated c-pawn on c6 is a long-term target. No friendly pawn can ever come to its defense.",
+                "text": "Black's pawn on c6 stands alone on the c-file, an isolani that must be defended by pieces.",
                 "side": "black",
                 "priority": 50
               },
@@ -643,6 +618,11 @@
                 "text": "Black's g5-h5 phalanx controls the squares ahead and can advance as a unit.",
                 "side": "black",
                 "priority": 48
+              },
+              {
+                "text": "White's isolated e-pawn on e3 is a long-term target. No friendly pawn can ever come to its defense.",
+                "side": "white",
+                "priority": 50
               }
             ]
           }
