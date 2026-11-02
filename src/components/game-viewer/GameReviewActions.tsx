@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BarChart3, Lightbulb } from 'lucide-react';
 import { useGameReview } from '@/components/game-analysis/useGameReview';
 import { GameReportDialog } from '@/components/game-analysis/GameReportDialog';
-import { ExplanationDialog } from '@/components/game-analysis/ExplanationDialog';
+import { ExplanationOverlay } from '@/components/game-analysis/ExplanationOverlay';
 import type { GamePly } from '@/lib/game/gameModel';
 import { pliesBefore } from '@/lib/game/moveSpeech';
 
@@ -15,8 +15,9 @@ function isInitialPosition(fen: string): boolean {
 import type { ChessGame } from '@/types/chess';
 
 /**
- * Game report and Explain position, as a row of two buttons and their dialogs
- * (layout redesign E4b-2; owner, E4a: both open in dialogs).
+ * Game report and Explain position, as a row of two buttons (layout redesign
+ * E4b-2). The report opens in a dialog; the explanation opens over the lane,
+ * beside the board (owner, 2026-11-03).
  *
  * Its own component so a page without them (the live viewer) never runs
  * `useGameReview` at all: the hook keeps a report in session storage by game and
@@ -65,6 +66,26 @@ export function GameReviewActions({
   };
   const canReport = isInitialPosition(startFen);
   const firstPly = pliesBefore(startFen);
+  /* "5... Bg7" for a board ply index. */
+  const moveLabel = (p: number) =>
+    `${Math.floor((firstPly + p) / 2) + 1}${(firstPly + p) % 2 === 0 ? '.' : '...'} ${plies[p]?.san ?? ''}`;
+
+  /*
+    THE EXPLANATION SITS BESIDE THE BOARD (owner, 2026-11-03), so the board stays
+    usable while it is open. It describes the ply it was asked for; the review
+    hook clears it whenever the board moves, so stepping away shows a notice
+    instead, and stepping back fetches it again from the hook's cache, with no
+    new engine run. `null` is closed.
+  */
+  const [explainedPly, setExplainedPly] = useState<number | null>(null);
+  const explainRef = useRef<HTMLButtonElement>(null);
+  /* A ref, not a dependency: the hook's callback changes on every render (its
+     `moves` is a new array each time), which would start a fetch per render. */
+  const explainNow = useRef(review.handleExplainPosition);
+  explainNow.current = review.handleExplainPosition;
+  useEffect(() => {
+    if (explainedPly !== null && ply === explainedPly) void explainNow.current();
+  }, [explainedPly, ply]);
   const reportLabel = review.reportButtonState === 'analyzing'
     ? (review.reportProgress ? `Analyzing ${review.reportProgress.current}/${review.reportProgress.total}` : 'Analyzing…')
     : review.reportError ? 'Try the report again' : 'Game report';
@@ -83,23 +104,40 @@ export function GameReviewActions({
           <BarChart3 className="shrink-0" aria-hidden />
           <span className="truncate">{reportLabel}</span>
         </button>}
-        <ExplanationDialog
-          structured={review.positionExplanation?.structured ?? null}
-          loading={review.explanationLoading}
-          error={review.explanationError}
-          title="Explain position"
-          description={ply < 0 ? undefined : `After ${Math.floor((firstPly + ply) / 2) + 1}${(firstPly + ply) % 2 === 0 ? '.' : '...'} ${plies[ply].san}.`}
-          onOpen={() => { void review.handleExplainPosition(); }}
-          trigger={(
-            /* Not at the starting position (owner, 2026-10-10): no move has been
-               played, so there is nothing to explain yet. */
-            <button type="button" disabled={ply < 0} className="card-btn w-full justify-center gap-[0.35em] disabled:opacity-50">
-              <Lightbulb className="shrink-0" aria-hidden />
-              <span className="truncate">Explain position</span>
-            </button>
-          )}
-        />
+        {/* Not at the starting position (owner, 2026-10-10): no move has been
+            played, so there is nothing to explain yet. */}
+        <button
+          ref={explainRef}
+          type="button"
+          disabled={ply < 0}
+          onClick={() => setExplainedPly(ply)}
+          className="card-btn w-full justify-center gap-[0.35em] disabled:opacity-50"
+        >
+          <Lightbulb className="shrink-0" aria-hidden />
+          <span className="truncate">Explain position</span>
+        </button>
       </div>
+      <ExplanationOverlay
+        open={explainedPly !== null}
+        onClose={() => setExplainedPly(null)}
+        returnFocusTo={explainRef}
+        structured={review.positionExplanation?.structured ?? null}
+        loading={review.explanationLoading}
+        error={review.explanationError}
+        title="Explain position"
+        description={explainedPly === null ? undefined : `After ${moveLabel(explainedPly)}.`}
+        notice={explainedPly !== null && ply !== explainedPly ? (
+          <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+            <p>The board is no longer on {moveLabel(explainedPly)}.</p>
+            {ply >= 0 && (
+              <button type="button" onClick={() => setExplainedPly(ply)} className="card-btn w-full justify-center gap-[0.35em]">
+                <Lightbulb className="shrink-0" aria-hidden />
+                <span className="truncate">Explain this position</span>
+              </button>
+            )}
+          </div>
+        ) : undefined}
+      />
       <GameReportDialog
         open={reportOpen}
         onOpenChange={setReportOpen}

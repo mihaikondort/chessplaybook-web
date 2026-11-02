@@ -1,4 +1,5 @@
-import { ExplanationDialog } from '@/components/game-analysis/ExplanationDialog';
+import { useEffect, useRef, useState } from 'react';
+import { ExplanationOverlay } from '@/components/game-analysis/ExplanationOverlay';
 import { BookOpen, Crown, Cpu, User } from 'lucide-react';
 import { logGA4Event } from '@/services/analytics';
 import type { StructuredExplanation } from '@/types/positionExplanation';
@@ -45,6 +46,11 @@ function formatCp(cp: number): string {
   foot. The card draws the "Move review" title.
 */
 export function MoveAnalysis({ champion, verdict, isLast, onNext }: MoveAnalysisProps) {
+  const [explainOpen, setExplainOpen] = useState(false);
+  const explainRef = useRef<HTMLButtonElement>(null);
+  /* A new answer is a new position: the old explanation closes with it. */
+  useEffect(() => { setExplainOpen(false); }, [verdict]);
+
   return (
     <div className="card-body">
       <section aria-label="Move result" className="flex flex-col" style={{ gap: 'var(--card-air)' }}>
@@ -85,20 +91,29 @@ export function MoveAnalysis({ champion, verdict, isLast, onNext }: MoveAnalysis
 
       <div className="mt-auto flex flex-col" style={{ gap: 'calc(var(--card-air) * 2)' }}>
         {/* The coaching describes the position as it stood BEFORE the move, while
-            the board now shows the move played: the dialog's title says so. It
-            opens in a dialog because a Workspace card cannot hold it (owner,
-            2026-10-08, D0); the verdict and the comparison above stay here. */}
-        <ExplanationDialog
+            the board now shows the move played: the panel's title says so. A
+            Workspace card cannot hold it (owner, 2026-10-08, D0), so it opens over
+            the lane, beside the board (owner, 2026-11-03); the verdict and the
+            comparison above stay here, under it. */}
+        <button
+          ref={explainRef}
+          type="button"
+          className="card-btn w-full text-[0.92em]"
+          onClick={() => {
+            setExplainOpen(true);
+            logGA4Event({ name: 'champion_challenge_explanation_opened', params: { champion, quality: verdict.quality } });
+          }}
+        >
+          <BookOpen aria-hidden />
+          Explain this position
+        </button>
+        <ExplanationOverlay
+          open={explainOpen}
+          onClose={() => setExplainOpen(false)}
+          returnFocusTo={explainRef}
           structured={verdict.feedback as StructuredExplanation}
           title="The position you solved"
           description="As it stood before your move."
-          onOpen={() => logGA4Event({ name: 'champion_challenge_explanation_opened', params: { champion, quality: verdict.quality } })}
-          trigger={(
-            <button type="button" className="card-btn w-full text-[0.92em]">
-              <BookOpen aria-hidden />
-              Explain this position
-            </button>
-          )}
         />
         <button type="button" className="card-btn card-btn-primary w-full" onClick={onNext}>
           {isLast ? 'See results' : 'Next position'}

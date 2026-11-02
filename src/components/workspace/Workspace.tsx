@@ -14,7 +14,7 @@
  * a page cannot wrap its cards in its own grid.
  */
 import {
-  Children, isValidElement, useContext, useId, useLayoutEffect, useRef,
+  Children, createContext, isValidElement, useContext, useId, useLayoutEffect, useRef, useState,
   type CSSProperties, type ReactElement, type ReactNode, type RefObject,
 } from 'react';
 import { ChromeContext } from '@/app/chromeContext';
@@ -173,9 +173,41 @@ function assertCard(el: unknown, where: string): asserts el is ReactElement<Work
   }
 }
 
+/*
+  A CARD CAN OPEN ITS OWN LANE'S OVERLAY (owner, 2026-11-03: the explanation must
+  not cover the board). The puzzles page owns its overlay and passes it as
+  `lane.overlay`. A control deeper in a card (Explain position in the game viewer,
+  Explain this position in Champion Challenge) keeps its own state instead: it
+  claims the overlay by name and renders its panel into it through a portal, so
+  its state stays where it is and the page needs no new prop.
+*/
+interface LaneOverlaySlot {
+  claim: (label: string | null) => void;
+  target: HTMLElement | null;
+}
+const LaneOverlayContext = createContext<LaneOverlaySlot | null>(null);
+
+/**
+ * Claim the overlay of the lane this card sits in while `label` is set.
+ * Returns the element to portal the panel into, or `null` while it is closed,
+ * before the lane has drawn it, or outside a Workspace lane.
+ */
+export function useLaneOverlay(label: string | null): HTMLElement | null {
+  const slot = useContext(LaneOverlayContext);
+  const claim = slot?.claim;
+  useLayoutEffect(() => {
+    if (!claim || label == null) return;
+    claim(label);
+    return () => claim(null);
+  }, [claim, label]);
+  return label != null ? slot?.target ?? null : null;
+}
+
 function Lane({ role, lane, focus }: { role: 'activity' | 'context'; lane?: WorkspaceLane; focus: boolean }) {
   const id = useId();
   const hiddenLane = focus && role === 'context';
+  const [claimed, setClaimed] = useState<string | null>(null);
+  const [target, setTarget] = useState<HTMLDivElement | null>(null);
 
   // An absent lane still occupies its track, so the board stays centred (spec §9).
   if (!lane) {
@@ -185,6 +217,10 @@ function Lane({ role, lane, focus }: { role: 'activity' | 'context'; lane?: Work
   const cards = Children.toArray(lane.cards);
   cards.forEach((c) => assertCard(c, `the ${role} lane`));
   if (lane.foot) assertCard(lane.foot, `the ${role} lane's foot`);
+  /* The page's own overlay wins; a claimed one is drawn empty and filled by the
+     portal of the card that claimed it. */
+  const overlayLabel = lane.overlay?.label ?? claimed;
+  const covered = overlayLabel != null;
   const keepers = (cards as ReactElement<WorkspaceCardProps>[]).filter((c) => c.props.keepInFocus);
   if (keepers.length > 1) {
     throw new Error(`Workspace: at most one card in a lane may set keepInFocus; the ${role} lane has ${keepers.length} (spec §9).`);
@@ -199,6 +235,7 @@ function Lane({ role, lane, focus }: { role: 'activity' | 'context'; lane?: Work
       hidden={hiddenLane || undefined}
     >
       <h2 id={id} className="sr-only">{lane.title}</h2>
+      <LaneOverlayContext.Provider value={{ claim: setClaimed, target }}>
       <div className="workspace-lane-stack">
         {(cards as ReactElement<WorkspaceCardProps>[]).map((c, i) => {
           const { share = 1, type, keepInFocus, children } = c.props;
@@ -212,23 +249,25 @@ function Lane({ role, lane, focus }: { role: 'activity' | 'context'; lane?: Work
               hidden={(focus && !keepInFocus) || undefined}
               /* Under an overlay a card is covered, so it must not take focus
                  or be read out either. */
-              {...(lane.overlay ? { inert: '' as unknown as boolean } : {})}
+              {...(covered ? { inert: '' as unknown as boolean } : {})}
             >
               <div {...contentProps(type)}>{children}</div>
             </div>
           );
         })}
-        {lane.overlay && (
+        {covered && (
           <div
+            ref={setTarget}
             className="workspace-lane-overlay surface-card rounded-lg"
             role="region"
-            aria-label={lane.overlay.label}
+            aria-label={overlayLabel}
             data-workspace-overlay
           >
-            {lane.overlay.content}
+            {lane.overlay?.content}
           </div>
         )}
       </div>
+      </LaneOverlayContext.Provider>
       {lane.foot && (
         <div className="workspace-foot surface-card rounded-lg" data-card-type={lane.foot.props.type}>
           <div {...contentProps(lane.foot.props.type)}>{lane.foot.props.children}</div>
