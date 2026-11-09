@@ -350,15 +350,18 @@ export function useGameReview({
   // Explain Position handler
   const handleExplainPosition = useCallback(async () => {
     if (!currentFen) return;
+    // The move index is part of the key: since pipeline 4.9.0 an explanation can carry the last move's reasons,
+    // which depend on the moves that reached the position (move explanations plan D4).
+    const cacheKey = `${currentMoveIndex}|${currentFen}`;
     // `?forceExplain=1` — skip the client-side useRef cache so a fresh
     // analysis always runs (debug tool for diagnosing "what did the
     // engine actually produce?"). The server-side cache-check is also
     // skipped further down.
     if (useForceExplain) {
-      explanationCache.current.delete(currentFen);
+      explanationCache.current.delete(cacheKey);
       console.info('[forceExplain] skipping client cache for', currentFen);
     }
-    const cached = explanationCache.current.get(currentFen);
+    const cached = explanationCache.current.get(cacheKey);
     // If the sectioned UI flag is ON but the cached entry predates the
     // 2.7.0-route-fix roll-out (commit 8ef0528) and therefore lacks
     // `structured`, evict it so the next call hits the network and
@@ -366,7 +369,7 @@ export function useGameReview({
     if (cached && !cached.structured) {
       // Legacy cached entry from before the sectioned-UI rollout; evict
       // so the next call hits the network and gets a structured response.
-      explanationCache.current.delete(currentFen);
+      explanationCache.current.delete(cacheKey);
     } else if (cached) {
       setPositionExplanation(cached);
       setExplanationError(null);
@@ -412,7 +415,11 @@ export function useGameReview({
           const cacheCheckUrl =
             `/api/explain-position/v4/cache-check` +
             `?fen=${encodeURIComponent(currentFen)}` +
-            `&lastMoveClassification=${encodeURIComponent(classificationParam)}`;
+            `&lastMoveClassification=${encodeURIComponent(classificationParam)}` +
+            // D3: the game's moves are part of the server's key, as they are in the POST's moveHistory.
+            (moves.length > 0 && currentMoveIndex > 0
+              ? `&moves=${encodeURIComponent(moves.slice(0, currentMoveIndex).join(','))}`
+              : '');
           const cacheCheckResponse = await backendAPIClient.get<{
             cached: boolean;
             result?: Record<string, unknown>;
@@ -518,7 +525,7 @@ export function useGameReview({
           action: response.action as string | undefined,
           structured: response.structured as StructuredExplanation | undefined,
         };
-        explanationCache.current.set(currentFen, explanation);
+        explanationCache.current.set(cacheKey, explanation);
         setPositionExplanation(explanation);
       } else {
         // Issue #10 (2026-04-19): the backend returned 2xx but the body

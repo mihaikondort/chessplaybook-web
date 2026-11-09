@@ -20,7 +20,7 @@ import { ReactNode } from 'react';
 import { Card } from '@/components/ui/card';
 import {
   ScrollText, ArrowLeft, Loader2, AlertCircle, Lightbulb, BookOpen,
-  Zap, Shield, Scale, Blocks, Grip, Compass,
+  Zap, Shield, Scale, Blocks, Grip, Compass, Footprints,
 } from 'lucide-react';
 import { SectionBlock } from './SectionBlock';
 import { CoachBriefingEvalRail } from './CoachBriefingEvalRail';
@@ -142,7 +142,7 @@ export function PositionExplanationCard({
   }
 
   // ── Populated ──
-  const { verdict, action, sections } = structured;
+  const { verdict, action, sections, moveReasons } = structured;
   const presentation = classifyVerdict(verdict.eval);
 
   // Disclosure: mobile opens Threats only (compact); desktop opens every
@@ -191,6 +191,15 @@ export function PositionExplanationCard({
             </div>
           )}
           <div className="px-4 pb-4">
+            {/* Why the last move was played (backend lines, in their order); only present in the opening. */}
+            {moveReasons && moveReasons.length > 0 && (
+              <SectionBlock
+                icon={<Footprints className="h-4 w-4" />}
+                title="Why This Move"
+                content={{ summary: '', items: moveReasons.map((text, i) => ({ text, side: 'neutral', priority: moveReasons.length - i })) }}
+                defaultExpanded
+              />
+            )}
             {SECTION_DISPLAY_ORDER.map((key) => {
               const content = sections[key];
               return (

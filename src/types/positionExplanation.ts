@@ -44,6 +44,8 @@ export interface StructuredExplanation {
     reason?: string;
   };
   action: string;
+  /** Why the last move was played, one line each, in the opening only (pipeline 4.9.0, move explanations plan D1). */
+  moveReasons?: string[];
   sections: {
     threats_and_tactics?: ThreatsAndTacticsSection;
     king_safety?: SectionContent;
