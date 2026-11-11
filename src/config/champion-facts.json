@@ -232,7 +232,134 @@
           "name": "World Championship 1st",
           "games": 20
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1860,
+          "to": 1899
+        },
+        "results": {
+          "w": 73,
+          "d": 0,
+          "l": 27
+        },
+        "playerAccuracy": 91,
+        "opponentAccuracy": 86.7,
+        "qualityScore": 90.5,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Steinitz, William",
+            "black": "Chigorin, Mikhail",
+            "event": "World Championship 4th",
+            "year": 1892,
+            "resultForPlayer": "win",
+            "qualityScore": 94.12,
+            "playerAccuracy": 97.12,
+            "opponentAccuracy": 87.11
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Steinitz, William",
+            "black": "Ware, Preston",
+            "event": "Vienna",
+            "year": 1882,
+            "resultForPlayer": "win",
+            "qualityScore": 93.89,
+            "playerAccuracy": 97.61,
+            "opponentAccuracy": 85.22
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Steinitz, William",
+            "black": "Dubois, Serafino",
+            "event": "London m2",
+            "year": 1862,
+            "resultForPlayer": "win",
+            "qualityScore": 93.68,
+            "playerAccuracy": 97.7,
+            "opponentAccuracy": 84.3
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Steinitz, William",
+            "black": "Chigorin, Mikhail",
+            "event": "Vienna",
+            "year": 1898,
+            "resultForPlayer": "win",
+            "qualityScore": 93.51,
+            "playerAccuracy": 95.41,
+            "opponentAccuracy": 89.08
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Lasker, Emanuel",
+            "black": "Steinitz, William",
+            "event": "World Championship 5th",
+            "year": 1894,
+            "resultForPlayer": "loss",
+            "qualityScore": 93.39,
+            "playerAccuracy": 88.44,
+            "opponentAccuracy": 95.51
+          }
+        ],
+        "openings": [
+          {
+            "name": "Ruy Lopez",
+            "games": 27
+          },
+          {
+            "name": "Italian Game",
+            "games": 14
+          },
+          {
+            "name": "Vienna Game",
+            "games": 10
+          },
+          {
+            "name": "French Defence",
+            "games": 10
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 9
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Emanuel Lasker",
+            "champion": "lasker",
+            "games": 14
+          },
+          {
+            "name": "Chigorin, Mikhail",
+            "champion": null,
+            "games": 10
+          },
+          {
+            "name": "Bird, Henry Edward",
+            "champion": null,
+            "games": 7
+          },
+          {
+            "name": "Zukertort, Johannes Hermann",
+            "champion": null,
+            "games": 7
+          },
+          {
+            "name": "Blackburne, Joseph Henry",
+            "champion": null,
+            "games": 6
+          }
+        ]
+      }
     },
     "lasker": {
       "name": "Emanuel Lasker",
@@ -499,7 +626,134 @@
           "name": "St Petersburg",
           "games": 18
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1889,
+          "to": 1936
+        },
+        "results": {
+          "w": 79,
+          "d": 1,
+          "l": 20
+        },
+        "playerAccuracy": 92,
+        "opponentAccuracy": 87,
+        "qualityScore": 91,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Stahlberg, Gideon",
+            "black": "Lasker, Emanuel",
+            "event": "Zuerich",
+            "year": 1934,
+            "resultForPlayer": "loss",
+            "qualityScore": 93.71,
+            "playerAccuracy": 90.08,
+            "opponentAccuracy": 95.27
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Lasker, Emanuel",
+            "black": "Marshall, Frank James",
+            "event": "World Championship 7th",
+            "year": 1907,
+            "resultForPlayer": "win",
+            "qualityScore": 93.52,
+            "playerAccuracy": 95.68,
+            "opponentAccuracy": 88.49
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Lasker, Emanuel",
+            "black": "Steinitz, William",
+            "event": "World Championship 5th",
+            "year": 1894,
+            "resultForPlayer": "win",
+            "qualityScore": 93.48,
+            "playerAccuracy": 95.61,
+            "opponentAccuracy": 88.5
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Rubinstein, Akiba",
+            "black": "Lasker, Emanuel",
+            "event": "Moscow",
+            "year": 1925,
+            "resultForPlayer": "win",
+            "qualityScore": 93.42,
+            "playerAccuracy": 95.74,
+            "opponentAccuracy": 87.98
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Lasker, Emanuel",
+            "black": "Zamudio, Jose",
+            "event": "Buenos Aires sim",
+            "year": 1910,
+            "resultForPlayer": "win",
+            "qualityScore": 93.02,
+            "playerAccuracy": 96.46,
+            "opponentAccuracy": 85
+          }
+        ],
+        "openings": [
+          {
+            "name": "Ruy Lopez",
+            "games": 29
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 20
+          },
+          {
+            "name": "French Defence",
+            "games": 11
+          },
+          {
+            "name": "Queen's Pawn Game",
+            "games": 7
+          },
+          {
+            "name": "Four Knights Game",
+            "games": 4
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Wilhelm Steinitz",
+            "champion": "steinitz",
+            "games": 10
+          },
+          {
+            "name": "Tarrasch, Siegbert",
+            "champion": null,
+            "games": 6
+          },
+          {
+            "name": "Pillsbury, Harry Nelson",
+            "champion": null,
+            "games": 5
+          },
+          {
+            "name": "Marshall, Frank James",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Blackburne, Joseph Henry",
+            "champion": null,
+            "games": 4
+          }
+        ]
+      }
     },
     "capablanca": {
       "name": "José Raúl Capablanca",
@@ -757,7 +1011,134 @@
           "name": "Budapest",
           "games": 22
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1909,
+          "to": 1939
+        },
+        "results": {
+          "w": 89,
+          "d": 1,
+          "l": 10
+        },
+        "playerAccuracy": 93.1,
+        "opponentAccuracy": 86.7,
+        "qualityScore": 91.4,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Capablanca, Jose Raul",
+            "black": "Marshall, Frank James",
+            "event": "USA m",
+            "year": 1909,
+            "resultForPlayer": "win",
+            "qualityScore": 94.15,
+            "playerAccuracy": 96,
+            "opponentAccuracy": 89.81
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Capablanca, Jose Raul",
+            "black": "Brinckmann, Alfred",
+            "event": "Budapest",
+            "year": 1929,
+            "resultForPlayer": "win",
+            "qualityScore": 94.14,
+            "playerAccuracy": 96.97,
+            "opponentAccuracy": 87.52
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Capablanca, Jose Raul",
+            "black": "Chajes, Oscar",
+            "event": "New York Rice prel",
+            "year": 1916,
+            "resultForPlayer": "win",
+            "qualityScore": 94.07,
+            "playerAccuracy": 95.97,
+            "opponentAccuracy": 89.62
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Capablanca, Jose Raul",
+            "black": "Balla, Zoltan",
+            "event": "Budapest",
+            "year": 1928,
+            "resultForPlayer": "win",
+            "qualityScore": 93.69,
+            "playerAccuracy": 96.43,
+            "opponentAccuracy": 87.32
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Lasker, Edward",
+            "black": "Capablanca, Jose Raul",
+            "event": "New York",
+            "year": 1931,
+            "resultForPlayer": "win",
+            "qualityScore": 93.47,
+            "playerAccuracy": 94.69,
+            "opponentAccuracy": 90.62
+          }
+        ],
+        "openings": [
+          {
+            "name": "Ruy Lopez",
+            "games": 25
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 22
+          },
+          {
+            "name": "Nimzo-Indian Defence",
+            "games": 7
+          },
+          {
+            "name": "Queen's Indian Defence",
+            "games": 6
+          },
+          {
+            "name": "Queen's Pawn Game",
+            "games": 6
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Marshall, Frank James",
+            "champion": null,
+            "games": 15
+          },
+          {
+            "name": "Chajes, Oscar",
+            "champion": null,
+            "games": 5
+          },
+          {
+            "name": "Emanuel Lasker",
+            "champion": "lasker",
+            "games": 5
+          },
+          {
+            "name": "Alexander Alekhine",
+            "champion": "alekhine",
+            "games": 4
+          },
+          {
+            "name": "Tartakower, Saviely",
+            "champion": null,
+            "games": 3
+          }
+        ]
+      }
     },
     "alekhine": {
       "name": "Alexander Alekhine",
@@ -1015,7 +1396,134 @@
           "name": "Munich",
           "games": 26
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1909,
+          "to": 1943
+        },
+        "results": {
+          "w": 77,
+          "d": 0,
+          "l": 23
+        },
+        "playerAccuracy": 92.7,
+        "opponentAccuracy": 88.4,
+        "qualityScore": 92,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Alekhine, Alexander",
+            "black": "Janowsky, Dawid Markelowicz",
+            "event": "New York",
+            "year": 1924,
+            "resultForPlayer": "win",
+            "qualityScore": 94.2,
+            "playerAccuracy": 96.93,
+            "opponentAccuracy": 87.84
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Alekhine, Alexander",
+            "black": "Frydman, Paulino",
+            "event": "Podebrady",
+            "year": 1936,
+            "resultForPlayer": "win",
+            "qualityScore": 93.94,
+            "playerAccuracy": 95.32,
+            "opponentAccuracy": 90.72
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Opocensky, Karel",
+            "black": "Alekhine, Alexander",
+            "event": "Munich",
+            "year": 1941,
+            "resultForPlayer": "loss",
+            "qualityScore": 93.87,
+            "playerAccuracy": 90.46,
+            "opponentAccuracy": 95.33
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Alekhine, Alexander",
+            "black": "Nimzowitsch, Aaron ",
+            "event": "St Petersburg",
+            "year": 1914,
+            "resultForPlayer": "win",
+            "qualityScore": 93.81,
+            "playerAccuracy": 95.61,
+            "opponentAccuracy": 89.6
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Alekhine, Alexander",
+            "black": "Euwe, Max",
+            "event": "World Championship 16th",
+            "year": 1935,
+            "resultForPlayer": "win",
+            "qualityScore": 93.7,
+            "playerAccuracy": 95.33,
+            "opponentAccuracy": 89.91
+          }
+        ],
+        "openings": [
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 35
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 11
+          },
+          {
+            "name": "Nimzo-Indian Defence",
+            "games": 7
+          },
+          {
+            "name": "Slav Defence",
+            "games": 6
+          },
+          {
+            "name": "Queen's Indian Defence",
+            "games": 6
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Bogoljubow, Efim",
+            "champion": null,
+            "games": 15
+          },
+          {
+            "name": "Max Euwe",
+            "champion": "euwe",
+            "games": 6
+          },
+          {
+            "name": "José Raúl Capablanca",
+            "champion": "capablanca",
+            "games": 4
+          },
+          {
+            "name": "Nimzowitsch, Aaron",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Tartakower, Saviely",
+            "champion": null,
+            "games": 3
+          }
+        ]
+      }
     },
     "euwe": {
       "name": "Max Euwe",
@@ -1300,7 +1808,134 @@
           "name": "Candidats Tournament",
           "games": 28
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1920,
+          "to": 1960
+        },
+        "results": {
+          "w": 68,
+          "d": 0,
+          "l": 32
+        },
+        "playerAccuracy": 92.1,
+        "opponentAccuracy": 88.9,
+        "qualityScore": 92.1,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Euwe, Max",
+            "black": "Colle, Edgar",
+            "event": "Amsterdam m1",
+            "year": 1928,
+            "resultForPlayer": "win",
+            "qualityScore": 94.21,
+            "playerAccuracy": 96.78,
+            "opponentAccuracy": 88.19
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Euwe, Max",
+            "black": "Olland, Adolf Georg",
+            "event": "NLD-ch",
+            "year": 1926,
+            "resultForPlayer": "win",
+            "qualityScore": 94.03,
+            "playerAccuracy": 97.28,
+            "opponentAccuracy": 86.44
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Euwe, Max",
+            "black": "Olland, Adolf Georg",
+            "event": "Amsterdam m 2021",
+            "year": 1921,
+            "resultForPlayer": "win",
+            "qualityScore": 93.93,
+            "playerAccuracy": 96.87,
+            "opponentAccuracy": 87.07
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Euwe, Max",
+            "black": "Steiner, Herman",
+            "event": "Groningen",
+            "year": 1946,
+            "resultForPlayer": "win",
+            "qualityScore": 93.82,
+            "playerAccuracy": 95.82,
+            "opponentAccuracy": 89.14
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Eliskases, Erich Gottlieb",
+            "black": "Euwe, Max",
+            "event": "Buenos Aires/La Plata",
+            "year": 1947,
+            "resultForPlayer": "loss",
+            "qualityScore": 93.8,
+            "playerAccuracy": 90.93,
+            "opponentAccuracy": 95.03
+          }
+        ],
+        "openings": [
+          {
+            "name": "Nimzo-Indian Defence",
+            "games": 13
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 13
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 12
+          },
+          {
+            "name": "Slav Defence",
+            "games": 9
+          },
+          {
+            "name": "King's Indian Defence",
+            "games": 7
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Alexander Alekhine",
+            "champion": "alekhine",
+            "games": 6
+          },
+          {
+            "name": "Bogoljubow, Efim",
+            "champion": null,
+            "games": 5
+          },
+          {
+            "name": "Olland, Adolf Georg",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Tartakower, Saviely",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Flohr, Salo",
+            "champion": null,
+            "games": 3
+          }
+        ]
+      }
     },
     "botvinnik": {
       "name": "Mikhail Botvinnik",
@@ -1602,7 +2237,134 @@
           "name": "World Championship 19th",
           "games": 24
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1926,
+          "to": 1970
+        },
+        "results": {
+          "w": 79,
+          "d": 0,
+          "l": 21
+        },
+        "playerAccuracy": 92.7,
+        "opponentAccuracy": 88.5,
+        "qualityScore": 91.9,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Botvinnik, Mikhail",
+            "black": "Dueckstein, Andreas",
+            "event": "Munich olm fin-A",
+            "year": 1958,
+            "resultForPlayer": "win",
+            "qualityScore": 94.58,
+            "playerAccuracy": 96.21,
+            "opponentAccuracy": 90.77
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Keres, Paul",
+            "black": "Botvinnik, Mikhail",
+            "event": "Alekhine mem",
+            "year": 1956,
+            "resultForPlayer": "loss",
+            "qualityScore": 94.44,
+            "playerAccuracy": 90.32,
+            "opponentAccuracy": 96.21
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Spassky, Boris V",
+            "black": "Botvinnik, Mikhail",
+            "event": "URS-chT",
+            "year": 1966,
+            "resultForPlayer": "win",
+            "qualityScore": 93.92,
+            "playerAccuracy": 95.01,
+            "opponentAccuracy": 91.37
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Petrosian, Tigran V",
+            "black": "Botvinnik, Mikhail",
+            "event": "World Championship 25th",
+            "year": 1963,
+            "resultForPlayer": "loss",
+            "qualityScore": 93.92,
+            "playerAccuracy": 90.42,
+            "opponentAccuracy": 95.42
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Botvinnik, Mikhail",
+            "black": "Lombardy, William James",
+            "event": "Hoogovens",
+            "year": 1969,
+            "resultForPlayer": "win",
+            "qualityScore": 93.69,
+            "playerAccuracy": 95.76,
+            "opponentAccuracy": 88.84
+          }
+        ],
+        "openings": [
+          {
+            "name": "English Opening",
+            "games": 12
+          },
+          {
+            "name": "Nimzo-Indian Defence",
+            "games": 12
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 11
+          },
+          {
+            "name": "Sicilian Defence",
+            "games": 10
+          },
+          {
+            "name": "Grunfeld Defence",
+            "games": 7
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Vasily Smyslov",
+            "champion": "smyslov",
+            "games": 8
+          },
+          {
+            "name": "Levenfish, Grigory",
+            "champion": null,
+            "games": 5
+          },
+          {
+            "name": "Ragozin, Viacheslav",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Keres, Paul",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Tigran Petrosian",
+            "champion": "petrosian",
+            "games": 3
+          }
+        ]
+      }
     },
     "smyslov": {
       "name": "Vasily Smyslov",
@@ -1905,7 +2667,134 @@
           "name": "Moscow-ch",
           "games": 46
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1942,
+          "to": 1999
+        },
+        "results": {
+          "w": 64,
+          "d": 0,
+          "l": 36
+        },
+        "playerAccuracy": 92.6,
+        "opponentAccuracy": 90.7,
+        "qualityScore": 93,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Lisitsin, Georgy",
+            "black": "Smyslov, Vassily",
+            "event": "URS-ch13",
+            "year": 1944,
+            "resultForPlayer": "win",
+            "qualityScore": 95,
+            "playerAccuracy": 95.7,
+            "opponentAccuracy": 93.36
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Reshevsky, Samuel Herman",
+            "black": "Smyslov, Vassily",
+            "event": "Moscow Veterans",
+            "year": 1991,
+            "resultForPlayer": "loss",
+            "qualityScore": 94.66,
+            "playerAccuracy": 92.3,
+            "opponentAccuracy": 95.67
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Smyslov, Vassily",
+            "black": "Timman, Jan H",
+            "event": "Moscow",
+            "year": 1981,
+            "resultForPlayer": "win",
+            "qualityScore": 94.53,
+            "playerAccuracy": 97.56,
+            "opponentAccuracy": 87.46
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Smyslov, Vassily",
+            "black": "Ragozin, Viacheslav",
+            "event": "URS-ch13",
+            "year": 1944,
+            "resultForPlayer": "win",
+            "qualityScore": 94.48,
+            "playerAccuracy": 96.44,
+            "opponentAccuracy": 89.91
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Smyslov, Vassily",
+            "black": "Rohde, Michael A",
+            "event": "New York op",
+            "year": 1989,
+            "resultForPlayer": "win",
+            "qualityScore": 94.45,
+            "playerAccuracy": 96.06,
+            "opponentAccuracy": 90.68
+          }
+        ],
+        "openings": [
+          {
+            "name": "English Opening",
+            "games": 17
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 16
+          },
+          {
+            "name": "Sicilian Defence",
+            "games": 9
+          },
+          {
+            "name": "King's Indian Defence",
+            "games": 7
+          },
+          {
+            "name": "Grunfeld Defence",
+            "games": 6
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Mikhail Botvinnik",
+            "champion": "botvinnik",
+            "games": 5
+          },
+          {
+            "name": "Reshevsky, Samuel Herman",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Golombek, Harry",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Portisch, Lajos",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Ragozin, Viacheslav",
+            "champion": null,
+            "games": 2
+          }
+        ]
+      }
     },
     "tal": {
       "name": "Mikhail Tal",
@@ -2200,7 +3089,134 @@
           "name": "Moscow",
           "games": 62
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1954,
+          "to": 1991
+        },
+        "results": {
+          "w": 60,
+          "d": 0,
+          "l": 40
+        },
+        "playerAccuracy": 92.1,
+        "opponentAccuracy": 90.3,
+        "qualityScore": 92.6,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Tal, Mihail",
+            "black": "Spassky, Boris V",
+            "event": "Tilburg",
+            "year": 1980,
+            "resultForPlayer": "win",
+            "qualityScore": 94.37,
+            "playerAccuracy": 95.59,
+            "opponentAccuracy": 91.52
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Fischer, Robert James",
+            "black": "Tal, Mihail",
+            "event": "Bled",
+            "year": 1961,
+            "resultForPlayer": "loss",
+            "qualityScore": 94.32,
+            "playerAccuracy": 88.75,
+            "opponentAccuracy": 96.7
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Mukhin, Evgeny B",
+            "black": "Tal, Mihail",
+            "event": "URS-chT Moscow",
+            "year": 1972,
+            "resultForPlayer": "win",
+            "qualityScore": 94.24,
+            "playerAccuracy": 96,
+            "opponentAccuracy": 90.12
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Tal, Mihail",
+            "black": "Stahlberg, Gideon",
+            "event": "Stockholm",
+            "year": 1961,
+            "resultForPlayer": "win",
+            "qualityScore": 93.98,
+            "playerAccuracy": 95.36,
+            "opponentAccuracy": 90.75
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Lisitsin, Georgy",
+            "black": "Tal, Mihail",
+            "event": "URS-chTJ Coop",
+            "year": 1954,
+            "resultForPlayer": "loss",
+            "qualityScore": 93.97,
+            "playerAccuracy": 92.01,
+            "opponentAccuracy": 94.81
+          }
+        ],
+        "openings": [
+          {
+            "name": "Sicilian Defence",
+            "games": 22
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 12
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 12
+          },
+          {
+            "name": "Nimzo-Indian Defence",
+            "games": 9
+          },
+          {
+            "name": "English Opening",
+            "games": 9
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Boris Spassky",
+            "champion": "spassky",
+            "games": 5
+          },
+          {
+            "name": "Kortschnoj, Viktor",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Polugaevsky, Lev",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Bobby Fischer",
+            "champion": "fischer",
+            "games": 2
+          },
+          {
+            "name": "Larsen, Bent",
+            "champion": null,
+            "games": 2
+          }
+        ]
+      }
     },
     "petrosian": {
       "name": "Tigran Petrosian",
@@ -2494,7 +3510,134 @@
           "name": "Palma de Mallorca",
           "games": 34
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1945,
+          "to": 1983
+        },
+        "results": {
+          "w": 82,
+          "d": 0,
+          "l": 18
+        },
+        "playerAccuracy": 93.4,
+        "opponentAccuracy": 89.3,
+        "qualityScore": 92.6,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Petrosian, Tigran V",
+            "black": "Karpov, Anatoly",
+            "event": "URS-ch41",
+            "year": 1973,
+            "resultForPlayer": "win",
+            "qualityScore": 94.2,
+            "playerAccuracy": 95.36,
+            "opponentAccuracy": 91.49
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Petrosian, Tigran V",
+            "black": "Fischer, Robert James",
+            "event": "Candidats Tournament",
+            "year": 1959,
+            "resultForPlayer": "win",
+            "qualityScore": 94.17,
+            "playerAccuracy": 97.19,
+            "opponentAccuracy": 87.13
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Petrosian, Tigran V",
+            "black": "Botvinnik, Mikhail",
+            "event": "World Championship 25th",
+            "year": 1963,
+            "resultForPlayer": "win",
+            "qualityScore": 93.92,
+            "playerAccuracy": 95.42,
+            "opponentAccuracy": 90.42
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Petrosian, Tigran V",
+            "black": "Bannik, Anatoly",
+            "event": "URS-ch25",
+            "year": 1958,
+            "resultForPlayer": "win",
+            "qualityScore": 93.9,
+            "playerAccuracy": 95.23,
+            "opponentAccuracy": 90.79
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Petrosian, Tigran V",
+            "black": "Parma, Bruno",
+            "event": "Rovinj/Zagreb",
+            "year": 1970,
+            "resultForPlayer": "win",
+            "qualityScore": 93.87,
+            "playerAccuracy": 95.19,
+            "opponentAccuracy": 90.79
+          }
+        ],
+        "openings": [
+          {
+            "name": "English Opening",
+            "games": 17
+          },
+          {
+            "name": "King's Indian Defence",
+            "games": 14
+          },
+          {
+            "name": "Queen's Indian Defence",
+            "games": 9
+          },
+          {
+            "name": "Nimzo-Indian Defence",
+            "games": 8
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 7
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Bobby Fischer",
+            "champion": "fischer",
+            "games": 4
+          },
+          {
+            "name": "Boris Spassky",
+            "champion": "spassky",
+            "games": 4
+          },
+          {
+            "name": "Portisch, Lajos",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Taimanov, Mark E",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Kortschnoj, Viktor",
+            "champion": null,
+            "games": 3
+          }
+        ]
+      }
     },
     "spassky": {
       "name": "Boris Spassky",
@@ -2798,7 +3941,134 @@
           "name": "Linares",
           "games": 43
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1955,
+          "to": 1995
+        },
+        "results": {
+          "w": 73,
+          "d": 0,
+          "l": 27
+        },
+        "playerAccuracy": 93.1,
+        "opponentAccuracy": 89.9,
+        "qualityScore": 92.8,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Schmid, Lothar",
+            "black": "Spassky, Boris V",
+            "event": "Bundesliga 8081",
+            "year": 1981,
+            "resultForPlayer": "win",
+            "qualityScore": 95.48,
+            "playerAccuracy": 97.36,
+            "opponentAccuracy": 91.08
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Spassky, Boris V",
+            "black": "Krogius, Nikolai V",
+            "event": "URS-ch25",
+            "year": 1958,
+            "resultForPlayer": "win",
+            "qualityScore": 95.4,
+            "playerAccuracy": 97,
+            "opponentAccuracy": 91.65
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Spassky, Boris V",
+            "black": "Barcza, Gedeon",
+            "event": "Sochi",
+            "year": 1966,
+            "resultForPlayer": "win",
+            "qualityScore": 95.3,
+            "playerAccuracy": 97.01,
+            "opponentAccuracy": 91.32
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Zhukhovitsky, Samuel",
+            "black": "Spassky, Boris V",
+            "event": "Sochi",
+            "year": 1967,
+            "resultForPlayer": "win",
+            "qualityScore": 95.27,
+            "playerAccuracy": 96.61,
+            "opponentAccuracy": 92.15
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Tal, Mihail",
+            "black": "Spassky, Boris V",
+            "event": "Tilburg",
+            "year": 1980,
+            "resultForPlayer": "loss",
+            "qualityScore": 94.37,
+            "playerAccuracy": 91.52,
+            "opponentAccuracy": 95.59
+          }
+        ],
+        "openings": [
+          {
+            "name": "Ruy Lopez",
+            "games": 24
+          },
+          {
+            "name": "Sicilian Defence",
+            "games": 21
+          },
+          {
+            "name": "Caro-Kann Defence",
+            "games": 7
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 7
+          },
+          {
+            "name": "Nimzo-Indian Defence",
+            "games": 6
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Bobby Fischer",
+            "champion": "fischer",
+            "games": 7
+          },
+          {
+            "name": "Mikhail Tal",
+            "champion": "tal",
+            "games": 5
+          },
+          {
+            "name": "Tigran Petrosian",
+            "champion": "petrosian",
+            "games": 4
+          },
+          {
+            "name": "Portisch, Lajos",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Anatoly Karpov",
+            "champion": "karpov",
+            "games": 3
+          }
+        ]
+      }
     },
     "fischer": {
       "name": "Bobby Fischer",
@@ -3075,7 +4345,134 @@
           "name": "Palma de Mallorca Interzonal",
           "games": 23
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1957,
+          "to": 1992
+        },
+        "results": {
+          "w": 81,
+          "d": 0,
+          "l": 19
+        },
+        "playerAccuracy": 93.1,
+        "opponentAccuracy": 88.8,
+        "qualityScore": 92.3,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Fischer, Robert James",
+            "black": "Reshevsky, Samuel Herman",
+            "event": "USA-ch",
+            "year": 1958,
+            "resultForPlayer": "win",
+            "qualityScore": 97.21,
+            "playerAccuracy": 97.33,
+            "opponentAccuracy": 96.93
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Fischer, Robert James",
+            "black": "Trifunovic, Petar",
+            "event": "Bled",
+            "year": 1961,
+            "resultForPlayer": "win",
+            "qualityScore": 94.39,
+            "playerAccuracy": 95.11,
+            "opponentAccuracy": 92.73
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Fischer, Robert James",
+            "black": "Tal, Mihail",
+            "event": "Bled",
+            "year": 1961,
+            "resultForPlayer": "win",
+            "qualityScore": 94.32,
+            "playerAccuracy": 96.7,
+            "opponentAccuracy": 88.75
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Petrosian, Tigran V",
+            "black": "Fischer, Robert James",
+            "event": "Candidats Tournament",
+            "year": 1959,
+            "resultForPlayer": "loss",
+            "qualityScore": 94.17,
+            "playerAccuracy": 87.13,
+            "opponentAccuracy": 97.19
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Fischer, Robert James",
+            "black": "Reshevsky, Samuel Herman",
+            "event": "USA-ch",
+            "year": 1962,
+            "resultForPlayer": "win",
+            "qualityScore": 94.12,
+            "playerAccuracy": 95.62,
+            "opponentAccuracy": 90.63
+          }
+        ],
+        "openings": [
+          {
+            "name": "Sicilian Defence",
+            "games": 36
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 17
+          },
+          {
+            "name": "King's Indian Defence",
+            "games": 9
+          },
+          {
+            "name": "French Defence",
+            "games": 7
+          },
+          {
+            "name": "Caro-Kann Defence",
+            "games": 6
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Boris Spassky",
+            "champion": "spassky",
+            "games": 12
+          },
+          {
+            "name": "Reshevsky, Samuel Herman",
+            "champion": null,
+            "games": 6
+          },
+          {
+            "name": "Tigran Petrosian",
+            "champion": "petrosian",
+            "games": 6
+          },
+          {
+            "name": "Larsen, Bent",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Benko, Pal C",
+            "champion": null,
+            "games": 3
+          }
+        ]
+      }
     },
     "karpov": {
       "name": "Anatoly Karpov",
@@ -3372,7 +4769,134 @@
           "name": "Bugojno",
           "games": 40
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1970,
+          "to": 1999
+        },
+        "results": {
+          "w": 82,
+          "d": 0,
+          "l": 18
+        },
+        "playerAccuracy": 94.1,
+        "opponentAccuracy": 89.8,
+        "qualityScore": 93.2,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Ljubojevic, Ljubomir",
+            "black": "Karpov, Anatoly",
+            "event": "Milan",
+            "year": 1975,
+            "resultForPlayer": "win",
+            "qualityScore": 95.6,
+            "playerAccuracy": 97.47,
+            "opponentAccuracy": 91.26
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Kamsky, Gata",
+            "black": "Karpov, Anatoly",
+            "event": "FIDE-Wch",
+            "year": 1996,
+            "resultForPlayer": "loss",
+            "qualityScore": 95.12,
+            "playerAccuracy": 91.27,
+            "opponentAccuracy": 96.77
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Ljubojevic, Ljubomir",
+            "black": "Karpov, Anatoly",
+            "event": "Linares",
+            "year": 1981,
+            "resultForPlayer": "win",
+            "qualityScore": 94.54,
+            "playerAccuracy": 95.71,
+            "opponentAccuracy": 91.79
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Ljubojevic, Ljubomir",
+            "black": "Karpov, Anatoly",
+            "event": "Amber-blind 4th",
+            "year": 1995,
+            "resultForPlayer": "win",
+            "qualityScore": 94.38,
+            "playerAccuracy": 95.64,
+            "opponentAccuracy": 91.46
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Karpov, Anatoly",
+            "black": "Anand, Viswanathan",
+            "event": "Candidats qf4",
+            "year": 1991,
+            "resultForPlayer": "win",
+            "qualityScore": 94.29,
+            "playerAccuracy": 95.99,
+            "opponentAccuracy": 90.33
+          }
+        ],
+        "openings": [
+          {
+            "name": "Queen's Indian Defence",
+            "games": 14
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 12
+          },
+          {
+            "name": "Caro-Kann Defence",
+            "games": 11
+          },
+          {
+            "name": "English Opening",
+            "games": 9
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 8
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Garry Kasparov",
+            "champion": "kasparov",
+            "games": 9
+          },
+          {
+            "name": "Ljubojevic, Ljubomir",
+            "champion": null,
+            "games": 6
+          },
+          {
+            "name": "Kortschnoj, Viktor",
+            "champion": null,
+            "games": 5
+          },
+          {
+            "name": "Kamsky, Gata",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Viswanathan Anand",
+            "champion": "anand",
+            "games": 4
+          }
+        ]
+      }
     },
     "kasparov": {
       "name": "Garry Kasparov",
@@ -3660,7 +5184,134 @@
           "name": "SuperGM",
           "games": 32
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1978,
+          "to": 1999
+        },
+        "results": {
+          "w": 90,
+          "d": 0,
+          "l": 10
+        },
+        "playerAccuracy": 94.5,
+        "opponentAccuracy": 88.4,
+        "qualityScore": 93,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Kasparov, Gary",
+            "black": "Van der Wiel, John TH",
+            "event": "Brussels",
+            "year": 1987,
+            "resultForPlayer": "win",
+            "qualityScore": 94.69,
+            "playerAccuracy": 97.44,
+            "opponentAccuracy": 88.29
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Comp Pentium Fritz4",
+            "black": "Kasparov, Gary",
+            "event": "London m",
+            "year": 1995,
+            "resultForPlayer": "win",
+            "qualityScore": 94.68,
+            "playerAccuracy": 97.06,
+            "opponentAccuracy": 89.11
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Kasparov, Gary",
+            "black": "Azmaiparashvili, Zurab",
+            "event": "Moscow ol (Men)",
+            "year": 1994,
+            "resultForPlayer": "win",
+            "qualityScore": 94.59,
+            "playerAccuracy": 96.32,
+            "opponentAccuracy": 90.56
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Kasparov, Gary",
+            "black": "Kamsky, Gata",
+            "event": "New York exh",
+            "year": 1989,
+            "resultForPlayer": "win",
+            "qualityScore": 94.45,
+            "playerAccuracy": 96.26,
+            "opponentAccuracy": 90.21
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Kasparov, Gary",
+            "black": "Speelman, Jonathan S",
+            "event": "Malta ol (Men)",
+            "year": 1980,
+            "resultForPlayer": "win",
+            "qualityScore": 94.39,
+            "playerAccuracy": 96.66,
+            "opponentAccuracy": 89.09
+          }
+        ],
+        "openings": [
+          {
+            "name": "Sicilian Defence",
+            "games": 18
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 12
+          },
+          {
+            "name": "Nimzo-Indian Defence",
+            "games": 8
+          },
+          {
+            "name": "Queen's Indian Defence",
+            "games": 8
+          },
+          {
+            "name": "Grunfeld Defence",
+            "games": 7
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Anatoly Karpov",
+            "champion": "karpov",
+            "games": 12
+          },
+          {
+            "name": "Short, Nigel D",
+            "champion": null,
+            "games": 7
+          },
+          {
+            "name": "Kamsky, Gata",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Kortschnoj, Viktor",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Viswanathan Anand",
+            "champion": "anand",
+            "games": 4
+          }
+        ]
+      }
     },
     "kramnik": {
       "name": "Vladimir Kramnik",
@@ -3938,7 +5589,134 @@
           "name": "It",
           "games": 29
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1989,
+          "to": 1999
+        },
+        "results": {
+          "w": 86,
+          "d": 0,
+          "l": 14
+        },
+        "playerAccuracy": 93.6,
+        "opponentAccuracy": 88.6,
+        "qualityScore": 92.5,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Kramnik, Vladimir",
+            "black": "Svidler, Peter",
+            "event": "Linares16th",
+            "year": 1999,
+            "resultForPlayer": "win",
+            "qualityScore": 94.98,
+            "playerAccuracy": 96.12,
+            "opponentAccuracy": 92.31
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Piket, Jeroen",
+            "black": "Kramnik, Vladimir",
+            "event": "Amber-blind 5th",
+            "year": 1996,
+            "resultForPlayer": "win",
+            "qualityScore": 94.67,
+            "playerAccuracy": 96.35,
+            "opponentAccuracy": 90.73
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Kramnik, Vladimir",
+            "black": "Polgar, Judit",
+            "event": "WDR TV",
+            "year": 1997,
+            "resultForPlayer": "win",
+            "qualityScore": 94.4,
+            "playerAccuracy": 96.93,
+            "opponentAccuracy": 88.5
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Kramnik, Vladimir",
+            "black": "Lautier, Joel",
+            "event": "Horgen",
+            "year": 1995,
+            "resultForPlayer": "win",
+            "qualityScore": 94.33,
+            "playerAccuracy": 95.67,
+            "opponentAccuracy": 91.22
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Seirawan, Yasser",
+            "black": "Kramnik, Vladimir",
+            "event": "Manila ol (Men)",
+            "year": 1992,
+            "resultForPlayer": "win",
+            "qualityScore": 94.26,
+            "playerAccuracy": 95.6,
+            "opponentAccuracy": 91.12
+          }
+        ],
+        "openings": [
+          {
+            "name": "Sicilian Defence",
+            "games": 15
+          },
+          {
+            "name": "King's Indian Defence",
+            "games": 13
+          },
+          {
+            "name": "Semi-Slav Defence",
+            "games": 12
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 12
+          },
+          {
+            "name": "English Opening",
+            "games": 11
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Polgar, Judit",
+            "champion": null,
+            "games": 6
+          },
+          {
+            "name": "Shirov, Alexei",
+            "champion": null,
+            "games": 6
+          },
+          {
+            "name": "Piket, Jeroen",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Topalov, Veselin",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Viswanathan Anand",
+            "champion": "anand",
+            "games": 4
+          }
+        ]
+      }
     },
     "anand": {
       "name": "Viswanathan Anand",
@@ -4235,7 +6013,134 @@
           "name": "Dortmund",
           "games": 36
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 1986,
+          "to": 2024
+        },
+        "results": {
+          "w": 74,
+          "d": 0,
+          "l": 26
+        },
+        "playerAccuracy": 93.7,
+        "opponentAccuracy": 90.9,
+        "qualityScore": 93.5,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Polgar, Judit",
+            "black": "Anand, Viswanathan",
+            "event": "Buenos Aires Sicilian",
+            "year": 1994,
+            "resultForPlayer": "win",
+            "qualityScore": 95.13,
+            "playerAccuracy": 97.36,
+            "opponentAccuracy": 89.94
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Gledura,B",
+            "black": "Anand, Viswanathan",
+            "event": "Gibraltar Masters 2016",
+            "year": 2016,
+            "resultForPlayer": "loss",
+            "qualityScore": 95.05,
+            "playerAccuracy": 91.11,
+            "opponentAccuracy": 96.73
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Anand, Viswanathan",
+            "black": "Gelfand,B",
+            "event": "10th Tal Mem 2016",
+            "year": 2016,
+            "resultForPlayer": "win",
+            "qualityScore": 94.55,
+            "playerAccuracy": 95.44,
+            "opponentAccuracy": 92.48
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Topalov,V",
+            "black": "Anand, Viswanathan",
+            "event": "3rd Pearl Spring",
+            "year": 2010,
+            "resultForPlayer": "win",
+            "qualityScore": 94.46,
+            "playerAccuracy": 96.94,
+            "opponentAccuracy": 88.67
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Anand, Viswanathan",
+            "black": "Van Wely,L",
+            "event": "Corus",
+            "year": 2001,
+            "resultForPlayer": "win",
+            "qualityScore": 94.44,
+            "playerAccuracy": 96.62,
+            "opponentAccuracy": 89.36
+          }
+        ],
+        "openings": [
+          {
+            "name": "Sicilian Defence",
+            "games": 28
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 22
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 7
+          },
+          {
+            "name": "Petrov Defence",
+            "games": 7
+          },
+          {
+            "name": "Semi-Slav Defence",
+            "games": 6
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Magnus Carlsen",
+            "champion": "carlsen",
+            "games": 6
+          },
+          {
+            "name": "Kamsky, Gata",
+            "champion": null,
+            "games": 5
+          },
+          {
+            "name": "Ponomariov,R",
+            "champion": null,
+            "games": 5
+          },
+          {
+            "name": "Vladimir Kramnik",
+            "champion": "kramnik",
+            "games": 5
+          },
+          {
+            "name": "Topalov,V",
+            "champion": null,
+            "games": 4
+          }
+        ]
+      }
     },
     "carlsen": {
       "name": "Magnus Carlsen",
@@ -4504,7 +6409,134 @@
           "name": "Classics GM",
           "games": 20
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 2002,
+          "to": 2024
+        },
+        "results": {
+          "w": 74,
+          "d": 0,
+          "l": 26
+        },
+        "playerAccuracy": 93.8,
+        "opponentAccuracy": 91.2,
+        "qualityScore": 93.6,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Carlsen, Magnus",
+            "black": "Bu Xiangzhi",
+            "event": "Trophee CCAS KO",
+            "year": 2008,
+            "resultForPlayer": "win",
+            "qualityScore": 95.17,
+            "playerAccuracy": 96.45,
+            "opponentAccuracy": 92.18
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Carlsen, Magnus",
+            "black": "Kramnik,V",
+            "event": "8th Tal Memorial",
+            "year": 2013,
+            "resultForPlayer": "win",
+            "qualityScore": 95.12,
+            "playerAccuracy": 96.3,
+            "opponentAccuracy": 92.37
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Le,Quang Liem",
+            "black": "Carlsen, Magnus",
+            "event": "45th Olympiad 2024",
+            "year": 2024,
+            "resultForPlayer": "win",
+            "qualityScore": 94.89,
+            "playerAccuracy": 96.85,
+            "opponentAccuracy": 90.31
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Carlsen, Magnus",
+            "black": "Li Chao2",
+            "event": "Qatar Masters Open 2015",
+            "year": 2015,
+            "resultForPlayer": "win",
+            "qualityScore": 94.85,
+            "playerAccuracy": 96.72,
+            "opponentAccuracy": 90.5
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Ivanchuk,V",
+            "black": "Carlsen, Magnus",
+            "event": "24th ECC",
+            "year": 2008,
+            "resultForPlayer": "loss",
+            "qualityScore": 94.85,
+            "playerAccuracy": 92.42,
+            "opponentAccuracy": 95.89
+          }
+        ],
+        "openings": [
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 12
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 12
+          },
+          {
+            "name": "Sicilian Defence",
+            "games": 12
+          },
+          {
+            "name": "Queen's Pawn Game",
+            "games": 7
+          },
+          {
+            "name": "English Opening",
+            "games": 7
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Aronian,L",
+            "champion": null,
+            "games": 5
+          },
+          {
+            "name": "Vladimir Kramnik",
+            "champion": "kramnik",
+            "games": 4
+          },
+          {
+            "name": "Karjakin,Sergey",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Caruana,F",
+            "champion": null,
+            "games": 4
+          },
+          {
+            "name": "Viswanathan Anand",
+            "champion": "anand",
+            "games": 3
+          }
+        ]
+      }
     },
     "ding": {
       "name": "Ding Liren",
@@ -4764,7 +6796,134 @@
           "name": "FIDE World Cup 2019",
           "games": 15
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 2001,
+          "to": 2024
+        },
+        "results": {
+          "w": 79,
+          "d": 0,
+          "l": 21
+        },
+        "playerAccuracy": 93.6,
+        "opponentAccuracy": 90,
+        "qualityScore": 93.1,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Ding Liren",
+            "black": "Saric,Iv",
+            "event": "43rd Olympiad 2018",
+            "year": 2018,
+            "resultForPlayer": "win",
+            "qualityScore": 94.97,
+            "playerAccuracy": 97.29,
+            "opponentAccuracy": 89.56
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Inarkiev,E",
+            "black": "Ding Liren",
+            "event": "Palma De Mallorca GP 2017",
+            "year": 2017,
+            "resultForPlayer": "win",
+            "qualityScore": 94.79,
+            "playerAccuracy": 97.75,
+            "opponentAccuracy": 87.87
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Ding Liren",
+            "black": "Karjakin,Sergey",
+            "event": "78th Tata Steel GpA",
+            "year": 2016,
+            "resultForPlayer": "win",
+            "qualityScore": 94.52,
+            "playerAccuracy": 95.57,
+            "opponentAccuracy": 92.06
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Ding Liren",
+            "black": "Yu Yangyi",
+            "event": "6th Hainan Danzhou GM",
+            "year": 2015,
+            "resultForPlayer": "win",
+            "qualityScore": 94.51,
+            "playerAccuracy": 95.66,
+            "opponentAccuracy": 91.83
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Ding Liren",
+            "black": "Haddouche,M",
+            "event": "FIDE World Cup 2017",
+            "year": 2017,
+            "resultForPlayer": "win",
+            "qualityScore": 94.37,
+            "playerAccuracy": 96.04,
+            "opponentAccuracy": 90.46
+          }
+        ],
+        "openings": [
+          {
+            "name": "King's Indian Defence",
+            "games": 12
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 11
+          },
+          {
+            "name": "English Opening",
+            "games": 11
+          },
+          {
+            "name": "Ruy Lopez",
+            "games": 9
+          },
+          {
+            "name": "Queen's Pawn Game",
+            "games": 8
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Inarkiev,E",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Yu Yangyi",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Wang Hao",
+            "champion": null,
+            "games": 3
+          },
+          {
+            "name": "Saric,Iv",
+            "champion": null,
+            "games": 2
+          },
+          {
+            "name": "Bu Xiangzhi",
+            "champion": null,
+            "games": 2
+          }
+        ]
+      }
     },
     "gukesh": {
       "name": "Gukesh Dommaraju",
@@ -5005,7 +7164,134 @@
           "name": "85th Tata Steel Masters",
           "games": 13
         }
-      ]
+      ],
+      "bestGames": {
+        "games": 100,
+        "years": {
+          "from": 2017,
+          "to": 2024
+        },
+        "results": {
+          "w": 67,
+          "d": 0,
+          "l": 33
+        },
+        "playerAccuracy": 92.4,
+        "opponentAccuracy": 89.7,
+        "qualityScore": 92.5,
+        "withoutMistakes": 100,
+        "top": [
+          {
+            "index": 0,
+            "rank": 1,
+            "white": "Gukesh, D",
+            "black": "Alinasab,Mobina",
+            "event": "24th Abu Dhabi Masters",
+            "year": 2017,
+            "resultForPlayer": "win",
+            "qualityScore": 94.38,
+            "playerAccuracy": 96.29,
+            "opponentAccuracy": 89.91
+          },
+          {
+            "index": 1,
+            "rank": 2,
+            "white": "Adams,Mi",
+            "black": "Gukesh, D",
+            "event": "Gibraltar Masters 2019",
+            "year": 2019,
+            "resultForPlayer": "loss",
+            "qualityScore": 94.19,
+            "playerAccuracy": 89.94,
+            "opponentAccuracy": 96
+          },
+          {
+            "index": 2,
+            "rank": 3,
+            "white": "Gupta,Ab",
+            "black": "Gukesh, D",
+            "event": "19th Delhi Open 2022",
+            "year": 2022,
+            "resultForPlayer": "win",
+            "qualityScore": 94.08,
+            "playerAccuracy": 95.54,
+            "opponentAccuracy": 90.66
+          },
+          {
+            "index": 3,
+            "rank": 4,
+            "white": "Gukesh, D",
+            "black": "Warmerdam,Max",
+            "event": "86th Tata Steel Masters",
+            "year": 2024,
+            "resultForPlayer": "win",
+            "qualityScore": 93.85,
+            "playerAccuracy": 95.54,
+            "opponentAccuracy": 89.89
+          },
+          {
+            "index": 4,
+            "rank": 5,
+            "white": "Gukesh, D",
+            "black": "Bharat,Kumar Reddy Poluri",
+            "event": "Bhopal International Open",
+            "year": 2017,
+            "resultForPlayer": "win",
+            "qualityScore": 93.79,
+            "playerAccuracy": 94.76,
+            "opponentAccuracy": 91.51
+          }
+        ],
+        "openings": [
+          {
+            "name": "Reti Opening",
+            "games": 15
+          },
+          {
+            "name": "Sicilian Defence",
+            "games": 15
+          },
+          {
+            "name": "Queen's Pawn Game",
+            "games": 12
+          },
+          {
+            "name": "Queen's Gambit Declined",
+            "games": 10
+          },
+          {
+            "name": "King's Indian Defence",
+            "games": 6
+          }
+        ],
+        "opponents": [
+          {
+            "name": "Keymer,Vincent",
+            "champion": null,
+            "games": 2
+          },
+          {
+            "name": "Aronyak,Ghosh",
+            "champion": null,
+            "games": 2
+          },
+          {
+            "name": "Iskandarov,M",
+            "champion": null,
+            "games": 2
+          },
+          {
+            "name": "Caruana,F",
+            "champion": null,
+            "games": 2
+          },
+          {
+            "name": "Erigaisi,Arjun",
+            "champion": null,
+            "games": 2
+          }
+        ]
+      }
     }
   }
 }

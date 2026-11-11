@@ -15,9 +15,8 @@ import type { BestGame } from '@/types/bestGames';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trophy } from 'lucide-react';
-import { BestGamesIntro, ChampionPortrait, getChampionContent } from '@/components/champion/ChampionProfile';
+import { BestGamesIntro, BestGamesDetails, ChampionPortrait, getChampionContent } from '@/components/champion/ChampionProfile';
 import { championRouteMeta } from '@/config/championRouteMeta';
-import { gameDateYear } from '@/services/GameFilterService';
 
 const BestGames = () => {
   const { name } = useParams<{ name: string }>();
@@ -82,7 +81,9 @@ const BestGames = () => {
   const paginatedGames = useMemo(() => filteredGames.slice(startIndex, endIndex), [filteredGames, startIndex, endIndex]);
 
 
-  if (loading) {
+  // A champion with written content renders at once; only the table waits for the games.
+  const championContent = getChampionContent(name);
+  if (loading && !championContent) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-foreground text-xl">Loading games...</div>
@@ -106,7 +107,7 @@ const BestGames = () => {
     );
   }
 
-  const pageTitle = championFullName || name || 'Chess Champion';
+  const pageTitle = championFullName || championContent?.name || name || 'Chess Champion';
   const gameCount = filteredGames.length;
   // Same text as the prerendered HTML (config/champion-route-meta.json); an ECO-filtered
   // view keeps its own title.
@@ -115,6 +116,7 @@ const BestGames = () => {
 
   return (
     <>
+      {!loading && (
       <Helmet>
         <title>{fullTitle}</title>
         <meta name="description" content={meta.description} />
@@ -160,6 +162,7 @@ const BestGames = () => {
           })}
         </script>
       </Helmet>
+      )}
 
       <div className="bg-background flex flex-col">
         <div className="py-12 px-4 sm:px-6 lg:px-8 flex-grow">
@@ -167,15 +170,15 @@ const BestGames = () => {
             {/* Header */}
             <div className={getChampionContent(name) ? 'mb-6' : 'mb-8 px-6'}>
             <div className="flex items-center gap-4 sm:gap-6 mb-3">
-            {getChampionContent(name) && <ChampionPortrait slug={name} name={championFullName} />}
+            {championContent && <ChampionPortrait slug={name} name={pageTitle} />}
             <div className="min-w-0">
             <h1 className="text-4xl md:text-5xl font-bold text-link mb-2">
-              {championFullName}
+              {pageTitle}
             </h1>
-            {championshipYears && (
+            {(championshipYears || championContent) && (
               <div>
                 <span className="inline-block bg-primary/20 text-link px-4 py-1.5 rounded-full border border-primary/30 text-lg font-semibold">
-                  {championshipYears}
+                  ♔ {championshipYears || championContent?.reign}
                 </span>
               </div>
             )}
@@ -186,14 +189,13 @@ const BestGames = () => {
                 {biography}
               </p>
             )}
-            <p className="text-lg text-muted-foreground">
-              {games.length} best games available
-            </p>
+            {!championContent && (
+              <p className="text-lg text-muted-foreground">
+                {games.length} best games available
+              </p>
+            )}
           </div>
-          <BestGamesIntro slug={name} years={(() => {
-            const ys = games.map(g => gameDateYear(g.date)).filter((y): y is number => y !== null);
-            return ys.length ? { from: Math.min(...ys), to: Math.max(...ys) } : null;
-          })()} />
+          <BestGamesIntro slug={name} />
 
         {/* Games Table */}
         <Card className="bg-card border-border">
@@ -228,7 +230,9 @@ const BestGames = () => {
             )}
           </CardHeader>
           <CardContent>
-            {games.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-12 text-muted-foreground text-lg">Loading games...</div>
+            ) : games.length === 0 ? (
               <div className="text-center py-12">
                 <Trophy className="w-16 h-16 text-link mx-auto mb-4 opacity-50" />
                 <p className="text-muted-foreground text-lg mb-4">
@@ -371,6 +375,7 @@ const BestGames = () => {
             )}
           </CardContent>
         </Card>
+        {!ecoFilter && <BestGamesDetails slug={name} />}
         </div>
       </div>
       </div>

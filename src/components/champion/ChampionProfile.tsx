@@ -41,6 +41,22 @@ interface ChampionFacts {
   topOpponents: OpponentRow[];
   vsChampions: OpponentRow[];
   topEvents: { name: string; games: number }[];
+  bestGames?: BestGamesFacts;
+}
+interface BestTop {
+  index: number; rank: number; white: string; black: string; event: string; year: number | null;
+  resultForPlayer: string; qualityScore: number; playerAccuracy: number | null; opponentAccuracy: number | null;
+}
+interface BestGamesFacts {
+  games: number;
+  years: { from: number; to: number } | null;
+  results: { w: number; d: number; l: number };
+  playerAccuracy: number | null;
+  opponentAccuracy: number | null;
+  qualityScore: number | null;
+  top: BestTop[];
+  openings: { name: string; games: number }[];
+  opponents: { name: string; champion: string | null; games: number }[];
 }
 
 const CONTENT = content as unknown as Record<string, ChampionContent>;
@@ -117,7 +133,7 @@ export function ChampionIntro({ slug }: { slug?: string }) {
   return (
     <div className="mb-6">
       <p className="text-lg text-foreground max-w-4xl">{c.intro}</p>
-      <JumpLinks name={c.name} />
+      <JumpLinks items={gamesSections(slug!)} />
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 max-w-5xl">
         <Stat label="Classical games" value={fmt(f.classicalGames)}
           sub={f.years ? `${f.years.from} to ${f.years.to}` : undefined} />
@@ -130,20 +146,27 @@ export function ChampionIntro({ slug }: { slug?: string }) {
   );
 }
 
-/** The sections below the table, in page order, for the jump links above it. */
-const SECTIONS = [
-  { id: 'about', label: (name: string) => `About ${name.split(' ')[0]}` },
-  { id: 'title-matches', label: () => 'Title matches' },
-  { id: 'openings', label: () => 'Openings' },
-  { id: 'opponents', label: () => 'Opponents' },
-  { id: 'questions', label: () => 'Questions' },
+/** "Tal", "Capablanca", "Ding": the surname, for short labels (the slug is the surname). */
+const surname = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1);
+
+interface Jump { id: string; label: string }
+
+/** The /games sections below the table, in page order. */
+const gamesSections = (slug: string): Jump[] => [
+  { id: 'about', label: `About ${surname(slug)}` },
+  { id: 'title-matches', label: 'Title matches' },
+  { id: 'openings', label: 'Openings' },
+  { id: 'opponents', label: 'Opponents' },
+  { id: 'questions', label: 'Questions' },
 ];
 
-function JumpLinks({ name }: { name: string }) {
+const pill = 'rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-sm text-link hover:bg-primary/20 transition-colors';
+
+function JumpLinks({ items, also }: { items: Jump[]; also?: { to: string; label: string } }) {
   return (
     <nav aria-label="On this page" className="mt-4 mb-5 flex flex-wrap items-center gap-2">
       <span className="text-sm text-muted-foreground mr-1">Read more below the games:</span>
-      {SECTIONS.map(s => (
+      {items.map(s => (
         <a
           key={s.id}
           href={`#${s.id}`}
@@ -153,11 +176,12 @@ function JumpLinks({ name }: { name: string }) {
             e.preventDefault();
             document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }}
-          className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-sm text-link hover:bg-primary/20 transition-colors"
+          className={pill}
         >
-          {s.label(name)}
+          {s.label}
         </a>
       ))}
+      {also && <Link to={also.to} className={pill}>{also.label}</Link>}
     </nav>
   );
 }
@@ -309,20 +333,127 @@ export function ChampionDetails({ slug, gameHref }: { slug?: string; gameHref: (
   );
 }
 
-/** Above the best-games table: what the list is. */
-export function BestGamesIntro({ slug, years }: { slug?: string; years: { from: number; to: number } | null }) {
+/** The /best-games sections below the table, in page order. */
+const bestSections: Jump[] = [
+  { id: 'how-ranked', label: 'How the ranking works' },
+  { id: 'top-games', label: 'Top five' },
+  { id: 'best-openings', label: 'Openings' },
+  { id: 'best-questions', label: 'Questions' },
+];
+
+const playerName2 = (n: string) => n.replace(/,(?!\s)/g, ', ');
+
+/** Above the best-games table: what the list is, and its key numbers. */
+export function BestGamesIntro({ slug }: { slug?: string }) {
   const c = getChampionContent(slug);
-  if (!c) return null;
+  const b = getChampionFacts(slug)?.bestGames;
+  if (!c || !b || !slug) return null;
+  const name = surname(slug);
   return (
-    <div className="mb-6 max-w-4xl space-y-2">
-      <p className="text-lg text-foreground">
-        {`These are ${c.name}'s best games, ranked by an engine's check of how accurately both sides played.`}
+    <div className="mb-6">
+      <p className="text-lg text-foreground max-w-4xl">
+        {`The ${b.games} best-played games of ${name}'s career by engine analysis, won or lost. `}
+        {`He won ${b.results.w} of them${b.results.l ? ` and lost ${b.results.l}` : ''}${b.results.d ? `, with ${b.results.d} drawn` : ''}.`}
       </p>
-      <p className="text-muted-foreground">
-        {years ? `The ranked games are from ${years.from} to ${years.to}.` : ''}
-        {c.bestGamesNote ? ` ${c.bestGamesNote}` : ''}
-        {' '}<Link to={`/champions/${slug}/games`} className="text-link hover:underline">{`All of ${c.name}'s games`}</Link> are in the full list, with his record and openings.
-      </p>
+      <JumpLinks items={bestSections} also={{ to: `/champions/${slug}/games`, label: `About ${name}` }} />
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 max-w-5xl">
+        <Stat label="Ranked games" value={fmt(b.games)} sub={b.years ? `${b.years.from} to ${b.years.to}` : undefined} />
+        <Stat label="Results" value={`${b.results.w} won`} sub={`${b.results.l} lost${b.results.d ? `, ${b.results.d} drawn` : ''}`} />
+        <Stat label="His accuracy" value={b.playerAccuracy === null ? '—' : `${b.playerAccuracy}%`} sub="average in these games" />
+        <Stat label="Opponents' accuracy" value={b.opponentAccuracy === null ? '—' : `${b.opponentAccuracy}%`} sub="average in these games" />
+        <Stat label="Quality score" value={b.qualityScore === null ? '—' : `${b.qualityScore}`} sub="average, out of 100" />
+      </div>
+    </div>
+  );
+}
+
+/** Below the best-games table: how the list is made, its top games, and questions. */
+export function BestGamesDetails({ slug }: { slug?: string }) {
+  const c = getChampionContent(slug);
+  const b = getChampionFacts(slug)?.bestGames;
+  if (!c || !b || !slug) return null;
+  const name = surname(slug);
+  const best = b.top[0];
+  const gameLabel = (g: BestTop) => `${playerName2(g.white)} vs ${playerName2(g.black)}, ${g.event}${g.year ? ` ${g.year}` : ''}`;
+  return (
+    <div>
+      <Section id="how-ranked" title="How the ranking works">
+        <div className="space-y-3 max-w-4xl text-foreground">
+          <p>Every move of these games was checked by the Leela Chess Zero engine and given an accuracy score from 0 to 100, the same kind of accuracy Lichess shows after a game.</p>
+          <p>Each game then gets a quality score out of 100. In a decisive game, the winner's accuracy counts for 70% and the loser's for 30%, so a win against strong resistance scores higher than a win after a blunder. That is also why games {name} lost can rank high: the score rewards the side that played best.</p>
+          <p>The middlegame counts most, then the endgame, then the opening, and very short games score lower. The list holds the {b.games} games with the highest quality score.</p>
+          {c.bestGamesNote && <p className="text-muted-foreground">{c.bestGamesNote}</p>}
+        </div>
+      </Section>
+
+      <Section id="top-games" title="Top five">
+        <table className="w-full max-w-4xl">
+          <thead><tr className="border-b border-border">
+            <th className={head}>#</th><th className={head}>Game</th><th className={head}>Result</th><th className={head}>His accuracy</th><th className={head}>Score</th>
+          </tr></thead>
+          <tbody>
+            {b.top.map(g => (
+              <tr key={g.rank} className="border-b border-border/50">
+                <td className={cell}>{g.rank}</td>
+                <td className={cell}><Link to={`/champions/${slug}/best-games/${g.index}`} className="text-link hover:underline">{gameLabel(g)}</Link></td>
+                <td className={cell}>{g.resultForPlayer === 'win' ? 'Won' : g.resultForPlayer === 'loss' ? 'Lost' : 'Drawn'}</td>
+                <td className={cell}>{g.playerAccuracy === null ? '—' : `${g.playerAccuracy}%`}</td>
+                <td className={cell}>{g.qualityScore}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Section>
+
+      <Section id="best-openings" title="Openings and opponents">
+        <div className="grid gap-6 md:grid-cols-2 max-w-4xl">
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Most common openings in these games</h3>
+            <ul className="space-y-1">
+              {b.openings.map(o => <li key={o.name} className="text-foreground">{o.name} <span className="text-muted-foreground">({o.games})</span></li>)}
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Opponents who appear most often</h3>
+            <ul className="space-y-1">
+              {b.opponents.map(o => (
+                <li key={o.name} className="text-foreground">
+                  {o.champion
+                    ? <Link to={`/champions/${o.champion}/best-games`} className="text-link hover:underline">{o.name}</Link>
+                    : playerName2(o.name)}
+                  <span className="text-muted-foreground"> ({o.games})</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="best-questions" title="Questions">
+        <div className="space-y-5 max-w-4xl">
+          {best && (
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-1">{`Which of ${name}'s games ranks highest?`}</h3>
+              <p className="text-muted-foreground">
+                <Link to={`/champions/${slug}/best-games/${best.index}`} className="text-link hover:underline">{gameLabel(best)}</Link>
+                {`, which he ${best.resultForPlayer === 'win' ? 'won' : best.resultForPlayer === 'loss' ? 'lost' : 'drew'}, with a quality score of ${best.qualityScore}. He played it with ${best.playerAccuracy}% accuracy.`}
+              </p>
+            </div>
+          )}
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-1">{`Why are some of ${name}'s losses on the list?`}</h3>
+            <p className="text-muted-foreground">The ranking measures how well a game was played, not who won it. The winner's accuracy counts most, so a game he lost to an opponent who played very accurately can score as high as one of his wins.</p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-1">Why is a famous game missing?</h3>
+            <p className="text-muted-foreground">
+              {`The list ranks games by accuracy alone. A famous game with a mistake in it, such as a brilliant attack against an opponent who went wrong, can score below a cleaner game.`}
+              {b.years ? ` Only games from ${b.years.from} to ${b.years.to} are ranked so far.` : ''}
+              {' '}<Link to={`/champions/${slug}/games`} className="text-link hover:underline">{`All of ${name}'s games`}</Link> are in the full list.
+            </p>
+          </div>
+        </div>
+      </Section>
     </div>
   );
 }
