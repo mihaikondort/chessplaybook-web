@@ -36,6 +36,8 @@ import {
   type PlayerKey,
 } from '@/features/world-championship/match';
 import { startOf, useMatchBroadcast } from '@/features/world-championship/useMatchBroadcast';
+import { googleCalendarUrl, matchCalendarEvents } from '@/features/world-championship/matchCalendar';
+import { logGA4Event } from '@/services/analytics';
 import type { LiveGame } from '@/types/LiveBroadcast';
 
 function isMatchGame(g: LiveGame): boolean {
@@ -106,6 +108,23 @@ export default function WorldChampionship2026Game() {
     { label: 'The match', to: MATCH_PATH, direction: 'back' },
   ];
 
+  /* Before the game, the Go to card also offers the game for the visitor's calendar:
+     timed when the start is confirmed, all day otherwise (matchCalendar.ts). */
+  const calendarEvent = notNeeded ? undefined : matchCalendarEvents(
+    (g) => startOf(g, broadcast.rounds),
+    (g) => broadcast.rounds.get(g)?.startsAt != null || SCHEDULED_GAMES[g - 1].timeConfirmed,
+  ).find((e) => e.game === n);
+  const beforeGoTo: ViewerGoTo[] = calendarEvent
+    ? [...goTo, {
+        label: 'Add to Google Calendar',
+        direction: 'forward',
+        onClick: () => {
+          logGA4Event({ name: 'match_calendar_added', params: { method: 'google', game: n, surface: 'game' } });
+          window.open(googleCalendarUrl(calendarEvent), '_blank', 'noopener,noreferrer');
+        },
+      }]
+    : goTo;
+
   /* Before the game: the same Workspace, on the starting position. */
   const white = whiteIn(n, score?.games.values() ?? []);
   const [w, b] = white ? [white, white === 'gukesh' ? 'sindarov' as const : 'gukesh' as const] : PLAYER_ORDER;
@@ -127,7 +146,7 @@ export default function WorldChampionship2026Game() {
           white: cardPlayer(w, white ? undefined : 'Player'),
           black: cardPlayer(b, white ? undefined : 'Player'),
         }}
-        goTo={goTo}
+        goTo={beforeGoTo}
         initialPly="start"
         analyticsSurface="live_game"
         boardLabel={`Chess board, game ${n}, not started`}

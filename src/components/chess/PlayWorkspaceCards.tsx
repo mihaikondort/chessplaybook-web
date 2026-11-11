@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { PlayerPortrait } from './PlayerPortrait';
 
 /*
   A PLAYER, IN THE WORKSPACE CARD GRAMMAR (layout redesign D1/D2a). Shared by
@@ -61,14 +62,7 @@ export function PlayerCard({ icon, label, name, title, rating, detail, status, c
               the lane's width stops growing, so the photo and the name are capped by the
               card's width too (a fixed 5em cut "Sindarov" at 1920x980), and the photo by
               its height (800x600). */}
-          <span className="relative shrink-0" style={{ width: PORTRAIT_SIZE, height: PORTRAIT_SIZE }}>
-            <img src={portrait} alt="" className="h-full w-full rounded-full" />
-            {flag && (
-              <span className="absolute bottom-[4%] right-[-2%] flex overflow-hidden rounded-[2px] shadow-[0_0_0_2px_hsl(var(--card))]" style={{ width: '34%', height: '23%' }}>
-                {flag}
-              </span>
-            )}
-          </span>
+          <PlayerPortrait src={portrait} flag={flag} style={{ width: PORTRAIT_SIZE, height: PORTRAIT_SIZE }} />
           {/* .card-body is a utility, so its own justify-content beats a class here. */}
           <div className="card-body min-w-0 self-stretch" style={{ justifyContent: 'center' }}>{rows}</div>
         </div>

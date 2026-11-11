@@ -1,6 +1,14 @@
 import { Link } from 'react-router-dom';
 import SeoHead from '@/components/SeoHead';
-import { MATCH_DAYS, MATCH_PATH } from '@/features/world-championship/match';
+import { CalendarPlus } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { MATCH_DAYS, MATCH_PATH, SCHEDULED_GAMES } from '@/features/world-championship/match';
+import { downloadMatchCalendar, googleCalendarUrl, matchCalendarEvents } from '@/features/world-championship/matchCalendar';
+import { logGA4Event } from '@/services/analytics';
+
+/* The article has no live data: the published schedule, so game 1 is timed and the
+   others are all-day entries until their times are announced (matchCalendar.ts). */
+const CALENDAR = matchCalendarEvents((g) => SCHEDULED_GAMES[g - 1].startsAt, (g) => SCHEDULED_GAMES[g - 1].timeConfirmed);
 
 /**
  * World Championship 2026: Geneva, games 24 November - 11 December.
@@ -116,13 +124,14 @@ function Photo({
 }
 
 /** One row of the facts card. Label left, value right, readable at 390px. */
-function FactRow({ label, value, note }: { label: string; value: string; note?: string }) {
+function FactRow({ label, value, note, action }: { label: string; value: string; note?: string; action?: ReactNode }) {
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 border-b border-border/60 last:border-b-0">
       <span className="text-sm text-muted-foreground uppercase tracking-wider">{label}</span>
       <span className="ml-auto text-right">
         <span className="text-base sm:text-lg font-semibold text-foreground">{value}</span>
         {note && <span className="block text-xs text-muted-foreground mt-0.5">{note}</span>}
+        {action && <span className="block mt-1.5">{action}</span>}
       </span>
     </div>
   );
@@ -169,7 +178,23 @@ const WorldChampionship2026Announced = () => {
               </h2>
               <FactRow label="Players" value="Gukesh Dommaraju vs Javokhir Sindarov" note="Reigning champion vs Candidates winner" />
               <FactRow label="Games" value="24 November &ndash; 11 December 2026" note="Opening ceremony 22 November. Tiebreak, if needed, and closing ceremony 12 December." />
-              <FactRow label="Game 1" value="Tuesday 24 November, 15:00 CET" note="14:00 UTC, 19:30 in India" />
+              <FactRow
+                label="Game 1"
+                value="Tuesday 24 November, 15:00 CET"
+                note="14:00 UTC, 19:30 in India"
+                action={
+                  <a
+                    href={googleCalendarUrl(CALENDAR[0])}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => logGA4Event({ name: 'match_calendar_added', params: { method: 'google', game: 1, surface: 'article' } })}
+                    className="inline-flex items-center gap-1.5 text-sm text-link hover:underline"
+                  >
+                    <CalendarPlus className="h-4 w-4" aria-hidden />
+                    Add to Google Calendar
+                  </a>
+                }
+              />
               <FactRow label="Venue" value="Fondation Martin Bodmer, Cologny" note="Geneva, Switzerland" />
               <FactRow label="Format" value="14 classical games" note="The first to 7&frac12; points wins, and the match stops there" />
               <FactRow label="Time control" value="120 minutes for 40 moves, then 30 minutes" note="Plus 30 seconds a move from move 41. No draw offers before Black's 40th move." />
@@ -202,10 +227,21 @@ const WorldChampionship2026Announced = () => {
               <p className="text-xs text-muted-foreground mt-3">
                 Game 1 starts at 15:00 in Geneva. FIDE has not yet published the start time of the other games.
               </p>
-              <p className="mt-4">
+              <p className="mt-4 flex flex-wrap gap-2">
                 <Link to={MATCH_PATH} className="text-sm px-4 py-2 rounded-md bg-primary/10 text-link hover:bg-primary/20 transition-colors inline-block">
                   Follow the match live
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    downloadMatchCalendar(CALENDAR);
+                    logGA4Event({ name: 'match_calendar_added', params: { method: 'ics', game: 'all', surface: 'article' } });
+                  }}
+                  className="text-sm px-4 py-2 rounded-md border border-border text-foreground hover:bg-muted transition-colors inline-flex items-center gap-2"
+                >
+                  <CalendarPlus className="h-4 w-4" aria-hidden />
+                  Add all games to your calendar
+                </button>
               </p>
             </section>
 

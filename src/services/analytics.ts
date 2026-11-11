@@ -354,6 +354,8 @@ type GA4Event =
   | { name: 'plan_created'; params: { sessions: number; positions: number; weeks: number; mixed: boolean; emphasis: string; surface: PlanSurface } }
   | { name: 'plan_session_started'; params: { area: string; total: number; kind: string; surface: PlanSurface } }
   | { name: 'plan_calendar_exported'; params: { format: 'ics'; plan_items: number; has_times: boolean } }
+  /* The World Championship match in a visitor's calendar: one game to Google, or every game as .ics. */
+  | { name: 'match_calendar_added'; params: { method: 'google' | 'ics'; game: number | 'all'; surface: 'hub' | 'game' | 'article' } }
   /*
     The DENOMINATOR for the move. `plan_setup_opened` counts intent to build one
     and `from` says what prompted it — the standing card, the one offer, or a

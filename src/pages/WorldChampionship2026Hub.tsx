@@ -13,8 +13,12 @@
 
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ChevronRight, Radio } from 'lucide-react';
+import { CalendarPlus, ChevronRight, Radio } from 'lucide-react';
 import SeoHead from '@/components/SeoHead';
+import { PlayerPortrait } from '@/components/chess/PlayerPortrait';
+import { CountryFlag } from '@/components/flags/CountryFlag';
+import { logGA4Event } from '@/services/analytics';
+import { downloadMatchCalendar, googleCalendarUrl, matchCalendarEvents } from '@/features/world-championship/matchCalendar';
 import {
   CLASSICAL_GAMES,
   MATCH_DAYS,
@@ -88,6 +92,7 @@ export default function WorldChampionship2026Hub() {
     ?? (cal.liveNow ? cal.todaysGame?.game : undefined);
 
   const timeKnown = (g: number) => broadcast.rounds.get(g)?.startsAt != null || SCHEDULED_GAMES[g - 1].timeConfirmed;
+  const calendar = matchCalendarEvents(start, timeKnown, lastGame);
 
   let status: string;
   if (score?.winner) {
@@ -127,16 +132,31 @@ export default function WorldChampionship2026Hub() {
 
           {/* -- The score ---------------------------------------------------- */}
           <section aria-label="Match score" className="surface-card rounded-lg p-5 sm:p-7 mb-8">
-            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+            <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-4 sm:items-center">
+              {/* Each photo sits beside the score with the name on the outside; on a
+                  phone the photo goes above the name so the row fits 390px. */}
               {PLAYER_ORDER.map((key, i) => (
-                <div key={key} className={i === 0 ? 'text-right order-1' : 'text-left order-3'}>
-                  <div className="text-lg sm:text-2xl font-semibold text-foreground">{PLAYERS[key].shortName}</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">
-                    {key === 'gukesh' ? 'Champion' : 'Challenger'}, {PLAYERS[key].country}
+                <div
+                  key={key}
+                  className={`flex flex-col items-center gap-2 text-center sm:gap-4 ${
+                    i === 0 ? 'order-1 sm:flex-row-reverse sm:justify-start sm:text-right' : 'order-3 sm:flex-row sm:text-left'
+                  }`}
+                >
+                  <PlayerPortrait
+                    src={PLAYERS[key].portrait}
+                    flag={<CountryFlag code={PLAYERS[key].countryCode} className="h-full w-full" />}
+                    className="h-14 w-14 sm:h-20 sm:w-20"
+                  />
+                  <div>
+                    <div className="text-lg sm:text-2xl font-semibold text-foreground">{PLAYERS[key].shortName}</div>
+                    {/* The role and the country on separate lines: "Champion, India" read as
+                        champion of India (owner). */}
+                    <div className="text-xs sm:text-sm text-muted-foreground">{PLAYERS[key].role}</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">{PLAYERS[key].country}</div>
                   </div>
                 </div>
               ))}
-              <div className="order-2 text-3xl sm:text-5xl font-bold tabular-nums text-foreground whitespace-nowrap">
+              <div className="order-2 mt-2.5 text-3xl sm:mt-0 sm:text-5xl font-bold tabular-nums text-foreground whitespace-nowrap">
                 {formatPoints(points.gukesh)} <span className="text-muted-foreground">-</span> {formatPoints(points.sindarov)}
               </div>
             </div>
@@ -163,7 +183,12 @@ export default function WorldChampionship2026Hub() {
                   return (
                     <li key={d.date} className="flex items-baseline justify-between gap-4 py-3">
                       <span className="text-foreground">Tiebreaks, if 7-7</span>
-                      <span className="text-sm text-muted-foreground whitespace-nowrap">{d.label}</span>
+                      {/* The spacer lines the date up with the games', which leave room for their calendar button. */}
+                      <span className="flex items-baseline text-sm text-muted-foreground whitespace-nowrap">
+                        {d.label}
+                        <span className="ml-1 w-4" aria-hidden />
+                        <span className="ml-2 w-9" aria-hidden />
+                      </span>
                     </li>
                   );
                 }
@@ -171,11 +196,13 @@ export default function WorldChampionship2026Hub() {
                 const g = score?.games.get(n);
                 const notNeeded = n > lastGame;
                 const right = notNeeded ? 'Not needed' : resultText(g) || (timeKnown(n) ? `${d.label}, ${genevaTime(start(n))}` : d.label);
+                // Only a game still to come can go into a calendar.
+                const event = !g && !notNeeded ? calendar.find((e) => e.game === n) : undefined;
                 return (
-                  <li key={d.date} className="border-b border-border/60">
+                  <li key={d.date} className="flex items-center border-b border-border/60">
                     <Link
                       to={gamePath(n)}
-                      className="flex items-baseline justify-between gap-4 py-3 hover:text-foreground group"
+                      className="flex flex-1 items-baseline justify-between gap-4 py-3 hover:text-foreground group"
                     >
                       <span className="flex flex-col sm:flex-row sm:items-baseline sm:gap-3">
                         <span className="font-semibold text-foreground">Game {n}</span>
@@ -186,6 +213,21 @@ export default function WorldChampionship2026Hub() {
                         <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
                       </span>
                     </Link>
+                    {event ? (
+                      <a
+                        href={googleCalendarUrl(event)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Add game ${n} to Google Calendar`}
+                        title="Add to Google Calendar"
+                        onClick={() => logGA4Event({ name: 'match_calendar_added', params: { method: 'google', game: n, surface: 'hub' } })}
+                        className="ml-2 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <CalendarPlus className="h-4 w-4" aria-hidden />
+                      </a>
+                    ) : (
+                      <span className="ml-2 h-9 w-9 shrink-0" aria-hidden />
+                    )}
                   </li>
                 );
               })}
@@ -193,6 +235,22 @@ export default function WorldChampionship2026Hub() {
             <p className="text-xs text-muted-foreground mt-3">
               Times are in Geneva (CET). Game 1 starts at 15:00. The other games show their time once it is published.
             </p>
+            {calendar.some((e) => !score?.games.has(e.game)) && (
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    downloadMatchCalendar(calendar.filter((e) => !score?.games.has(e.game)));
+                    logGA4Event({ name: 'match_calendar_added', params: { method: 'ics', game: 'all', surface: 'hub' } });
+                  }}
+                  className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+                >
+                  <CalendarPlus className="h-4 w-4" aria-hidden />
+                  Add all games to your calendar
+                </button>
+                <span className="text-xs text-muted-foreground">Or add one game to Google Calendar with the button beside it.</span>
+              </div>
+            )}
           </section>
 
           {/* -- Read more ---------------------------------------------------- */}

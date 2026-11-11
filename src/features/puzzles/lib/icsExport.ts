@@ -90,7 +90,8 @@ export function planCalendarFilename(plan: TrainingPlan): string {
   return `chess-playbook-training-plan-${plan.startsOn}.ics`;
 }
 
-function escapeText(value: string): string {
+/** iCalendar TEXT escaping (RFC 5545 3.3.11). Shared with the match calendar. */
+export function escapeText(value: string): string {
   return value.replaceAll('\\', '\\\\').replaceAll('\n', '\\n')
     .replaceAll(',', '\\,').replaceAll(';', '\\;');
 }
@@ -113,7 +114,8 @@ function addDays(iso: string, amount: number): string {
   return date.toISOString().slice(0, 10);
 }
 
-function foldLine(line: string): string {
+/** Folds a content line at 75 octets (RFC 5545 3.1). Shared with the match calendar. */
+export function foldLine(line: string): string {
   const encoder = new TextEncoder();
   const chunks: string[] = [];
   let chunk = '';
