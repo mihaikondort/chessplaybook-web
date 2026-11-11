@@ -320,6 +320,7 @@ class BackendAPIClient {
     return {
       metadata,
       pgn: backendGame.pgn ?? '',
+      id: backendGame.id,
     };
   }
 

@@ -50,4 +50,6 @@ export type GameMetadata = ChessGame;
 export interface PgnGame {
   metadata: ChessGame;
   pgn: string;
+  /** The game's database id, when it came from the API. */
+  id?: number;
 }

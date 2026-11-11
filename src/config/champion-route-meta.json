@@ -1,0 +1,19 @@
+{
+  "_comment": "Title and description of the champion game pages, the ONE source for both the prerendered HTML (scripts/generate-route-html.cjs) and the rendered page (GameList, BestGames). {name} is the champion's full name. Before 2026-11-11 the two were written separately and differed, so Google saw two titles and two descriptions per page.",
+  "games": {
+    "title": "{name} Chess Games | Chess Playbook",
+    "description": "Browse and replay the chess games of {name}, World Chess Champion. Filter by opening, opponent and result, and study every move on an interactive board.",
+    "ogTitle": "{name} Chess Games",
+    "ogDescription": "Browse and replay the chess games of {name}, World Chess Champion.",
+    "keywords": "{name}, {slug}, chess games, world chess champion, chess strategy, grandmaster games",
+    "heading": "{name} - Chess Games"
+  },
+  "bestGames": {
+    "title": "{name} Best Chess Games | Chess Playbook",
+    "description": "The highest-quality games of {name}, World Chess Champion, ranked by engine-measured accuracy. Replay each one move by move with analysis.",
+    "ogTitle": "{name} Best Chess Games",
+    "ogDescription": "The highest-quality games of {name}, World Chess Champion, ranked by engine-measured accuracy.",
+    "keywords": "{name}, {slug}, best chess games, world chess champion, chess accuracy, grandmaster games",
+    "heading": "{name} - Best Games"
+  }
+}

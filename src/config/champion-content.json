@@ -1,0 +1,1219 @@
+{
+  "_comment": "Written content for the champion pages. Every fact comes from docs/Features Development/champion-content/research/<slug>.md and was confirmed by two sources (section 11 there); unconfirmed items are left out. [[game:ID|text]] links to a game in our collection by its database id; [[champion:slug|text]] links to another champion's games. No em dashes (ui-copy).",
+  "steinitz": {
+    "name": "Wilhelm Steinitz",
+    "reign": "World Champion 1886-1894",
+    "intro": "Wilhelm Steinitz was the first official World Chess Champion. He won the title in 1886 by beating Zukertort 12.5-7.5, and held it until Emanuel Lasker beat him in 1894.",
+    "about": [
+      "Steinitz was born in the Prague ghetto in May 1836 and died on 12 August 1900 in Manhattan State Hospital on Wards Island, New York, aged 64. He learned chess at 12. In 1857 he left Prague to study mathematics in Vienna.",
+      "In 1866 he beat Adolf Anderssen 8-6 in a match in London. It was level at 6-6 after 12 games, and he won the last two, including [[game:40263|his win over Anderssen in game 14 of the 1866 London match]]. Steinitz later dated his championship from this match, but the title is usually counted from 1886. In 1873 he won the Vienna tournament, and from about then he put more weight on pawn structure and space.",
+      "The 1886 match against Zukertort was played in New York, St Louis and New Orleans. Zukertort led 4-1 after five games. Steinitz won nine of the last 15, and [[game:40484|his win over Zukertort in game 20]] was his tenth win of the match. He then defended the title against Gunsberg in New York in 1890-91, winning 10.5-8.5, and against Chigorin in Havana in 1892, winning 12.5-10.5 after the match was level at 10-10 after 20 games.",
+      "His early play was attacking, and he was nicknamed \"the Austrian Morphy\". From about 1873 he gave priority to pawn structure, space, knight outposts and the bishop pair. He published The Modern Chess Instructor in 1889 and ran the International Chess Magazine in New York from 1885 to 1891. Vladimir Kramnik has said that Steinitz was the first to realise that chess follows common principles. At Hastings in 1895 Steinitz won a famous attacking game, ending with 25.Rxh7+, in [[game:40600|his win over von Bardeleben at Hastings 1895]]. Von Bardeleben left the playing hall and lost on time.",
+      "Steinitz lost the title to [[champion:lasker|Emanuel Lasker]] in 1894 by 7-12, and lost the 1896-97 return match 4.5-12.5. He suffered mental breakdowns after that match and died poor. He is called, with Paul Morphy, a founder of modern chess."
+    ],
+    "titleMatches": [
+      {
+        "year": "1886",
+        "opponent": "Johannes Zukertort",
+        "place": "New York, St Louis, New Orleans",
+        "score": "12.5-7.5",
+        "result": "won"
+      },
+      {
+        "year": "1890-91",
+        "opponent": "Isidor Gunsberg",
+        "place": "New York",
+        "score": "10.5-8.5",
+        "result": "won"
+      },
+      {
+        "year": "1892",
+        "opponent": "Mikhail Chigorin",
+        "place": "Havana",
+        "score": "12.5-10.5",
+        "result": "won"
+      },
+      {
+        "year": "1894",
+        "opponent": "Emanuel Lasker",
+        "opponentSlug": "lasker",
+        "place": "New York, Philadelphia, Montreal",
+        "score": "7-12",
+        "result": "lost"
+      },
+      {
+        "year": "1896-97",
+        "opponent": "Emanuel Lasker",
+        "opponentSlug": "lasker",
+        "place": "Moscow",
+        "score": "4.5-12.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Who was the first official World Chess Champion?",
+        "a": "Wilhelm Steinitz. He beat Zukertort 12.5-7.5 (10 wins, 5 losses, 5 draws) in a match played from 11 January to 29 March 1886 in New York, St Louis and New Orleans."
+      },
+      {
+        "q": "Why did Steinitz lose the world title?",
+        "a": "He lost the 1894 match to Emanuel Lasker 5 wins to 10, with 4 draws, in a match played to 10 wins. Lasker was 25. Steinitz lost the 1896-97 return match too, 4.5-12.5."
+      },
+      {
+        "q": "How did Steinitz die?",
+        "a": "He died on 12 August 1900 in a psychiatric hospital on Wards Island, New York, aged 64. He was poor at the end of his life."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Wilhelm_Steinitz",
+      "https://www.wikidata.org/wiki/Q102648"
+    ]
+  },
+  "lasker": {
+    "name": "Emanuel Lasker",
+    "reign": "World Champion 1894-1921",
+    "intro": "Emanuel Lasker beat Wilhelm Steinitz in 1894 and held the world title for 27 years, the longest reign of any champion. He also had a doctorate in mathematics.",
+    "about": [
+      "Lasker was born on 24 December 1868 in Berlinchen, Prussia, now Barlinek in Poland. He died on 11 January 1941 at Mount Sinai Hospital in New York, aged 72, of kidney failure. He studied mathematics in Berlin, Göttingen and Heidelberg, and earned his doctorate at Erlangen in 1900 under Max Noether. His 1905 paper in Mathematische Annalen is the basis of the Lasker-Noether theorem.",
+      "[[game:39250|His win over Bauer at Amsterdam 1889]] includes a double bishop sacrifice. It was not the first of its kind: the same idea had been played in 1884. In 1894, aged 25, Lasker beat [[champion:steinitz|Wilhelm Steinitz]] 12-7 in a match played in New York, Philadelphia and Montreal. He won the 1896-97 return match in Moscow 12.5-4.5.",
+      "He defended the title against Marshall in 1907 (11.5-3.5), Tarrasch in 1908 (10.5-5.5), Schlechter in 1910 (5-5, so he kept the title) and Janowski in 1910 (9.5-1.5). He finished first at St Petersburg in 1914 and beat Capablanca in [[game:38779|his win over Capablanca at St Petersburg 1914]]. In 1920 he resigned the title in favour of Capablanca, then insisted on playing as the challenger. In Havana in 1921 he lost 5-9 and resigned the match after 14 games.",
+      "He kept playing for years after losing the title, and wrote Common Sense in Chess and Lasker's Manual of Chess. He won the New York tournament in 1924 with 16 out of 20, 1.5 points ahead of Capablanca. In 1933 he left Germany, and he moved to the United States in 1937. At Moscow in 1935, aged 66, he finished third without losing a game and beat Capablanca in [[game:39140|his win over Capablanca at Moscow 1935]], his first win over him in 25 years."
+    ],
+    "titleMatches": [
+      {
+        "year": "1894",
+        "opponent": "Wilhelm Steinitz",
+        "opponentSlug": "steinitz",
+        "place": "New York, Philadelphia, Montreal",
+        "score": "12-7",
+        "result": "won"
+      },
+      {
+        "year": "1896-97",
+        "opponent": "Wilhelm Steinitz",
+        "opponentSlug": "steinitz",
+        "place": "Moscow",
+        "score": "12.5-4.5",
+        "result": "won"
+      },
+      {
+        "year": "1907",
+        "opponent": "Frank Marshall",
+        "place": "United States",
+        "score": "11.5-3.5",
+        "result": "won"
+      },
+      {
+        "year": "1908",
+        "opponent": "Siegbert Tarrasch",
+        "place": "Düsseldorf, Munich",
+        "score": "10.5-5.5",
+        "result": "won"
+      },
+      {
+        "year": "1910",
+        "opponent": "Carl Schlechter",
+        "place": "Vienna, Berlin",
+        "score": "5-5",
+        "result": "drawn"
+      },
+      {
+        "year": "1910",
+        "opponent": "David Janowski",
+        "place": "Berlin",
+        "score": "9.5-1.5",
+        "result": "won"
+      },
+      {
+        "year": "1921",
+        "opponent": "José Raúl Capablanca",
+        "opponentSlug": "capablanca",
+        "place": "Havana",
+        "score": "5-9",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "How long was Lasker World Champion?",
+        "a": "27 years, from 1894 to 1921. That is the longest reign of any world champion."
+      },
+      {
+        "q": "Was Emanuel Lasker also a mathematician?",
+        "a": "Yes. He earned a doctorate at Erlangen in 1900 under Max Noether. His 1905 paper in Mathematische Annalen led to the Lasker-Noether theorem."
+      },
+      {
+        "q": "How did Lasker lose the world title?",
+        "a": "He lost to Capablanca in Havana in 1921, 5-9, with no wins, four losses and ten draws. He resigned the match after game 14."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Emanuel_Lasker",
+      "https://www.wikidata.org/wiki/Q57095"
+    ]
+  },
+  "capablanca": {
+    "name": "José Raúl Capablanca",
+    "reign": "World Champion 1921-1927",
+    "intro": "José Raúl Capablanca of Cuba won the world title from Emanuel Lasker in Havana in 1921, without losing a game. He lost it to Alexander Alekhine in 1927 and never got a rematch.",
+    "about": [
+      "Capablanca was born in Havana in November 1888. At 12 he beat the Cuban champion Juan Corzo in a match in Havana, winning 4 games to 3 with 6 draws. He died on 8 March 1942 in New York, aged 53, the morning after he collapsed at the Manhattan Chess Club. The cause was a cerebral haemorrhage.",
+      "In 1909 he beat Frank Marshall 15-8 in a match in New York. In 1911 he won the San Sebastian tournament with 9.5 out of 14, half a point ahead of Rubinstein.",
+      "He won the title in Havana in 1921. He beat [[champion:lasker|Emanuel Lasker]] 9-5, with 4 wins and 10 draws, and Lasker resigned the match after 14 games. Capablanca won games 5, 10, 11 and [[game:38864|the last game of the match, game 14 against Lasker]]. He then won London 1922 with 13 out of 15 and New York 1927 with 14 out of 20, and in 1931 beat Euwe 2-0 with 8 draws in a match.",
+      "His unbeaten run lasted 63 games, with 40 wins and 23 draws, from a loss to Oscar Chajes in 1916 until he lost to Reti at New York in 1924, in [[game:38882|his loss to Reti at New York 1924]]. He wrote My Chess Career in 1920.",
+      "In Buenos Aires in 1927 he lost the title to [[champion:alekhine|Alexander Alekhine]] 15.5-18.5, with 3 wins, 6 losses and 25 draws. He had never lost a game to Alekhine before the match. His last win of it was [[game:37682|game 29 against Alekhine]]. No rematch was played. After the match he won Moscow 1936. At AVRO 1938 he finished seventh of eight. The Capablanca Memorial has been held in Cuba every year since 1962."
+    ],
+    "titleMatches": [
+      {
+        "year": "1921",
+        "opponent": "Emanuel Lasker",
+        "opponentSlug": "lasker",
+        "place": "Havana",
+        "score": "9-5",
+        "result": "won"
+      },
+      {
+        "year": "1927",
+        "opponent": "Alexander Alekhine",
+        "opponentSlug": "alekhine",
+        "place": "Buenos Aires",
+        "score": "15.5-18.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "How did Capablanca win the world title?",
+        "a": "He beat Emanuel Lasker in Havana in 1921 by 9-5, with 4 wins and 10 draws. Lasker resigned the match after game 14."
+      },
+      {
+        "q": "Who beat Capablanca for the world title?",
+        "a": "Alexander Alekhine, in Buenos Aires in 1927. The match ran from 16 September to 29 November, 34 games, and Alekhine won 18.5-15.5 with 6 wins, 3 losses and 25 draws."
+      },
+      {
+        "q": "Did Capablanca ever get a rematch with Alekhine?",
+        "a": "No. Talks about a rematch did not lead to a match, and the two never played for the title again."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Jos%C3%A9_Ra%C3%BAl_Capablanca",
+      "https://www.wikidata.org/wiki/Q160702"
+    ]
+  },
+  "alekhine": {
+    "name": "Alexander Alekhine",
+    "reign": "World Champion 1927-1935 and 1937-1946",
+    "intro": "Alexander Alekhine won the world title from Capablanca in 1927, lost it to Max Euwe in 1935 and won it back in 1937. He is the only champion to have died holding the title.",
+    "about": [
+      "Alekhine was born in Moscow in 1892. In 1909 he won the All-Russian Amateur Tournament in St Petersburg. At Mannheim in 1914 the outbreak of the First World War interrupted the tournament and he was interned in Rastatt, but he was freed in September 1914. He won the 1920 All-Russian Olympiad in Moscow with 9 wins and 6 draws, and it was later counted as the first Soviet championship. He later played for France and won board one gold at the Olympiads of 1931 and 1933.",
+      "He beat [[champion:capablanca|Capablanca]] in Buenos Aires in 1927, 18.5-15.5, with 6 wins, 3 losses and 25 draws in 34 games. [[game:37687|His win over Capablanca in game 34]] gave him his sixth win and the title. He defended it against Bogoljubow in 1929 (15.5-9.5) and 1934 (15.5-10.5). In 1935 he lost to [[champion:euwe|Max Euwe]] 14.5-15.5, though he won [[game:36401|game 19 against Euwe]]. In the 1937 return match he won 15.5-9.5.",
+      "The Alekhine Defence, 1.e4 Nf6, is named after him, and his first tournament games with it were at Budapest in 1921. He won San Remo in 1930 with 14 out of 15, 3.5 points ahead of Nimzowitsch, and Hastings 1936-37 with 8 out of 9. In 1938 he finished level fourth to sixth at AVRO, where he won [[game:38453|his game against Capablanca at AVRO 1938]].",
+      "In March 1941 the German-controlled Pariser Zeitung published a six-part series, \"Aryan and Jewish Chess\", under his name. The articles were antisemitic. Alekhine later gave different accounts of who wrote them, and sources still disagree on how much of the text was his. His invitation to the London tournament in 1946 was withdrawn after other players protested.",
+      "He agreed a $10,000 purse for a match with Botvinnik after AVRO, but the war intervened. Alekhine was found dead in his hotel room in Estoril, Portugal, on 24 March 1946, aged 53, while talks with Botvinnik were under way. The cause of death is still disputed. Moscow held an Alekhine Memorial in 1956, which Botvinnik and Smyslov shared."
+    ],
+    "titleMatches": [
+      {
+        "year": "1927",
+        "opponent": "José Raúl Capablanca",
+        "opponentSlug": "capablanca",
+        "place": "Buenos Aires",
+        "score": "18.5-15.5",
+        "result": "won"
+      },
+      {
+        "year": "1929",
+        "opponent": "Efim Bogoljubow",
+        "place": "Wiesbaden, Berlin and other cities",
+        "score": "15.5-9.5",
+        "result": "won"
+      },
+      {
+        "year": "1934",
+        "opponent": "Efim Bogoljubow",
+        "place": "Germany",
+        "score": "15.5-10.5",
+        "result": "won"
+      },
+      {
+        "year": "1935",
+        "opponent": "Max Euwe",
+        "opponentSlug": "euwe",
+        "place": "Netherlands",
+        "score": "14.5-15.5",
+        "result": "lost"
+      },
+      {
+        "year": "1937",
+        "opponent": "Max Euwe",
+        "opponentSlug": "euwe",
+        "place": "Netherlands",
+        "score": "15.5-9.5",
+        "result": "won"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Did Alekhine die as World Champion?",
+        "a": "Yes. He is the only champion to do so. He died in Estoril, Portugal, on 24 March 1946, while a match with Mikhail Botvinnik was being arranged."
+      },
+      {
+        "q": "Who did Alekhine lose the title to, and did he get it back?",
+        "a": "He lost it to Max Euwe in 1935, 14.5-15.5. He won it back in the 1937 return match, 15.5-9.5."
+      },
+      {
+        "q": "What was the score of the Alekhine-Capablanca match?",
+        "a": "Alekhine won 18.5-15.5 in Buenos Aires in 1927, with 6 wins, 3 losses and 25 draws in 34 games."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Alexander_Alekhine",
+      "https://www.wikidata.org/wiki/Q131374"
+    ]
+  },
+  "euwe": {
+    "name": "Max Euwe",
+    "reign": "World Champion 1935-1937",
+    "intro": "Max Euwe, a Dutch mathematician, beat Alexander Alekhine 15.5-14.5 in 1935 to become the fifth world champion. He lost the title back to Alekhine in 1937 and later served as FIDE president from 1970 to 1978.",
+    "about": [
+      "Euwe was born on 20 May 1901 in Watergraafsmeer, near Amsterdam, and died in Amsterdam on 26 November 1981, aged 80. He earned a doctorate in mathematics at the University of Amsterdam in 1926 and worked as a mathematics teacher. He was never a professional chess player.",
+      "He won the Dutch championship every time he entered between 1921 and 1952, and again in 1955. That made 12 titles, a record. He lost a short match to [[champion:alekhine|Alekhine]] in 1926-27 by 4.5-5.5, and a ten-game match to [[champion:capablanca|Capablanca]] in 1931 by 4-6. In between he won Hastings 1930-31 ahead of Capablanca. At Zurich 1934 he finished equal second with Flohr, behind Alekhine, and [[game:36369|beat Alekhine]] in their game.",
+      "The title match began on 3 October 1935 and was played in 13 Dutch cities. Alekhine led 6-3 after nine games. Euwe came back and won 15.5-14.5, with 9 wins, 8 losses and 13 draws. [[game:36408|Game 26]], a win for Euwe, was one of those nine. Alekhine won the return match in 1937 by 15.5-9.5. Euwe led 3-2 after five games, but Alekhine won ten games to his four.",
+      "He was known for a clear, logical style, for his calculation and for his knowledge of openings, where he made major contributions to theory. He wrote more than 70 books, among them Strategy and Tactics in Chess (1937) and The Logical Approach to Chess (1958).",
+      "At AVRO 1938 he [[game:36508|beat Capablanca]]. He lost a 14-game match to Keres in 1939-40, 6.5-7.5, and was second at Groningen 1946, half a point behind [[champion:botvinnik|Botvinnik]]. In the 1948 title tournament he finished last with 4 out of 20. He was president of FIDE from 1970 to 1978, after Folke Rogard and before Fridrik Olafsson, and held the post during the 1972 Reykjavik match."
+    ],
+    "titleMatches": [
+      {
+        "year": "1935",
+        "opponent": "Alexander Alekhine",
+        "opponentSlug": "alekhine",
+        "place": "The Netherlands",
+        "score": "15.5-14.5",
+        "result": "won"
+      },
+      {
+        "year": "1937",
+        "opponent": "Alexander Alekhine",
+        "opponentSlug": "alekhine",
+        "place": "The Netherlands",
+        "score": "9.5-15.5",
+        "result": "lost"
+      },
+      {
+        "year": "1948",
+        "opponent": "Match tournament (Botvinnik, Smyslov, Keres, Reshevsky)",
+        "place": "The Hague and Moscow",
+        "score": "4/20",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Who did Max Euwe beat to win the world title?",
+        "a": "Alexander Alekhine. Euwe won their 1935 match 15.5-14.5, with 9 wins, 8 losses and 13 draws, after trailing 6-3 following nine games."
+      },
+      {
+        "q": "How long was Max Euwe world champion?",
+        "a": "About two years. He won the title in December 1935 and lost the return match to Alekhine in 1937 by 15.5-9.5."
+      },
+      {
+        "q": "Was Max Euwe a professional chess player?",
+        "a": "No. He was a mathematician and teacher with a doctorate from the University of Amsterdam. He still won the Dutch championship 12 times, a record."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Max_Euwe",
+      "https://www.wikidata.org/wiki/Q173714"
+    ]
+  },
+  "botvinnik": {
+    "name": "Mikhail Botvinnik",
+    "reign": "World Champion 1948-1957, 1958-1960, 1961-1963",
+    "intro": "Mikhail Botvinnik, a Soviet player, won the 1948 world championship tournament and became the sixth world champion. He lost the title and won it back twice, in 1958 and 1961, before losing to Tigran Petrosian in 1963.",
+    "about": [
+      "Botvinnik was born on 17 August 1911 in Kuokkala, in Finland, now Repino near St Petersburg. He died in Moscow on 5 May 1995, aged 83. In a simultaneous exhibition in Leningrad on 20 November 1925 he beat [[champion:capablanca|Capablanca]], at the age of 14. He won the Soviet championship in 1931 and 1933, and in 1951 he earned a doctorate in electrical engineering.",
+      "In round 11 of AVRO 1938 he [[game:32541|beat Capablanca]]. In 1946 he won Groningen, half a point ahead of [[champion:euwe|Euwe]]. In 1948 he won the world championship tournament in The Hague and Moscow with 14 out of 20. Smyslov scored 11, Keres and Reshevsky 10.5, and Euwe 4.",
+      "He then defended the title against Bronstein in 1951 and [[champion:smyslov|Smyslov]] in 1954, and both matches ended 12-12. Smyslov beat him 12.5-9.5 in 1957, and Botvinnik took the title back in 1958 by 12.5-10.5. In that rematch he won the first three games, two of them with the Caro-Kann, including [[game:32938|game 1 against Smyslov]]. He lost to [[champion:tal|Tal]] in 1960 and won the rematch in 1961, 13-8. The rematch clause he used twice was nicknamed the Botvinnik rule. In 1963 he lost to [[champion:petrosian|Petrosian]] 9.5-12.5.",
+      "He was known for deep strategy, serious opening and psychological preparation, and a scientific approach built on logic. He used the Semi-Slav system that carries his name against Denker in the 1945 radio match between the USSR and the USA, and [[game:32685|won in 25 moves]]. He retired from play in 1970, aged 59.",
+      "After he stopped playing he worked on computer chess. He led the Soviet Pioneer project, a program meant to model a master's thinking by searching a few lines very deeply. It never played a public tournament game. He also ran a school for young players, and Garry Kasparov is linked to it. His book Half a Century of Chess first appeared in 1984."
+    ],
+    "titleMatches": [
+      {
+        "year": "1948",
+        "opponent": "Match tournament (Smyslov, Keres, Reshevsky, Euwe)",
+        "place": "The Hague and Moscow",
+        "score": "14/20",
+        "result": "won"
+      },
+      {
+        "year": "1951",
+        "opponent": "David Bronstein",
+        "place": "Moscow",
+        "score": "12-12",
+        "result": "drawn"
+      },
+      {
+        "year": "1954",
+        "opponent": "Vasily Smyslov",
+        "opponentSlug": "smyslov",
+        "place": "Moscow",
+        "score": "12-12",
+        "result": "drawn"
+      },
+      {
+        "year": "1957",
+        "opponent": "Vasily Smyslov",
+        "opponentSlug": "smyslov",
+        "place": "Moscow",
+        "score": "9.5-12.5",
+        "result": "lost"
+      },
+      {
+        "year": "1958",
+        "opponent": "Vasily Smyslov",
+        "opponentSlug": "smyslov",
+        "place": "Moscow",
+        "score": "12.5-10.5",
+        "result": "won"
+      },
+      {
+        "year": "1960",
+        "opponent": "Mikhail Tal",
+        "opponentSlug": "tal",
+        "place": "Moscow",
+        "score": "8.5-12.5",
+        "result": "lost"
+      },
+      {
+        "year": "1961",
+        "opponent": "Mikhail Tal",
+        "opponentSlug": "tal",
+        "place": "Moscow",
+        "score": "13-8",
+        "result": "won"
+      },
+      {
+        "year": "1963",
+        "opponent": "Tigran Petrosian",
+        "opponentSlug": "petrosian",
+        "place": "Moscow",
+        "score": "9.5-12.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Did Botvinnik lose the world title and win it back?",
+        "a": "Yes, twice. He lost to Smyslov in 1957 and won the 1958 rematch 12.5-10.5. He lost to Tal in 1960 and won the 1961 rematch 13-8. He lost to Petrosian in 1963."
+      },
+      {
+        "q": "What was the Botvinnik rule?",
+        "a": "It was the rematch clause that let a defeated champion demand a return match. It was nicknamed after Botvinnik because he used it twice, in 1958 and 1961."
+      },
+      {
+        "q": "Did Botvinnik work on computer chess?",
+        "a": "Yes. He led the Soviet Pioneer project, a program that tried to copy how a master thinks. It never played a public tournament game."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Mikhail_Botvinnik",
+      "https://www.wikidata.org/wiki/Q178865"
+    ]
+  },
+  "smyslov": {
+    "name": "Vasily Smyslov",
+    "reign": "World Champion 1957-1958",
+    "intro": "Vasily Smyslov beat Mikhail Botvinnik 12.5-9.5 in 1957 to become the seventh world champion, and lost the rematch a year later. He was also a baritone, and in his sixties he reached the final of the 1984 Candidates.",
+    "about": [
+      "Smyslov was born in Moscow on 24 March 1921 and died there on 27 March 2010, aged 89. He was named an International Grandmaster in 1950, on FIDE's first list. In the 1948 world championship tournament he finished second with 11 out of 20, behind [[champion:botvinnik|Botvinnik]].",
+      "He earned his title match by winning two Candidates tournaments in a row. At Zurich in 1953 he scored 18 out of 28 and finished two points ahead of Bronstein, Keres and Reshevsky, who all had 16. He won again in Amsterdam in 1956.",
+      "He first played Botvinnik for the title in Moscow in 1954, and the match ended 12-12 with the champion keeping the title. In [[game:32849|game 9]] he won the first of three wins in a row. In 1957 he won 12.5-9.5, with 6 wins, 13 draws and 3 losses. His [[game:32932|win in game 17]] was one of them. Botvinnik used his right to a rematch and won it in 1958, 12.5-10.5. Across the three matches Smyslov won 18 games, Botvinnik 17, and 34 were drawn.",
+      "He had a positional style and precise endgame technique, and many of his games also ended in spectacular tactics. In round 1 of the 1959 Candidates he [[game:30169|beat Tal]].",
+      "He kept playing at a high level for decades. At 62 he drew his 1983 Candidates quarter-final against Hubner 7-7 and won it on the spin of a roulette wheel. He then beat Ribli 6.5-4.5 and lost the 1984 final to [[champion:kasparov|Kasparov]] in Vilnius, 4.5-8.5. In 1991 he won the first World Senior Championship, aged 70. Outside chess he was a baritone who gave recitals at tournaments and made recordings. He retired after 2001 because of failing eyesight."
+    ],
+    "titleMatches": [
+      {
+        "year": "1954",
+        "opponent": "Mikhail Botvinnik",
+        "opponentSlug": "botvinnik",
+        "place": "Moscow",
+        "score": "12-12",
+        "result": "drawn"
+      },
+      {
+        "year": "1957",
+        "opponent": "Mikhail Botvinnik",
+        "opponentSlug": "botvinnik",
+        "place": "Moscow",
+        "score": "12.5-9.5",
+        "result": "won"
+      },
+      {
+        "year": "1958",
+        "opponent": "Mikhail Botvinnik",
+        "opponentSlug": "botvinnik",
+        "place": "Moscow",
+        "score": "10.5-12.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Was Vasily Smyslov a singer?",
+        "a": "Yes. He was a baritone who gave recitals at tournaments and made recordings. He also auditioned for the Bolshoi Theatre."
+      },
+      {
+        "q": "How long was Smyslov world champion?",
+        "a": "About a year. He beat Botvinnik 12.5-9.5 in 1957 and lost the rematch 10.5-12.5 in 1958."
+      },
+      {
+        "q": "How did Smyslov win the 1983 Candidates quarter-final?",
+        "a": "He drew the match with Hubner 7-7 after 14 games, and a spin of a roulette wheel decided it. The red side was Smyslov's, and he went through at the age of 62."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Vasily_Smyslov",
+      "https://www.wikidata.org/wiki/Q104148"
+    ]
+  },
+  "tal": {
+    "name": "Mikhail Tal",
+    "reign": "World Champion 1960-1961",
+    "intro": "Mikhail Tal won the world title from Mikhail Botvinnik in 1960, aged 23, and lost it back to him a year later. He is remembered for attacking chess full of sacrifices.",
+    "about": [
+      "Tal was born in Riga on 9 November 1936 and died in Moscow on 28 June 1992, aged 55. He won the Soviet championship in 1957, at 20 the youngest winner until then, and became a grandmaster the same year.",
+      "He won every stage on the way to the title. He kept the Soviet title in 1958, won the Portoroz Interzonal that year with 13.5 out of 20, and in 1959 won the Candidates in Bled, Zagreb and Belgrade with 20 out of 28, ahead of Paul Keres on 18.5. He beat Bobby Fischer in all four of their games there.",
+      "In the 1960 match in Moscow he beat [[champion:botvinnik|Botvinnik]] 12.5-8.5, with 6 wins, 2 losses and 13 draws, and at 23 was the youngest champion so far. In [[game:30281|game 6]] he won with the speculative knight move 21...Nf4. Botvinnik used his right to a rematch in 1961 and won it 13-8, with Tal suffering from kidney trouble during the match.",
+      "FIDE describes his style as combinational, full of sacrifices and the fight for the initiative. His win over [[champion:spassky|Boris Spassky]] at [[game:27090|Tilburg 1980]] tops our ranking of his best games.",
+      "He never regained the title, but he stayed among the best players for three decades. He was Soviet champion six times and won eight Olympiad team golds with the Soviet Union. In 1972 and 1973 he went 86 games unbeaten, and in 1973 and 1974 he went 95 games unbeaten, with 46 wins and 49 draws. His peak FIDE rating was 2705 in January 1980, when he was number two in the world. In 1988, at 51, he won the World Blitz Championship in Saint John, Canada."
+    ],
+    "titleMatches": [
+      {
+        "year": "1960",
+        "opponent": "Mikhail Botvinnik",
+        "opponentSlug": "botvinnik",
+        "place": "Moscow",
+        "score": "12.5-8.5",
+        "result": "won"
+      },
+      {
+        "year": "1961",
+        "opponent": "Mikhail Botvinnik",
+        "opponentSlug": "botvinnik",
+        "place": "Moscow",
+        "score": "8-13",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "How old was Tal when he became world champion?",
+        "a": "He was 23 when he beat Mikhail Botvinnik in 1960, the youngest world champion up to that time."
+      },
+      {
+        "q": "Why did Tal lose the 1961 rematch?",
+        "a": "Botvinnik prepared to steer the games into quieter positions and endgames, and Tal was ill with kidney trouble during the match. Botvinnik won 13-8."
+      },
+      {
+        "q": "How long was Tal's longest unbeaten run?",
+        "a": "95 games, in 1973 and 1974, with 46 wins and 49 draws. He also went 86 games unbeaten in 1972 and 1973."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Mikhail_Tal",
+      "https://www.wikidata.org/wiki/Q102664"
+    ]
+  },
+  "petrosian": {
+    "name": "Tigran Petrosian",
+    "reign": "World Champion 1963-1969",
+    "intro": "Tigran Petrosian beat Mikhail Botvinnik 12.5-9.5 in 1963, after losing the first game, and held the title for six years. He was known as Iron Tigran for the strength of his defence.",
+    "about": [
+      "Petrosian was born in Tiflis (now Tbilisi) on 17 June 1929 and died in Moscow on 13 August 1984, aged 55. He became a grandmaster in 1952, after finishing second at the Stockholm Interzonal. He was Soviet champion four times, in 1959, 1961, 1969 and 1975.",
+      "His road to the title was steady. At the 1953 Zurich Candidates he was fifth, on 15 out of 28. At the 1962 Stockholm Interzonal he shared second place with Geller on 15 points. Then he won the Candidates in Curacao with 17.5 out of 28.",
+      "He played [[champion:botvinnik|Botvinnik]] in Moscow from 23 March to 20 May 1963. He lost game 1, then won 12.5-9.5, with 5 wins, 15 draws and 2 losses. In 1966 he defended the title against [[champion:spassky|Spassky]] 12.5-11.5, and he won [[game:26394|game 10 against Spassky]] of that match. In 1969 Spassky won the rematch 12.5-10.5 and became the tenth champion.",
+      "He was a solid positional player known for defence, prophylaxis and counterattack. He played in ten Olympiads for the Soviet Union between 1958 and 1978, scoring 78 wins, 50 draws and 1 loss, a defeat by Hubner at Skopje in 1972.",
+      "In 1971 he lost the Candidates final to [[champion:fischer|Fischer]] in Buenos Aires, 2.5-6.5. In 1979 he shared first place at the Rio de Janeiro Interzonal with Portisch and Hubner. In 1980 he lost a Candidates match to Korchnoi in Velden, 3.5-5.5. He also beat the young [[champion:kasparov|Kasparov]] at [[game:19502|Tilburg 1981]]."
+    ],
+    "titleMatches": [
+      {
+        "year": "1963",
+        "opponent": "Mikhail Botvinnik",
+        "opponentSlug": "botvinnik",
+        "place": "Moscow",
+        "score": "12.5-9.5",
+        "result": "won"
+      },
+      {
+        "year": "1966",
+        "opponent": "Boris Spassky",
+        "opponentSlug": "spassky",
+        "place": "Moscow",
+        "score": "12.5-11.5",
+        "result": "won"
+      },
+      {
+        "year": "1969",
+        "opponent": "Boris Spassky",
+        "opponentSlug": "spassky",
+        "place": "Moscow",
+        "score": "10.5-12.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Why was Petrosian called Iron Tigran?",
+        "a": "For his defence. He was known for prophylaxis and for counterattack, and he was very hard to break down."
+      },
+      {
+        "q": "How did Petrosian become world champion?",
+        "a": "He won the 1962 Candidates in Curacao with 17.5 out of 28. Then he beat Botvinnik 12.5-9.5 in 1963, after losing the first game."
+      },
+      {
+        "q": "How did Petrosian lose the world title?",
+        "a": "To Boris Spassky, 10.5-12.5 in Moscow in 1969. Petrosian had beaten Spassky 12.5-11.5 in 1966."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Tigran_Petrosian",
+      "https://www.wikidata.org/wiki/Q180636"
+    ]
+  },
+  "spassky": {
+    "name": "Boris Spassky",
+    "reign": "World Champion 1969-1972",
+    "intro": "Boris Spassky became the tenth world champion in 1969 by beating Tigran Petrosian. He lost the title to Bobby Fischer in Reykjavik in 1972, in his only title defence.",
+    "about": [
+      "Spassky was born in Leningrad on 30 January 1937 and died in Moscow on 27 February 2025, aged 88. He won the World Junior Championship in Antwerp in 1955 and became a grandmaster at 18. He played his first Candidates tournament, in Amsterdam in 1956, at 19, and he won the Soviet championship in 1961 and 1973.",
+      "His road to the title began with a four-way tie for first on 17 out of 23 at the 1964 Amsterdam Interzonal, shared with Larsen, Smyslov and [[champion:tal|Tal]]. He won the 1965 Candidates, beating Keres 6-4, Geller 5.5-2.5 and Tal 7-4. In 1966 [[champion:petrosian|Tigran Petrosian]] beat him 12.5-11.5 in Moscow. Spassky came back through the 1968 Candidates and beat Geller, Larsen and then Korchnoi, 6.5-3.5 in the final.",
+      "The rematch with Petrosian in Moscow in 1969 ended 12.5-10.5 for Spassky, with six wins, four losses and 13 draws. He won [[game:26592|game 19 against Petrosian]]. In 1972 he lost the title to [[champion:fischer|Bobby Fischer]] in Reykjavik, 8.5-12.5. Spassky won game 1, won game 2 by forfeit when Fischer did not appear, and won [[game:25751|game 11 against Fischer]], his last win in the match.",
+      "He was often called a universal player. He played the King's Gambit against Bronstein in the [[game:26047|1960 USSR Championship game]] and won in 23 moves.",
+      "In 1974 he lost to [[champion:karpov|Karpov]] in the Candidates, and in 1977 he lost the final to Korchnoi. He moved to France in 1976, became a French citizen in 1978, and played board one for France at the 1984, 1986 and 1988 Olympiads. In 1992 he lost an unofficial rematch with Fischer, 5-10 with 15 draws, in Sveti Stefan and Belgrade. He returned to Russia in 2012."
+    ],
+    "titleMatches": [
+      {
+        "year": "1966",
+        "opponent": "Tigran Petrosian",
+        "opponentSlug": "petrosian",
+        "place": "Moscow",
+        "score": "11.5-12.5",
+        "result": "lost"
+      },
+      {
+        "year": "1969",
+        "opponent": "Tigran Petrosian",
+        "opponentSlug": "petrosian",
+        "place": "Moscow",
+        "score": "12.5-10.5",
+        "result": "won"
+      },
+      {
+        "year": "1972",
+        "opponent": "Bobby Fischer",
+        "opponentSlug": "fischer",
+        "place": "Reykjavik",
+        "score": "8.5-12.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "When did Boris Spassky become world champion?",
+        "a": "In 1969. He beat Tigran Petrosian 12.5-10.5 in Moscow, three years after losing to him in 1966. He was the tenth world champion."
+      },
+      {
+        "q": "What was the score of the 1972 Spassky v Fischer match?",
+        "a": "Fischer won 12.5-8.5 in Reykjavik, with seven wins, three losses and 11 draws. Spassky won game 1, game 2 by forfeit and game 11. Fischer won seven games, all after game 2."
+      },
+      {
+        "q": "Did Spassky ever win the world title back?",
+        "a": "No. He reached the Candidates again in 1974 and 1977, but lost to Karpov and then to Korchnoi."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Boris_Spassky",
+      "https://www.wikidata.org/wiki/Q177310"
+    ]
+  },
+  "fischer": {
+    "name": "Bobby Fischer",
+    "reign": "World Champion 1972-1975",
+    "intro": "Bobby Fischer won the world title from Boris Spassky in Reykjavik in 1972 and was the first American-born champion. He never defended it: FIDE gave the title to Anatoly Karpov in 1975, after Fischer and FIDE could not agree on the match rules.",
+    "about": [
+      "Fischer was born in Chicago on 9 March 1943. At 13 he beat Donald Byrne at the 1956 Rosenwald Memorial in New York, in a game later called the [[game:24986|Game of the Century]]. He won the US Championship at 14, still the youngest winner, and took eight titles in all. In 1963/64 he scored 11 out of 11.",
+      "At the 1958 Portoroz Interzonal he tied for fifth and sixth on 12 out of 20, which qualified him, and became a grandmaster at 15 years 6 months, the youngest at the time. He won the 1962 Stockholm Interzonal on 17.5 out of 22, unbeaten and 2.5 points clear of the field, and the 1970 Palma de Mallorca Interzonal with 18.5 out of 23.",
+      "In the 1971 Candidates he beat Taimanov and Larsen 6-0 and then [[champion:petrosian|Petrosian]] 6.5-2.5 in the final, winning [[game:25706|game 1 against Petrosian]]. The 1972 match with [[champion:spassky|Spassky]] ran from 11 July to 1 September in Reykjavik. Fischer lost game 1 and did not appear for game 2, which was awarded to Spassky. He then won game 3, which was played away from the main hall, and won [[game:25746|game 6 against Spassky]] with his first Queen's Gambit, which Spassky applauded. Fischer won 12.5-8.5.",
+      "For 1975 Fischer wanted a match to ten wins, with the champion keeping the title at 9-9. FIDE accepted ten wins but rejected the 9-9 clause. Fischer did not confirm by the deadline, and FIDE declared [[champion:karpov|Karpov]] champion on 3 April 1975.",
+      "In 1992 he beat Spassky 10-5 with 15 draws in an unofficial rematch in Sveti Stefan and Belgrade. Yugoslavia was under UN sanctions, and the US Treasury had warned him that playing breached a US order. A US arrest warrant followed. He was arrested in Japan in July 2004, became an Icelandic citizen in March 2005, and died in Reykjavik on 17 January 2008, aged 64."
+    ],
+    "titleMatches": [
+      {
+        "year": "1972",
+        "opponent": "Boris Spassky",
+        "opponentSlug": "spassky",
+        "place": "Reykjavik",
+        "score": "12.5-8.5",
+        "result": "won"
+      }
+    ],
+    "faq": [
+      {
+        "q": "How did Fischer qualify for the 1972 title match?",
+        "a": "He won the 1970 Palma de Mallorca Interzonal, then the 1971 Candidates. He beat Taimanov 6-0, Larsen 6-0 and Petrosian 6.5-2.5."
+      },
+      {
+        "q": "Did Bobby Fischer play in the 1975 World Championship?",
+        "a": "No. Fischer wanted the champion to keep the title at 9-9. FIDE rejected that clause, Fischer did not confirm the match, and Karpov was declared champion on 3 April 1975."
+      },
+      {
+        "q": "What else did Fischer invent?",
+        "a": "A digital chess clock that adds a fixed time increment after each move. It was patented in 1989. He also announced Fischer Random chess in Buenos Aires in 1996."
+      }
+    ],
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Bobby_Fischer",
+      "https://www.wikidata.org/wiki/Q41314"
+    ]
+  },
+  "karpov": {
+    "name": "Anatoly Karpov",
+    "reign": "World Champion 1975-1985 and FIDE World Champion 1993-1999",
+    "intro": "Anatoly Karpov became world champion in 1975, aged 23, when FIDE awarded him the title after Bobby Fischer did not defend it. He held it until Garry Kasparov beat him in 1985, and he was FIDE champion again from 1993 to 1999.",
+    "about": [
+      "Karpov was born in Zlatoust on 23 May 1951. He shared first place with Korchnoi at the 1973 Leningrad Interzonal. In the 1974 Candidates he beat Polugaevsky 5.5-2.5, [[champion:spassky|Spassky]] 7-4 and Korchnoi 12.5-11.5, which earned him a match against [[champion:fischer|Fischer]].",
+      "That match was never played. FIDE accepted Fischer's demand for a match to ten wins but not his 9-9 clause, Fischer did not agree, and FIDE president Max Euwe announced Karpov champion on 3 April 1975. Karpov then beat Korchnoi in Baguio in 1978, 6-5, and in Merano in 1981, 6-2.",
+      "From 1984 to 1990 he played [[champion:kasparov|Garry Kasparov]] in five title matches, 144 games in all. Karpov won 19, Kasparov won 21 and 104 were drawn. FIDE ended the first match without a result on 15 February 1985, with Karpov ahead 5-3 after 48 games. Kasparov won the 1985 rematch 13-11 on 9 November. In 1987 in Seville the match ended 12-12 and Kasparov kept the title, with Karpov winning [[game:19816|game 23 against Kasparov]].",
+      "In 1993 Kasparov and Nigel Short left FIDE. FIDE stripped Kasparov of the title, and Karpov beat Timman 12.5-8.5 for FIDE's version. He kept it against Kamsky in 1996, 10.5-7.5, and against [[champion:anand|Anand]] in 1998, on a rapid tiebreak after a 3-3 draw. In 1999 he declined to play the Las Vegas knockout in protest at its format, and his FIDE reign ended.",
+      "At Linares in 1994 he scored 11 out of 13, unbeaten and 2.5 points clear of Kasparov and Shirov, a performance rating of 2985. He beat Topalov there in [[game:23241|round 4 against Topalov]], and he beat Unzicker in [[game:21760|Karpov-Unzicker at the Nice Olympiad of 1974]]. In 2010 Karpov lost the FIDE presidency election to Ilyumzhinov, 95-55."
+    ],
+    "titleMatches": [
+      {
+        "year": "1978",
+        "opponent": "Korchnoi",
+        "place": "Baguio",
+        "score": "6-5",
+        "result": "won"
+      },
+      {
+        "year": "1981",
+        "opponent": "Korchnoi",
+        "place": "Merano",
+        "score": "6-2",
+        "result": "won"
+      },
+      {
+        "year": "1984-85",
+        "opponent": "Garry Kasparov",
+        "opponentSlug": "kasparov",
+        "place": "Moscow",
+        "score": "5-3",
+        "result": "abandoned"
+      },
+      {
+        "year": "1985",
+        "opponent": "Garry Kasparov",
+        "opponentSlug": "kasparov",
+        "place": "Moscow",
+        "score": "11-13",
+        "result": "lost"
+      },
+      {
+        "year": "1986",
+        "opponent": "Garry Kasparov",
+        "opponentSlug": "kasparov",
+        "place": "London and Leningrad",
+        "score": "11.5-12.5",
+        "result": "lost"
+      },
+      {
+        "year": "1987",
+        "opponent": "Garry Kasparov",
+        "opponentSlug": "kasparov",
+        "place": "Seville",
+        "score": "12-12",
+        "result": "drawn"
+      },
+      {
+        "year": "1990",
+        "opponent": "Garry Kasparov",
+        "opponentSlug": "kasparov",
+        "place": "New York and Lyon",
+        "score": "11.5-12.5",
+        "result": "lost"
+      },
+      {
+        "year": "1993",
+        "opponent": "Timman",
+        "place": "Zwolle, Arnhem, Amsterdam and Jakarta",
+        "score": "12.5-8.5",
+        "result": "won"
+      },
+      {
+        "year": "1996",
+        "opponent": "Gata Kamsky",
+        "place": "Elista",
+        "score": "10.5-7.5",
+        "result": "won"
+      },
+      {
+        "year": "1998",
+        "opponent": "Viswanathan Anand",
+        "opponentSlug": "anand",
+        "place": "Lausanne",
+        "score": "3-3, then 2-0 in the rapid tiebreak",
+        "result": "won"
+      }
+    ],
+    "faq": [
+      {
+        "q": "How did Karpov become world champion?",
+        "a": "He won the 1974 Candidates, beating Polugaevsky, Spassky and Korchnoi. Fischer did not play the title match, and FIDE awarded Karpov the title on 3 April 1975."
+      },
+      {
+        "q": "Why did the 1984-85 Karpov v Kasparov match end with no result?",
+        "a": "After 48 games Karpov led 5-3. FIDE stopped the match on 15 February 1985 with no result."
+      },
+      {
+        "q": "Was Karpov world champion again after 1985?",
+        "a": "Yes, FIDE champion from 1993 to 1999. After Kasparov left FIDE, Karpov won FIDE's title matches against Timman in 1993, Kamsky in 1996 and Anand in 1998."
+      }
+    ],
+    "bestGamesNote": "His games after 1999 are not ranked yet.",
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Anatoly_Karpov",
+      "https://www.wikidata.org/wiki/Q131674",
+      "https://ratings.fide.com/profile/4100026"
+    ]
+  },
+  "kasparov": {
+    "name": "Garry Kasparov",
+    "reign": "World Champion 1985-2000",
+    "intro": "Garry Kasparov became world champion in 1985, aged 22, by beating Anatoly Karpov 13-11 in Moscow. He held the title until Vladimir Kramnik beat him in London in 2000.",
+    "about": [
+      "Kasparov was born Garik Weinstein in Baku on 13 April 1963 and took his mother's surname at about twelve. He won the 1982 Moscow Interzonal, then the 1983-84 Candidates, beating Beliavsky 6.5-2.5, Korchnoi 7-4 and [[champion:smyslov|Smyslov]] 8.5-4.5.",
+      "His first match against [[champion:karpov|Karpov]], in 1984-85, was stopped without a result with Karpov ahead 5-3. Kasparov won the 1985 rematch 13-11 on 9 November 1985, at 22 the youngest undisputed champion until then. He won [[game:19692|game 24 against Karpov]] with Black to take the title. He kept it with a 12.5-11.5 win in 1986 and a 12-12 draw in 1987, and won again in 1990, 12.5-11.5.",
+      "In 1993 Kasparov and Nigel Short left FIDE, formed the Professional Chess Association and played their title match in London. Kasparov won 12.5-7.5. FIDE stripped him of the title and organised its own match, Karpov v Timman. He beat [[champion:anand|Anand]] 10.5-7.5 in New York in 1995. In 2000 [[champion:kramnik|Kramnik]] beat him 8.5-6.5 in London, with two wins and no losses, using the Berlin Defence against 1.e4.",
+      "In January 1999 at Wijk aan Zee he beat Topalov in [[game:20821|Kasparov's Immortal]], which turned on a rook sacrifice, 24.Rxd4. His rating peaked at 2851 in July 1999. He played the computer Deep Blue twice. He won the 1996 match in Philadelphia 4-2, then lost the 1997 rematch in New York 2.5-3.5, losing game 6 after 19 moves.",
+      "Kasparov won Linares nine times. He announced his retirement from professional chess on 10 March 2005, after winning Linares on a tiebreak. Russia designated him a foreign agent on 20 May 2022."
+    ],
+    "titleMatches": [
+      {
+        "year": "1984-85",
+        "opponent": "Anatoly Karpov",
+        "opponentSlug": "karpov",
+        "place": "Moscow",
+        "score": "3-5",
+        "result": "abandoned"
+      },
+      {
+        "year": "1985",
+        "opponent": "Anatoly Karpov",
+        "opponentSlug": "karpov",
+        "place": "Moscow",
+        "score": "13-11",
+        "result": "won"
+      },
+      {
+        "year": "1986",
+        "opponent": "Anatoly Karpov",
+        "opponentSlug": "karpov",
+        "place": "London and Leningrad",
+        "score": "12.5-11.5",
+        "result": "won"
+      },
+      {
+        "year": "1987",
+        "opponent": "Anatoly Karpov",
+        "opponentSlug": "karpov",
+        "place": "Seville",
+        "score": "12-12",
+        "result": "drawn"
+      },
+      {
+        "year": "1990",
+        "opponent": "Anatoly Karpov",
+        "opponentSlug": "karpov",
+        "place": "New York and Lyon",
+        "score": "12.5-11.5",
+        "result": "won"
+      },
+      {
+        "year": "1993",
+        "opponent": "Nigel Short",
+        "place": "London",
+        "score": "12.5-7.5",
+        "result": "won"
+      },
+      {
+        "year": "1995",
+        "opponent": "Viswanathan Anand",
+        "opponentSlug": "anand",
+        "place": "New York",
+        "score": "10.5-7.5",
+        "result": "won"
+      },
+      {
+        "year": "2000",
+        "opponent": "Vladimir Kramnik",
+        "opponentSlug": "kramnik",
+        "place": "London",
+        "score": "6.5-8.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Did Kasparov beat Deep Blue?",
+        "a": "He won the 1996 match in Philadelphia 4-2, then lost the 1997 rematch in New York 2.5-3.5."
+      },
+      {
+        "q": "Why did Kasparov leave FIDE in 1993?",
+        "a": "He and Nigel Short left FIDE to organise their own title match in London through the Professional Chess Association. FIDE then stripped Kasparov of the title and arranged a match between Karpov and Timman."
+      },
+      {
+        "q": "What was Kasparov's highest rating?",
+        "a": "2851, in July 1999."
+      }
+    ],
+    "bestGamesNote": "His games after 1999 are not ranked yet.",
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Garry_Kasparov",
+      "https://www.wikidata.org/wiki/Q28614",
+      "https://ratings.fide.com/profile/4100018"
+    ]
+  },
+  "kramnik": {
+    "name": "Vladimir Kramnik",
+    "reign": "Classical World Champion 2000-2006, undisputed 2006-2007",
+    "intro": "Vladimir Kramnik won the classical world title in 2000 by beating Garry Kasparov 8.5-6.5 in London without losing a game. In 2006 he won a tiebreak against Veselin Topalov in Elista and became the undisputed champion.",
+    "about": [
+      "Kramnik was born in Tuapse on 25 June 1975. He won the World Under-18 title in 1991. At the 1992 Manila Olympiad he made his debut for Russia aged 17, as first reserve. He scored 8.5 out of 9, with eight wins and one draw, and won the individual gold medal for the best performance. He became a grandmaster that year.",
+      "In October 2000 he played [[champion:kasparov|Garry Kasparov]] in London for the classical world title. The match ended in early November. Kramnik won 8.5-6.5 without a loss: he won [[game:46136|game 2]] and [[game:46144|game 10]] and drew the other thirteen. He played the Berlin Defence as Black in games 1, 3, 9 and 13, and all four were drawn.",
+      "He kept the title in 2004 by drawing 7-7 with Peter Leko in Brissago. He won games 1 and 14, and Leko won games 5 and 8. In 2006 he met Topalov, the FIDE champion, in Elista to unify the title. Topalov's manager complained about Kramnik's bathroom visits, Kramnik did not appear for game 5 and was forfeited, and the match went on. It was level at 6-6 after the classical games, and Kramnik won the rapid tiebreak 2.5-1.5.",
+      "In 2007 he finished second equal in the Mexico City tournament with 8 out of 14. [[champion:anand|Viswanathan Anand]] won it with 9. Kramnik then lost the 2008 match in Bonn to Anand, 4.5-6.5. In 2013 he finished level on 8.5 with [[champion:carlsen|Magnus Carlsen]] in the Candidates and lost on tiebreak, having won four games to Carlsen's five. That year he also won the World Cup in Tromso, beating Andreikin 2.5-1.5 in the final. His rating peaked at 2817 in October 2016. The top game on our list of his best is his [[game:45990|win over Svidler at Linares in 1999]].",
+      "He retired from classical chess in January 2019 and kept playing rapid and blitz online. From 2023 he publicly questioned other players' online results. On 3 July 2026 the FIDE Ethics and Disciplinary Commission found him responsible for bullying and cyberbullying, psychological abuse and false or unjustified public accusations, and gave him a two-year worldwide ban from FIDE competitions and official functions, with the last 12 months suspended. He said he would appeal."
+    ],
+    "titleMatches": [
+      {
+        "year": "2000",
+        "opponent": "Garry Kasparov",
+        "opponentSlug": "kasparov",
+        "place": "London",
+        "score": "8.5-6.5",
+        "result": "won"
+      },
+      {
+        "year": "2004",
+        "opponent": "Peter Leko",
+        "place": "Brissago",
+        "score": "7-7",
+        "result": "drawn"
+      },
+      {
+        "year": "2006",
+        "opponent": "Veselin Topalov",
+        "place": "Elista",
+        "score": "6-6, rapid 2.5-1.5",
+        "result": "won"
+      },
+      {
+        "year": "2007",
+        "opponent": "Title tournament (Mexico City)",
+        "place": "Mexico City",
+        "score": "8/14",
+        "result": "lost"
+      },
+      {
+        "year": "2008",
+        "opponent": "Viswanathan Anand",
+        "opponentSlug": "anand",
+        "place": "Bonn",
+        "score": "4.5-6.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Who did Kramnik beat to become world champion?",
+        "a": "Garry Kasparov, 8.5-6.5 in London in 2000. Kramnik did not lose a game in the match. He won games 2 and 10 and drew the other thirteen."
+      },
+      {
+        "q": "What happened in the 2006 match between Kramnik and Topalov?",
+        "a": "Topalov's manager complained about Kramnik's bathroom visits. Kramnik did not appear for game 5 and was forfeited, and the match went on. It was 6-6 after the classical games, and Kramnik won the rapid tiebreak 2.5-1.5."
+      },
+      {
+        "q": "Why did FIDE sanction Kramnik in 2026?",
+        "a": "On 3 July 2026 the FIDE Ethics and Disciplinary Commission found him responsible for bullying and cyberbullying, psychological abuse and false or unjustified public accusations about other players. It gave him a two-year worldwide ban from FIDE competitions and official functions, with the last 12 months suspended on a three-year probation, plus 12 months of unpaid community service. Kramnik said he would appeal."
+      }
+    ],
+    "bestGamesNote": "His games after 1999, including his title matches, are not ranked yet.",
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Vladimir_Kramnik",
+      "https://www.wikidata.org/wiki/Q161092",
+      "https://ratings.fide.com/profile/4101588"
+    ]
+  },
+  "anand": {
+    "name": "Viswanathan Anand",
+    "reign": "FIDE World Champion 2000, undisputed World Champion 2007-2013",
+    "intro": "Viswanathan Anand became India's first world champion in 2000 and held the undisputed title from 2007 to 2013. He lost it to Magnus Carlsen in Chennai in 2013.",
+    "about": [
+      "Anand was born in 1969. He won the national sub-junior title in 1983 with 9 out of 9, and was Indian champion in 1986, 1987 and 1988. He became a grandmaster in 1988.",
+      "In 1995 he played [[champion:kasparov|Garry Kasparov]] for the PCA world title in New York. The first eight games were drawn, and Anand won [[game:50255|game 9]]. He lost the match 7.5-10.5, with one win, four losses and thirteen draws. In December 2000 he beat Shirov 3.5-0.5 in the final of the FIDE knockout in Tehran and became India's first world champion. That was the FIDE title, and the classical title was held by Kramnik. In 2003 he won the world rapid title, beating [[champion:kramnik|Vladimir Kramnik]] in the final.",
+      "In 2007 he won the eight-player tournament in Mexico City with 9 out of 14, undefeated, with four wins and ten draws, and became the undisputed champion. He was also No. 1 on the rating list from April 2007. In 2008 he beat Kramnik 6.5-4.5 in Bonn, winning games 3 and 5 with the Meran ([[game:51759|game 3]]). In 2010 he beat Topalov 6.5-5.5 in Sofia and clinched the match by winning [[game:51924|game 12]]. In 2012 he was level 6-6 with Gelfand in Moscow and won the rapid tiebreak 2.5-1.5 on 30 May. His rating peaked at 2817 in March 2011, when he took No. 1 from Carlsen by two points.",
+      "He lost the title to [[champion:carlsen|Magnus Carlsen]] 3.5-6.5 in Chennai in 2013, without a win. He earned a rematch by winning the 2014 Candidates in Khanty-Mansiysk with 8 out of 13, and lost it 4.5-6.5 in Sochi.",
+      "In December 2017 he won the world rapid title again, in Riyadh, with 10.5 out of 15 and a playoff win over Fedoseev. On 7 August 2022 he was elected FIDE Deputy President at the Chennai Olympiad. Timur Turlov was elected president on 26 September 2026, and Anand is Deputy President again. He still plays, and is rated 2739, No. 14 on the November 2026 list."
+    ],
+    "titleMatches": [
+      {
+        "year": "1995",
+        "opponent": "Garry Kasparov",
+        "opponentSlug": "kasparov",
+        "place": "New York",
+        "score": "7.5-10.5",
+        "result": "lost"
+      },
+      {
+        "year": "2000",
+        "opponent": "Alexei Shirov",
+        "place": "Tehran",
+        "score": "3.5-0.5",
+        "result": "won"
+      },
+      {
+        "year": "2007",
+        "opponent": "Title tournament (Mexico City)",
+        "place": "Mexico City",
+        "score": "9/14",
+        "result": "won"
+      },
+      {
+        "year": "2008",
+        "opponent": "Vladimir Kramnik",
+        "opponentSlug": "kramnik",
+        "place": "Bonn",
+        "score": "6.5-4.5",
+        "result": "won"
+      },
+      {
+        "year": "2010",
+        "opponent": "Veselin Topalov",
+        "place": "Sofia",
+        "score": "6.5-5.5",
+        "result": "won"
+      },
+      {
+        "year": "2012",
+        "opponent": "Boris Gelfand",
+        "place": "Moscow",
+        "score": "6-6, rapid 2.5-1.5",
+        "result": "won"
+      },
+      {
+        "year": "2013",
+        "opponent": "Magnus Carlsen",
+        "opponentSlug": "carlsen",
+        "place": "Chennai",
+        "score": "3.5-6.5",
+        "result": "lost"
+      },
+      {
+        "year": "2014",
+        "opponent": "Magnus Carlsen",
+        "opponentSlug": "carlsen",
+        "place": "Sochi",
+        "score": "4.5-6.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "How many times was Anand world champion?",
+        "a": "Five times by the usual count: the 2000 FIDE knockout, then the undisputed title in 2007, 2008, 2010 and 2012. The 2000 title was a FIDE title, won while the classical title was held by Kramnik."
+      },
+      {
+        "q": "Who beat Anand for the world title?",
+        "a": "Magnus Carlsen, 6.5-3.5 in Chennai in 2013 and 6.5-4.5 in Sochi in 2014."
+      },
+      {
+        "q": "Is Anand still active?",
+        "a": "Yes. He still plays, and he has been FIDE Deputy President since his election on 7 August 2022. Timur Turlov was elected FIDE president on 26 September 2026, with Anand as Deputy President again."
+      }
+    ],
+    "bestGamesNote": "His games since late 2024 are not ranked yet.",
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Viswanathan_Anand",
+      "https://www.wikidata.org/wiki/Q45747",
+      "https://ratings.fide.com/profile/5000017"
+    ]
+  },
+  "carlsen": {
+    "name": "Magnus Carlsen",
+    "reign": "World Champion 2013-2023",
+    "intro": "Magnus Carlsen won the world title by beating Viswanathan Anand in Chennai in 2013, and won all five title matches he played. He did not defend in 2023, and he is still No. 1 on the FIDE rating list.",
+    "about": [
+      "Carlsen was born in Tonsberg, Norway, on 30 November 1990. In March 2004 in Reykjavik he beat [[champion:karpov|Anatoly Karpov]] in a blitz tournament. The next day, in a rapid knockout, he drew one game with [[champion:kasparov|Garry Kasparov]] and lost the next. In April 2004 he became a grandmaster aged 13, the second-youngest at the time. He first topped the official FIDE list in January 2010, at 2810.",
+      "He won the 2013 Candidates in London on tiebreak. He and [[champion:kramnik|Vladimir Kramnik]] both scored 8.5 out of 14 and both lost their last games, and Carlsen went through with more wins, five to four. In Chennai that November he beat [[champion:anand|Viswanathan Anand]] 6.5-3.5, with wins in games 5, 6 and 9, and the match ended after game 10. [[game:55282|Game 5]] was his first win. He beat Anand again in Sochi in 2014, 6.5-4.5.",
+      "In New York in 2016 the classical games against Karjakin finished 6-6, and Carlsen won the rapid tiebreak 3-1 on 30 November, his 26th birthday. In London in 2018 all twelve classical games against Caruana were drawn, and he won the tiebreak 3-0. In Dubai in 2021 he beat Nepomniachtchi 7.5-3.5, with four wins and seven draws, and the match ended after game 11. [[game:57746|Game 6]] lasted 136 moves, the longest game in a world championship match.",
+      "His rating peaked at 2882 on the May 2014 list, the highest official FIDE rating ever. He has been No. 1 on the list without a break since July 2011. From July 2018 to October 2020 he played 125 classical games without a loss, until [[game:56985|Duda beat him at Norway Chess 2020]].",
+      "On 20 July 2022 he said he would not defend the title in 2023 because he was not motivated to play another match, and that he would not retire. [[champion:ding|Ding Liren]], the Candidates runner-up, took his place. Carlsen then won the 2023 World Cup in Baku, beating Praggnanandhaa in the final, and gave up the Candidates place it earned him. He has won six world rapid titles and nine world blitz titles, the latest of the blitz titles in Doha in December 2025. In February 2026 he beat Caruana 2.5-1.5 in the final of the first FIDE Freestyle Chess World Championship. He is rated 2823, No. 1 on the November 2026 list."
+    ],
+    "titleMatches": [
+      {
+        "year": "2013",
+        "opponent": "Viswanathan Anand",
+        "opponentSlug": "anand",
+        "place": "Chennai",
+        "score": "6.5-3.5",
+        "result": "won"
+      },
+      {
+        "year": "2014",
+        "opponent": "Viswanathan Anand",
+        "opponentSlug": "anand",
+        "place": "Sochi",
+        "score": "6.5-4.5",
+        "result": "won"
+      },
+      {
+        "year": "2016",
+        "opponent": "Sergey Karjakin",
+        "place": "New York",
+        "score": "6-6, rapid 3-1",
+        "result": "won"
+      },
+      {
+        "year": "2018",
+        "opponent": "Fabiano Caruana",
+        "place": "London",
+        "score": "6-6, rapid 3-0",
+        "result": "won"
+      },
+      {
+        "year": "2021",
+        "opponent": "Ian Nepomniachtchi",
+        "place": "Dubai",
+        "score": "7.5-3.5",
+        "result": "won"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Is Magnus Carlsen still world champion?",
+        "a": "Not in classical chess. He did not defend the title in 2023, Ding Liren won it that year, and Gukesh took it in December 2024. Carlsen is still No. 1 on the FIDE list at 2823. He won the world rapid and blitz titles in December 2025 and the FIDE Freestyle title in February 2026."
+      },
+      {
+        "q": "What is Magnus Carlsen's highest rating?",
+        "a": "2882, on the May 2014 FIDE list. It is the highest official rating ever recorded."
+      },
+      {
+        "q": "How many world championship matches did Carlsen win?",
+        "a": "All five he played: 2013, 2014, 2016, 2018 and 2021. The 2016 and 2018 matches were level after the classical games and he won the rapid tiebreaks, 3-1 and 3-0."
+      }
+    ],
+    "bestGamesNote": "His games since late 2024 are not ranked yet.",
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Magnus_Carlsen",
+      "https://www.wikidata.org/wiki/Q106807",
+      "https://ratings.fide.com/profile/1503014"
+    ]
+  },
+  "ding": {
+    "name": "Ding Liren",
+    "reign": "World Champion 2023-2024",
+    "intro": "Ding Liren became the 17th world champion and the first Chinese open champion in April 2023, by beating Ian Nepomniachtchi in a rapid tiebreak in Astana. He lost the title to Gukesh in December 2024.",
+    "about": [
+      "Ding was born in China on 24 October 1992. He became a grandmaster in October 2009, about two weeks before his 17th birthday, and was Chinese champion that year at 16. He won the national title again in 2011 and 2012.",
+      "From August 2017 to 11 November 2018 he played 100 classical games without a loss, with 29 wins and 71 draws. That is longer than [[champion:tal|Mikhail Tal's]] run of 95. It ended when [[game:62513|Vachier-Lagrave beat him]] at the Shenzhen Masters. In 2018 he also became the first Chinese player over 2800, and his rating peaked at 2816 on the November 2018 list. At the 2018 Olympiad he played board 1 and won team and individual gold, and his [[game:62494|win over Saric]] there is the top game on his best list.",
+      "He finished second behind Nepomniachtchi in the 2022 Candidates in Madrid. On 20 July 2022 [[champion:carlsen|Magnus Carlsen]] said he would not defend his title, and Ding, as runner-up, took his place in the match.",
+      "The match was played in Astana in April 2023. Nepomniachtchi led three times, and Ding levelled each time, in games 4, 6 and 12 ([[game:63506|game 12]]). After 14 classical games it was 7-7, with three wins each and eight draws. Ding won the four-game rapid tiebreak 2.5-1.5. He won the last game with Black in 68 moves, after declining a repetition draw.",
+      "He played no tournament after the Superbet Classic in Bucharest in May 2023, saying he had an illness, and came back at Tata Steel in January 2024, finishing 9th. In Singapore he lost the 2024 title match to [[champion:gukesh|Gukesh]], 6.5-7.5. Ding won games 1 and 12 and lost games 3, 11 and 14. In [[game:65841|game 14]] he played 55.Rf2, and the king and pawn ending that followed was lost. He is rated 2723, No. 17 on the November 2026 list."
+    ],
+    "titleMatches": [
+      {
+        "year": "2023",
+        "opponent": "Ian Nepomniachtchi",
+        "place": "Astana",
+        "score": "7-7, rapid 2.5-1.5",
+        "result": "won"
+      },
+      {
+        "year": "2024",
+        "opponent": "Gukesh Dommaraju",
+        "opponentSlug": "gukesh",
+        "place": "Singapore",
+        "score": "6.5-7.5",
+        "result": "lost"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Who did Ding Liren play for the world title in 2023?",
+        "a": "Ian Nepomniachtchi. The match in Astana was level at 7-7 after 14 classical games, and Ding won the rapid tiebreak 2.5-1.5 on 30 April 2023."
+      },
+      {
+        "q": "How did Ding Liren lose the world title?",
+        "a": "He lost to Gukesh, 6.5-7.5, in Singapore. The match was decided in game 14 on 12 December 2024, after Ding played 55.Rf2 in a rook ending."
+      },
+      {
+        "q": "What was Ding Liren's 100-game unbeaten streak?",
+        "a": "He played 100 classical games without a loss, from August 2017 to 11 November 2018, with 29 wins and 71 draws. Vachier-Lagrave ended it at the Shenzhen Masters."
+      }
+    ],
+    "bestGamesNote": "His games since late 2024 are not ranked yet.",
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Ding_Liren",
+      "https://www.wikidata.org/wiki/Q1191198",
+      "https://ratings.fide.com/profile/8603677"
+    ]
+  },
+  "gukesh": {
+    "name": "Gukesh Dommaraju",
+    "reign": "World Champion since 2024",
+    "intro": "Gukesh became the youngest undisputed world champion in December 2024, at 18, by beating Ding Liren 7.5-6.5 in Singapore. He defends the title against Javokhir Sindarov in Geneva, with the first game on 24 November 2026.",
+    "about": [
+      "Gukesh was born in Chennai on 29 May 2006. He became a grandmaster on 15 January 2019, aged 12 years, 7 months and 17 days, at the time the second-youngest in history.",
+      "His rise was fast. He won the board 1 gold medal at the 2022 Chennai Olympiad with 9 out of 11. On the September 2023 rating list he passed Viswanathan Anand as India's top player, the first time since 1986 that Anand was not India's number one. In April 2024 he won the Candidates in Toronto with 9 out of 14, losing only to Alireza Firouzja, and became the youngest challenger ever. That September he scored 9 out of 10 on board 1 at the Budapest Olympiad, where India won its first open team gold.",
+      "The title match against [[champion:ding|Ding Liren]] ran from 25 November to 12 December 2024. Ding won game 1, Gukesh won games 3 and 11, and Ding levelled in game 12. Nine games were drawn. In [[game:65841|game 14]], in a level rook ending, Ding played 55.Rf2 to trade rooks, and the king and pawn ending that followed was lost for him. Gukesh won the match 7.5-6.5.",
+      "FIDE describes his chess as built on exceptional calculation and a fearless approach to complicated positions. He took the lead of the Candidates by grinding down Firouzja in a Berlin ending in [[game:65734|round 13]], and his first classical win over [[champion:carlsen|Magnus Carlsen]] came at [[game:65909|Norway Chess 2025]], after Carlsen went wrong in time pressure.",
+      "As champion he started well, tying for first at Tata Steel 2025 and losing the playoff to Praggnanandhaa, then finishing third at Norway Chess 2025. From mid-2025 his results fell away. He went out of the 2025 World Cup in round 3, and in 2026 he finished at the bottom of Prague, Norway Chess and the Chennai Grand Masters. His rating dropped from a peak of 2794 in October 2024 to 2710 in November 2026. In between he won an individual silver on board 4 at the 2026 Olympiad, where India took team silver."
+    ],
+    "titleMatches": [
+      {
+        "year": "2024",
+        "opponent": "Ding Liren",
+        "opponentSlug": "ding",
+        "place": "Singapore",
+        "score": "7.5-6.5",
+        "result": "won"
+      },
+      {
+        "year": "2026",
+        "opponent": "Javokhir Sindarov",
+        "place": "Cologny, Geneva",
+        "score": "from 24 November",
+        "result": "upcoming"
+      }
+    ],
+    "faq": [
+      {
+        "q": "How old was Gukesh when he became world champion?",
+        "a": "He was 18. He won the title on 12 December 2024, which makes him the youngest undisputed world champion in history."
+      },
+      {
+        "q": "How did Gukesh win the 2024 title match?",
+        "a": "The score was level going into game 14. Ding played 55.Rf2 in a level rook ending, the rooks came off, and the king and pawn ending was winning for Gukesh. He won the match 7.5-6.5."
+      },
+      {
+        "q": "When does Gukesh defend his title?",
+        "a": "Against Javokhir Sindarov, the 2026 Candidates winner, at the Fondation Martin Bodmer in Cologny near Geneva. Game 1 is on 24 November 2026, the last classical game on 11 December, and a tiebreak on 12 December if the match is level at 7-7."
+      }
+    ],
+    "bestGamesNote": "The 2024 title match and his games since 2025 are not ranked yet.",
+    "sameAs": [
+      "https://en.wikipedia.org/wiki/Gukesh_Dommaraju",
+      "https://www.wikidata.org/wiki/Q56026072",
+      "https://ratings.fide.com/profile/46616543"
+    ]
+  }
+}

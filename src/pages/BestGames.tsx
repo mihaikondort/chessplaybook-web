@@ -15,6 +15,9 @@ import type { BestGame } from '@/types/bestGames';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trophy } from 'lucide-react';
+import { BestGamesIntro, ChampionPortrait, getChampionContent } from '@/components/champion/ChampionProfile';
+import { championRouteMeta } from '@/config/championRouteMeta';
+import { gameDateYear } from '@/services/GameFilterService';
 
 const BestGames = () => {
   const { name } = useParams<{ name: string }>();
@@ -105,31 +108,29 @@ const BestGames = () => {
 
   const pageTitle = championFullName || name || 'Chess Champion';
   const gameCount = filteredGames.length;
-  const fullTitle = ecoFilter
-    ? `${pageTitle} — ${ecoFilter} Games | Chess Playbook`
-    : `${pageTitle} Best ${games.length} Games | Chess Playbook`;
+  // Same text as the prerendered HTML (config/champion-route-meta.json); an ECO-filtered
+  // view keeps its own title.
+  const meta = championRouteMeta('bestGames', pageTitle, name || '');
+  const fullTitle = ecoFilter ? `${pageTitle}: ${ecoFilter} Games | Chess Playbook` : meta.title;
 
   return (
     <>
       <Helmet>
         <title>{fullTitle}</title>
-        <meta
-          name="description"
-          content={`Study the top ${gameCount} highest-quality chess games by ${pageTitle}, World Chess Champion. These games feature exceptional accuracy from both players.`}
-        />
-        <meta name="keywords" content={`${pageTitle}, ${name}, best chess games, world chess champion, chess accuracy, grandmaster games`} />
+        <meta name="description" content={meta.description} />
+        <meta name="keywords" content={meta.keywords} />
         <link rel="canonical" href={`https://www.chessplaybook.com/champions/${name}/best-games`} />
 
         {/* Open Graph */}
-        <meta property="og:title" content={`${pageTitle} Best ${gameCount} Games`} />
-        <meta property="og:description" content={`Study the top ${gameCount} highest-quality games by ${pageTitle}, World Chess Champion.`} />
+        <meta property="og:title" content={meta.ogTitle} />
+        <meta property="og:description" content={meta.ogDescription} />
         <meta property="og:url" content={`https://www.chessplaybook.com/champions/${name}/best-games`} />
         <meta property="og:type" content="website" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${pageTitle} Best ${gameCount} Games`} />
-        <meta name="twitter:description" content={`Top ${gameCount} highest-quality games by ${pageTitle}`} />
+        <meta name="twitter:title" content={meta.ogTitle} />
+        <meta name="twitter:description" content={meta.ogDescription} />
 
         {/* BreadcrumbList Schema.org */}
         <script type="application/ld+json">
@@ -164,18 +165,23 @@ const BestGames = () => {
         <div className="py-12 px-4 sm:px-6 lg:px-8 flex-grow">
           <div className="max-w-7xl mx-auto">
             {/* Header */}
-            <div className="mb-8 px-6">
+            <div className={getChampionContent(name) ? 'mb-6' : 'mb-8 px-6'}>
+            <div className="flex items-center gap-4 sm:gap-6 mb-3">
+            {getChampionContent(name) && <ChampionPortrait slug={name} name={championFullName} />}
+            <div className="min-w-0">
             <h1 className="text-4xl md:text-5xl font-bold text-link mb-2">
               {championFullName}
             </h1>
             {championshipYears && (
-              <div className="mb-3">
+              <div>
                 <span className="inline-block bg-primary/20 text-link px-4 py-1.5 rounded-full border border-primary/30 text-lg font-semibold">
                   {championshipYears}
                 </span>
               </div>
             )}
-            {biography && (
+            </div>
+            </div>
+            {biography && !getChampionContent(name) && (
               <p className="text-lg text-muted-foreground max-w-4xl mb-4">
                 {biography}
               </p>
@@ -184,6 +190,10 @@ const BestGames = () => {
               {games.length} best games available
             </p>
           </div>
+          <BestGamesIntro slug={name} years={(() => {
+            const ys = games.map(g => gameDateYear(g.date)).filter((y): y is number => y !== null);
+            return ys.length ? { from: Math.min(...ys), to: Math.max(...ys) } : null;
+          })()} />
 
         {/* Games Table */}
         <Card className="bg-card border-border">

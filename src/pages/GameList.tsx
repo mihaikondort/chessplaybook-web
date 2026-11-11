@@ -18,6 +18,8 @@ import { useFilterUrlState } from '@/hooks/useFilterUrlState';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CompactFilterControls, ActiveFiltersBar, GamePagination } from '@/components/game-list';
+import { ChampionIntro, ChampionDetails, ChampionPortrait, getChampionContent } from '@/components/champion/ChampionProfile';
+import { championRouteMeta } from '@/config/championRouteMeta';
 
 const GameList = () => {
   const { name } = useParams<{ name: string }>();
@@ -39,6 +41,9 @@ const GameList = () => {
   const [championFullName, setChampionFullName] = useState<string>('');
   const [biography, setBiography] = useState<string>('');
   const [championshipYears, setChampionshipYears] = useState<string>('');
+  /** Database ids in list order; a game's URL is its index in this list. */
+  const [gameIds, setGameIds] = useState<number[]>([]);
+  const championContent = getChampionContent(name);
 
   // Filter and sort state
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTER_STATE);
@@ -82,6 +87,7 @@ const GameList = () => {
       const gameHeaders: GameMetadata[] = response.games.map(game => game.metadata);
 
       setGames(gameHeaders);
+      setGameIds(response.games.map(game => game.id ?? -1));
 
       // Get champion's full name, biography, and championship years
       const playerInfo = await backendAPIClient.getPlayer(playerName);
@@ -183,7 +189,8 @@ const GameList = () => {
     setSort(DEFAULT_SORT_STATE);
   };
 
-  if (loading) {
+  // A champion with written content renders at once; only the table waits for the games.
+  if (loading && !championContent) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-foreground text-xl">Loading games...</div>
@@ -207,32 +214,31 @@ const GameList = () => {
     );
   }
 
-  const pageTitle = championFullName || name || 'Chess Champion';
+  const pageTitle = championFullName || championContent?.name || name || 'Chess Champion';
   const gameCount = games.length;
   const filteredGameCount = filteredAndSortedGames.length;
-  const fullTitle = `${pageTitle} Chess Games - ${gameCount} Games | Chess Playbook`;
+  // Same text as the prerendered HTML (config/champion-route-meta.json).
+  const meta = championRouteMeta('games', pageTitle, name || '');
 
   return (
     <>
+      {!loading && (
       <Helmet>
-        <title>{fullTitle}</title>
-        <meta
-          name="description"
-          content={`Study ${gameCount} chess games by ${pageTitle}, World Chess Champion. Analyze strategies, openings, and tactics from one of history's greatest chess players.`}
-        />
-        <meta name="keywords" content={`${pageTitle}, ${name}, chess games, world chess champion, chess strategy, grandmaster games`} />
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+        <meta name="keywords" content={meta.keywords} />
         <link rel="canonical" href={`https://www.chessplaybook.com/champions/${name}/games`} />
 
         {/* Open Graph */}
-        <meta property="og:title" content={`${pageTitle} Chess Games - ${gameCount} Games`} />
-        <meta property="og:description" content={`Study ${gameCount} chess games by ${pageTitle}, World Chess Champion.`} />
+        <meta property="og:title" content={meta.ogTitle} />
+        <meta property="og:description" content={meta.ogDescription} />
         <meta property="og:url" content={`https://www.chessplaybook.com/champions/${name}/games`} />
         <meta property="og:type" content="website" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${pageTitle} Chess Games`} />
-        <meta name="twitter:description" content={`Study ${gameCount} games by ${pageTitle}`} />
+        <meta name="twitter:title" content={meta.ogTitle} />
+        <meta name="twitter:description" content={meta.ogDescription} />
 
         {/* BreadcrumbList Schema.org */}
         <script type="application/ld+json">
@@ -262,31 +268,40 @@ const GameList = () => {
           })}
         </script>
       </Helmet>
+      )}
 
       <div className="bg-background flex flex-col">
         <div className="py-12 px-4 sm:px-6 lg:px-8 flex-grow">
           <div className="max-w-7xl mx-auto">
             {/* Header */}
-            <div className="mb-8 px-6">
+            <div className={championContent ? 'mb-6' : 'mb-8 px-6'}>
+            <div className="flex items-center gap-4 sm:gap-6 mb-3">
+            {championContent && <ChampionPortrait slug={name} name={pageTitle} />}
+            <div className="min-w-0">
             <h1 className="text-4xl md:text-5xl font-bold text-link mb-2">
-              {championFullName}
+              {pageTitle}
             </h1>
-            {championshipYears && (
-              <div className="mb-3">
+            {(championshipYears || championContent) && (
+              <div>
                 <span className="inline-block bg-primary/20 text-link px-4 py-1.5 rounded-full border border-primary/30 text-lg font-semibold">
-                  ♔ {championshipYears}
+                  ♔ {championshipYears || championContent?.reign}
                 </span>
               </div>
             )}
-            {biography && (
+            </div>
+            </div>
+            {biography && !championContent && (
               <p className="text-lg text-muted-foreground max-w-4xl mb-4">
                 {biography}
               </p>
             )}
-            <p className="text-lg text-muted-foreground">
-              {games.length} games available
-            </p>
+            {!championContent && (
+              <p className="text-lg text-muted-foreground">
+                {games.length} games available
+              </p>
+            )}
           </div>
+          <ChampionIntro slug={name} />
 
         {/* Games Table */}
         <Card className="bg-card border-border">
@@ -331,7 +346,9 @@ const GameList = () => {
             />
           </CardHeader>
           <CardContent>
-            {filteredAndSortedGames.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-12 text-muted-foreground text-lg">Loading games...</div>
+            ) : filteredAndSortedGames.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg mb-4">
                   No games match your current filters.
@@ -461,6 +478,13 @@ const GameList = () => {
             )}
           </CardContent>
         </Card>
+        <ChampionDetails
+          slug={name}
+          gameHref={id => {
+            const index = gameIds.indexOf(id);
+            return index >= 0 ? `/champions/${name}/games/${index}` : null;
+          }}
+        />
         </div>
       </div>
       </div>

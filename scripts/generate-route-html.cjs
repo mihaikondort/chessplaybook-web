@@ -59,6 +59,8 @@ const IS_PRODUCTION_SITE = DOMAIN === PRODUCTION_DOMAIN;
 const DIST_DIR = path.join(__dirname, '../dist');
 const INDEX_PATH = path.join(DIST_DIR, 'index.html');
 const PLAYERS_JSON_PATH = path.join(__dirname, '../public/assets/players/players_list.json');
+const CHAMPION_ROUTE_META = JSON.parse(fs.readFileSync(path.join(__dirname, '../src/config/champion-route-meta.json'), 'utf-8'));
+const CHAMPION_CONTENT = JSON.parse(fs.readFileSync(path.join(__dirname, '../src/config/champion-content.json'), 'utf-8'));
 
 /** Escape a string for use inside a double-quoted HTML attribute. */
 function attr(value) {
@@ -305,36 +307,26 @@ function buildRoutes(playersData) {
     const bio = (data.biography || '').trim();
     const reign = years ? ` ${years}.` : '';
 
-    routes.push({
-      key: `champions/${slug}/games`,
-      title: `${name} Chess Games | Chess Playbook`,
-      description:
-        `Browse and replay the chess games of ${name}, World Chess Champion. ` +
-        `Filter by opening, opponent and result, and study every move on an interactive board.`,
-      ogTitle: `${name} Chess Games`,
-      ogDescription: `Browse and replay the chess games of ${name}, World Chess Champion.`,
-      keywords: `${name}, ${slug}, chess games, world chess champion, chess strategy, grandmaster games`,
-      heading: `${name} - Chess Games`,
-      body:
-        `Replay the games of ${name}, World Chess Champion.${reign}` +
-        (bio ? ` ${bio}` : ''),
-    });
-
-    routes.push({
-      key: `champions/${slug}/best-games`,
-      title: `${name} Best Chess Games | Chess Playbook`,
-      description:
-        `The highest-quality games of ${name}, World Chess Champion, ranked by ` +
-        `engine-measured accuracy. Replay each one move by move with analysis.`,
-      ogTitle: `${name} Best Chess Games`,
-      ogDescription:
-        `The highest-quality games of ${name}, World Chess Champion, ranked by engine-measured accuracy.`,
-      keywords: `${name}, ${slug}, best chess games, world chess champion, chess accuracy, grandmaster games`,
-      heading: `${name} - Best Games`,
-      body:
-        `The highest-quality games of ${name}, World Chess Champion, ranked by ` +
-        `engine-measured accuracy.${reign}` + (bio ? ` ${bio}` : ''),
-    });
+    // Title and description come from src/config/champion-route-meta.json, which the
+    // rendered pages read too, so both passes carry the same text. A champion with
+    // written content (champion-content.json) gets its intro as the crawlable body.
+    const fill = tpl => tpl.replace(/\{name\}/g, name).replace(/\{slug\}/g, slug);
+    const intro = CHAMPION_CONTENT[slug] && CHAMPION_CONTENT[slug].intro;
+    for (const [kind, segment] of [['games', 'games'], ['bestGames', 'best-games']]) {
+      const m = CHAMPION_ROUTE_META[kind];
+      routes.push({
+        key: `champions/${slug}/${segment}`,
+        title: fill(m.title),
+        description: fill(m.description),
+        ogTitle: fill(m.ogTitle),
+        ogDescription: fill(m.ogDescription),
+        keywords: fill(m.keywords),
+        heading: fill(m.heading),
+        body: intro || (kind === 'games'
+          ? `Replay the games of ${name}, World Chess Champion.${reign}` + (bio ? ` ${bio}` : '')
+          : `The highest-quality games of ${name}, World Chess Champion, ranked by engine-measured accuracy.${reign}` + (bio ? ` ${bio}` : '')),
+      });
+    }
   });
 
   return routes;
@@ -463,9 +455,14 @@ function generate() {
   console.log(`  Output: ${ROUTES_DIR} (flat files + manifest.tsv)`);
 }
 
-try {
-  generate();
-} catch (error) {
-  console.error('Error generating route HTML:', error);
-  process.exit(1);
+// Run as a script (the build); a test requires it for buildRoutes alone.
+if (require.main === module) {
+  try {
+    generate();
+  } catch (error) {
+    console.error('Error generating route HTML:', error);
+    process.exit(1);
+  }
 }
+
+module.exports = { buildRoutes };
