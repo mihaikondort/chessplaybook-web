@@ -8,6 +8,28 @@
 import type { GameMetadata } from '@/types/chess';
 import type { FilterState, SortState } from '@/types/filter';
 
+/**
+ * A game's date as stored, in any of the forms the corpus holds: "1961"
+ * (year only), "1955-06", "1961-05-12", PGN "1961.05.12" / "1961.??.??", or
+ * a full ISO timestamp. Unknown month or day counts as the first.
+ * Returns ms since epoch, or NaN when there is no year.
+ */
+const DATE_PATTERN = /^(\d{4})(?:[-.](\d{2}|\?\?))?(?:[-.](\d{2}|\?\?))?/;
+
+export function gameDateTime(date?: string | null): number {
+  const m = date ? DATE_PATTERN.exec(date.trim()) : null;
+  if (!m) return NaN;
+  const month = m[2] && m[2] !== '??' ? parseInt(m[2], 10) : 1;
+  const day = m[3] && m[3] !== '??' ? parseInt(m[3], 10) : 1;
+  return Date.UTC(parseInt(m[1], 10), month - 1, day);
+}
+
+/** The year of a stored game date, or null. */
+export function gameDateYear(date?: string | null): number | null {
+  const m = date ? DATE_PATTERN.exec(date.trim()) : null;
+  return m ? parseInt(m[1], 10) : null;
+}
+
 export class GameFilterService {
   /**
    * Filter games based on filter criteria
@@ -41,18 +63,8 @@ export class GameFilterService {
       if (filters.dateFrom || filters.dateTo) {
         if (!game.date) return false; // Skip games without dates
 
-        // Parse date - supports both YYYY.MM.DD (PGN) and ISO format (2021-07-10T...)
-        let year: number;
-        if (game.date.includes('T') || game.date.includes('-')) {
-          // ISO date format
-          year = new Date(game.date).getFullYear();
-        } else {
-          // PGN date format (YYYY.MM.DD or YYYY.??.??)
-          const yearStr = game.date.split('.')[0];
-          year = parseInt(yearStr);
-        }
-
-        if (isNaN(year)) return false; // Skip invalid dates
+        const year = gameDateYear(game.date);
+        if (year === null) return false; // Skip invalid dates
 
         if (filters.dateFrom && year < filters.dateFrom) return false;
         if (filters.dateTo && year > filters.dateTo) return false;
@@ -250,14 +262,10 @@ export class GameFilterService {
     let max = 0;
 
     games.forEach((game) => {
-      if (game.date) {
-        const yearStr = game.date.split('.')[0];
-        const year = parseInt(yearStr);
-
-        if (!isNaN(year)) {
-          if (year < min) min = year;
-          if (year > max) max = year;
-        }
+      const year = gameDateYear(game.date);
+      if (year !== null) {
+        if (year < min) min = year;
+        if (year > max) max = year;
       }
     });
 
@@ -318,20 +326,8 @@ export class GameFilterService {
     if (!dateA) return 1;
     if (!dateB) return -1;
 
-    // Parse dates - supports both YYYY.MM.DD (PGN) and ISO format (2021-07-10T...)
-    const parseDate = (date: string): number => {
-      if (date.includes('T') || date.includes('-')) {
-        // ISO date format
-        return new Date(date).getTime();
-      } else {
-        // PGN date format (YYYY.MM.DD or YYYY.??.??)
-        const parts = date.split('.').map((p) => (p === '??' ? '01' : p));
-        return new Date(`${parts[0]}-${parts[1]}-${parts[2]}`).getTime();
-      }
-    };
-
-    const timeA = parseDate(dateA);
-    const timeB = parseDate(dateB);
+    const timeA = gameDateTime(dateA);
+    const timeB = gameDateTime(dateB);
 
     if (isNaN(timeA) && isNaN(timeB)) return 0;
     if (isNaN(timeA)) return 1;

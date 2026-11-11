@@ -11,7 +11,7 @@ import ReportProblemLink from '@/components/support/ReportProblemLink';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { backendAPIClient } from '@/services/BackendAPIClient';
-import { GameFilterService } from '@/services/GameFilterService';
+import { GameFilterService, gameDateYear } from '@/services/GameFilterService';
 import type { GameMetadata } from '@/types/chess';
 import { FilterState, SortState, DEFAULT_FILTER_STATE, DEFAULT_SORT_STATE } from '@/types/filter';
 import { useFilterUrlState } from '@/hooks/useFilterUrlState';
@@ -394,7 +394,7 @@ const GameList = () => {
                     };
 
                     // Extract year from date (e.g., "2023.11.28" -> "2023")
-                    const year = game.date ? game.date.split('.')[0] : 'N/A';
+                    const year = gameDateYear(game.date) ?? 'N/A';
 
                     // Compact result for mobile (e.g., "1-0" -> "1-0", "1/2-1/2" -> "½")
                     const compactResult = game.result === '1/2-1/2' ? '½' : game.result;
