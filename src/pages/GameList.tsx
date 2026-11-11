@@ -75,6 +75,7 @@ const GameList = () => {
       // Load games from backend API
       const response = await backendAPIClient.getPlayerGames(playerName, {
         limit: 10000, // Load all games (no pagination at fetch level)
+        fields: 'summary', // headers only: the table never shows the moves
       });
 
       // Extract metadata from each game

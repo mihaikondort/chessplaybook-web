@@ -131,7 +131,12 @@ export default function PlayerProfile() {
   if (error || !profile) {
     return (
       <>
-        <Helmet><title>Player Not Found - Chess Playbook</title></Helmet>
+        {/* The server cannot 404 a client-routed profile, so a missing player
+            says noindex instead; otherwise Google files it as a soft 404. */}
+        <Helmet>
+          <title>Player Not Found - Chess Playbook</title>
+          <meta name="robots" content="noindex, follow" />
+        </Helmet>
         <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-3">
           <h1 className="text-xl font-bold">Player not found</h1>
           <p className="text-muted-foreground text-sm">

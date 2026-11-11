@@ -91,7 +91,8 @@ interface BackendPlayer {
 // Backend game type (from database)
 interface BackendGame {
   id: number;
-  pgn: string;
+  /** Absent when the games were requested with `fields: 'summary'`. */
+  pgn?: string;
   event?: string;
   site?: string;
   date?: string;
@@ -154,6 +155,8 @@ interface GetPlayerGamesOptions {
   offset?: number;
   result?: string;
   opponent?: string;
+  /** 'summary' returns the headers only, without each game's PGN. */
+  fields?: 'summary';
 }
 
 interface PlayerGamesResponse {
@@ -316,7 +319,7 @@ class BackendAPIClient {
 
     return {
       metadata,
-      pgn: backendGame.pgn,
+      pgn: backendGame.pgn ?? '',
     };
   }
 
@@ -412,7 +415,7 @@ class BackendAPIClient {
     slug: string,
     options: GetPlayerGamesOptions = {}
   ): Promise<PlayerGamesResponse> {
-    const { limit = 50, offset = 0, result, opponent } = options;
+    const { limit = 50, offset = 0, result, opponent, fields } = options;
 
     // Build query string
     const params = new URLSearchParams();
@@ -420,6 +423,7 @@ class BackendAPIClient {
     if (offset) params.append('offset', offset.toString());
     if (result) params.append('result', result);
     if (opponent) params.append('opponent', opponent);
+    if (fields) params.append('fields', fields);
 
     const queryString = params.toString();
     const endpoint = `/api/players/${slug}/games${queryString ? `?${queryString}` : ''}`;
