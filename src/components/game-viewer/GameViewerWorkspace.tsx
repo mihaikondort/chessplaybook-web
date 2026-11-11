@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import type { Key } from '@lichess-org/chessground/types';
-import { ChevronLeft, ChevronRight, Circle, ListOrdered, Minimize2, Trophy, List, Radio } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Circle, ListOrdered, Minimize2, Trophy, List, Radio, User } from 'lucide-react';
 import { ChessBoard } from '@/components/chess/ChessBoard';
 import { BoardControls } from '@/components/chess/BoardControls';
 import { GameMoveList } from '@/components/chess/GameMoveList';
@@ -43,6 +43,12 @@ export interface ViewerPlayer {
   rating?: number;
   /** One short line under the name: the result for that side, or "Live". */
   detail: string;
+  /** A round portrait beside the name. */
+  portrait?: string;
+  /** A flag, as a badge on the portrait. */
+  flag?: ReactNode;
+  /** In place of White/Black, while the colours are not known (before the drawing of lots). */
+  label?: string;
 }
 
 export interface ViewerGoTo {
@@ -157,8 +163,10 @@ export function GameViewerWorkspace({
       <PlayerCard
         /* A light dot for White and a dark one for Black, both outlined so each reads
            on the card; a hollow ring read as "empty" rather than "black". */
-        icon={<Circle className={side === 'white' ? 'fill-foreground' : 'fill-background'} aria-hidden />}
-        label={side === 'white' ? 'White' : 'Black'}
+        icon={player.label ? <User aria-hidden /> : <Circle className={side === 'white' ? 'fill-foreground' : 'fill-background'} aria-hidden />}
+        label={player.label ?? (side === 'white' ? 'White' : 'Black')}
+        portrait={player.portrait}
+        flag={player.flag}
         name={player.name}
         title={player.title ?? (side === 'white' ? model?.headers.whiteTitle : model?.headers.blackTitle)}
         rating={player.rating ?? (side === 'white' ? model?.headers.whiteElo : model?.headers.blackElo)}

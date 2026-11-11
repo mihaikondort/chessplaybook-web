@@ -15,7 +15,7 @@ import type { ReactNode } from 'react';
   them from the PGN headers; `/play` and `/play-online` keep their rating in `detail`
   as before, so nothing on those pages moved.
 */
-export function PlayerCard({ icon, label, name, title, rating, detail, status, clock }: {
+export function PlayerCard({ icon, label, name, title, rating, detail, status, clock, portrait, flag }: {
   icon: ReactNode;
   label: string;
   name: string;
@@ -27,28 +27,59 @@ export function PlayerCard({ icon, label, name, title, rating, detail, status, c
   /** A short state beside the detail, e.g. "Thinking…". */
   status?: string;
   clock?: ReactNode;
+  /** A round portrait left of the rows (the World Championship pages). */
+  portrait?: string;
+  /** A flag, drawn as a badge on the portrait's lower right (it takes no width from the text). */
+  flag?: ReactNode;
 }) {
+  const rows = (
+    <>
+        {/* With a portrait the name is the card's headline, so it is larger. */}
+        <span className={portrait ? 'card-row gap-[0.35em]' : 'card-row'} style={portrait ? { fontSize: 'min(1.2em, 8.8cqw)' } : undefined}>
+          {title && <span className="shrink-0 font-semibold text-link">{title}</span>}
+          <span className="truncate font-semibold text-foreground" data-player-name>{name}</span>
+          {rating !== undefined && !portrait && <span className="shrink-0 tabular-nums">{rating}</span>}
+        </span>
+        <span className={portrait ? 'card-row' : 'card-row text-[0.86em]'} style={portrait ? { fontSize: 'min(0.95em, 6.5cqw)' } : undefined}>
+          <span className="truncate">{portrait && rating !== undefined ? <><span className="tabular-nums">{rating}</span> · {detail}</> : detail}</span>
+          {status && <span className="ml-auto shrink-0 text-link">{status}</span>}
+        </span>
+        {clock && <div className="mt-auto">{clock}</div>}
+    </>
+  );
   return (
     <>
       <span className="card-label inline-flex items-center gap-[0.35em]" aria-label={label}>
         {icon}
         {label}
       </span>
-      <div className="card-body">
-        <span className="card-row">
-          {title && <span className="shrink-0 font-semibold text-link">{title}</span>}
-          <span className="truncate font-semibold text-foreground">{name}</span>
-          {rating !== undefined && <span className="shrink-0 tabular-nums">{rating}</span>}
-        </span>
-        <span className="card-row text-[0.86em]">
-          <span className="truncate">{detail}</span>
-          {status && <span className="ml-auto shrink-0 text-link">{status}</span>}
-        </span>
-        {clock && <div className="mt-auto">{clock}</div>}
-      </div>
+      {portrait ? (
+        /* Pulled up by the title gap, so the photo sits halfway between the label and
+           the card's foot (it sat 37px under the label and 22px over the foot). */
+        <div className="flex min-h-0 flex-1 items-center gap-[0.7em]" style={{ marginTop: 'calc(-1 * var(--card-title-gap, 0px))' }}>
+          {/* The card is a size container. The type grows with the window's height while
+              the lane's width stops growing, so the photo and the name are capped by the
+              card's width too (a fixed 5em cut "Sindarov" at 1920x980), and the photo by
+              its height (800x600). */}
+          <span className="relative shrink-0" style={{ width: PORTRAIT_SIZE, height: PORTRAIT_SIZE }}>
+            <img src={portrait} alt="" className="h-full w-full rounded-full" />
+            {flag && (
+              <span className="absolute bottom-[4%] right-[-2%] flex overflow-hidden rounded-[2px] shadow-[0_0_0_2px_hsl(var(--card))]" style={{ width: '34%', height: '23%' }}>
+                {flag}
+              </span>
+            )}
+          </span>
+          {/* .card-body is a utility, so its own justify-content beats a class here. */}
+          <div className="card-body min-w-0 self-stretch" style={{ justifyContent: 'center' }}>{rows}</div>
+        </div>
+      ) : (
+        <div className="card-body">{rows}</div>
+      )}
     </>
   );
 }
+
+const PORTRAIT_SIZE = 'min(4.8em, 35cqw, 58cqh)';
 
 /** The clock's classes on a player card: borderless, left-aligned, in `em`. */
 export const PLAYER_CLOCK_CLASS = 'w-full bg-transparent px-0 py-0 text-left text-[1.6em] leading-tight text-foreground shadow-none';

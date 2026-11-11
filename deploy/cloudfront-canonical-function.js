@@ -5,7 +5,7 @@
  * trailing slash (except root), /index.html and <path>/index.html stripped,
  * /champions/* lowercased, and every other route's LITERAL segments lowercased
  * (see canonicalRoute). Each rule replaced a 200 soft-duplicate serving the
- * homepage's title and canonical. Full history: CLAUDE.md 2026-07-27/28.
+ * homepage's title and canonical.
  *
  * AND IT ANSWERS UNKNOWN URLS WITH A REAL 404 (2026-08-08).
  *
@@ -33,7 +33,7 @@
  */
 
 // --- BEGIN GENERATED ROUTE TABLE (scripts/generate-cloudfront-function.cjs) ---
-var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress reset-password signup terms verify-email world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
+var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
 // --- END GENERATED ROUTE TABLE ---
 
 /*

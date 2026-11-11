@@ -47,6 +47,21 @@ export class LichessBroadcastService {
   }
 
   /**
+   * Every game of a broadcast tournament, all rounds, in one request
+   * (`/api/broadcast/{tournamentId}.pgn`). The World Championship hub reads its
+   * score from it rather than fetching fourteen rounds.
+   */
+  async fetchTournamentPGN(tournamentId: string): Promise<string> {
+    const url = `${this.API_BASE}/${tournamentId}.pgn?_=${Date.now()}`;
+    log('Fetching tournament PGN:', url);
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch tournament PGN: ${response.status} ${response.statusText}`);
+    }
+    return response.text();
+  }
+
+  /**
    * Parse PGN text into structured LiveGame objects
    * @param pgnText - Raw PGN text with multiple games separated by double newlines
    * @returns Array of LiveGame objects

@@ -4,7 +4,7 @@ import { SiteShell } from "@/app/SiteShell";
 import { DocumentLayout } from "@/app/DocumentLayout";
 import { FocusedLayout } from "@/app/FocusedLayout";
 import { WorkspaceKindLayout } from "@/app/WorkspaceKindLayout";
-import { CANDIDATES_2026_CONFIG } from "@/config/tournaments/candidates2026";
+import { MATCH_PATH, calendarState, gamePath } from "@/features/world-championship/match";
 
 // Critical pages � eagerly loaded (above-the-fold, high traffic)
 import Index from "@/pages/Index";
@@ -97,6 +97,8 @@ const TrainerLayoutSkeleton = import.meta.env.DEV
   : null;
 const News = lazy(() => lazyRetry(() => import("@/pages/News")));
 const Candidates2026Hub = lazy(() => lazyRetry(() => import("@/pages/Candidates2026Hub")));
+const WorldChampionship2026Hub = lazy(() => lazyRetry(() => import("@/pages/WorldChampionship2026Hub")));
+const WorldChampionship2026Game = lazy(() => lazyRetry(() => import("@/pages/WorldChampionship2026Game")));
 const Candidates2026GameDay = lazy(() => lazyRetry(() => import("@/pages/Candidates2026GameDay")));
 const CandidatesArticle2026 = lazy(() => lazyRetry(() => import("@/pages/CandidatesArticle2026")));
 const CandidatesArticleWomen2026 = lazy(() => lazyRetry(() => import("@/pages/CandidatesArticleWomen2026")));
@@ -119,23 +121,15 @@ const Leaderboard = lazy(() => lazyRetry(() => import("@/features/online/pages/L
 
 const ProtectedRoute = lazy(() => lazyRetry(() => import("@/features/auth/components/ProtectedRoute").then(m => ({ default: m.ProtectedRoute }))));
 
-/** Redirect /live-events to today's round during Candidates 2026 */
+/**
+ * /live-events during the 2026 World Championship: today's game page on a game day,
+ * the match hub on the other match days, the live events page otherwise. (It sent
+ * visitors to the Candidates rounds until 2026-11-11; that event ended in April.)
+ */
 function LiveEventsRedirect() {
-  const today = new Date().toISOString().split('T')[0];
-  const gameDay = CANDIDATES_2026_CONFIG.gameDays.find(d => {
-    const dayDate = d.startTime.toISOString().split('T')[0];
-    return dayDate === today;
-  });
-  if (gameDay) {
-    return <Navigate to={`/candidates-2026/${gameDay.slug}`} replace />;
-  }
-  // During tournament but rest day � go to hub
-  const start = '2026-03-29';
-  const end = '2026-04-15';
-  if (today >= start && today <= end) {
-    return <Navigate to="/candidates-2026" replace />;
-  }
-  // Outside tournament � show the regular live events page
+  const { duringMatch, todaysGame } = calendarState(new Date());
+  if (todaysGame) return <Navigate to={gamePath(todaysGame.game)} replace />;
+  if (duringMatch) return <Navigate to={MATCH_PATH} replace />;
   return <LiveEventsHub />;
 }
 
@@ -243,6 +237,8 @@ export function AppRoutes() {
             viewers, with live clocks; it follows new moves only for a reader at the
             latest one (D31). It was a content page until now. */}
         <Route path="/live-game/:roundId/:gameId" element={<LiveGameViewer />} />
+        {/* The 2026 World Championship match: one game, the live board (2026-11-11). */}
+        <Route path="/world-championship-2026/:slug" element={<WorldChampionship2026Game />} />
         {/*
           `/dev/puzzles-layout` moves WITH `/puzzles`, as it always said it would:
           it is the same component, and the layout guards drive it as the
@@ -306,6 +302,7 @@ export function AppRoutes() {
         <Route path="/live-events" element={<LiveEventsRedirect />} />
         <Route path="/world-cup-2025" element={<WorldCup2025Hub />} />
         <Route path="/world-cup-2025/:slug" element={<WorldCup2025GameDay />} />
+        <Route path="/world-championship-2026" element={<WorldChampionship2026Hub />} />
         <Route path="/candidates-2026" element={<Candidates2026Hub />} />
         <Route path="/candidates-2026/:slug" element={<Candidates2026GameDay />} />
 

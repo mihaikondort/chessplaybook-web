@@ -58,3 +58,12 @@ export const PORTRAIT_CREDITS: PortraitCredit[] = [
   { champion: 'Lasker', year: 1896, author: 'Photographer not recorded', licence: 'Public domain', licenceUrl: null, source: 'https://commons.wikimedia.org/wiki/File:Lasker,_Emanuel_-3_-_DPLA_-_f013f46242be9148b0dc1480aa6b1455.jpg' },
   { champion: 'Steinitz', year: null, author: 'Dore', licence: 'Public domain', licenceUrl: null, source: 'https://commons.wikimedia.org/wiki/File:Steinitz,_William_-5_-_DPLA_-_e9b896c075dbf5da3e7bade985bfdeaa.jpg' },
 ];
+
+/**
+ * Players who are not champions, made the same way (`scripts/portraits/make_portrait.py`).
+ * Same folder: each is a new file name, so no cached file is overwritten. Kept out of
+ * `PORTRAIT_CREDITS`, which is pinned to the 18-champion roster.
+ */
+export const PLAYER_PORTRAIT_CREDITS: PortraitCredit[] = [
+  { champion: 'Sindarov', year: 2026, author: 'ChessKelly', licence: 'CC BY 4.0', licenceUrl: 'https://creativecommons.org/licenses/by/4.0', source: 'https://commons.wikimedia.org/wiki/File:Javokhir_Sindarov_at_the_Naroditsky_Memorial_Rapid_and_Blitz_2026.jpg' },
+];

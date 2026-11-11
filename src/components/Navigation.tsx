@@ -5,6 +5,7 @@ import { Users, ChevronLeft, Radio, Swords, Newspaper, BarChart3, Menu, X, Crown
 import { contactHref } from '@/components/support/ReportProblemLink';
 import { logGA4Event } from '@/services/analytics';
 import { MdPsychology } from 'react-icons/md';
+import { MATCH_LAST_DAY, MATCH_PATH, calendarState, gamePath, genevaDate } from '@/features/world-championship/match';
 import { lazy, Suspense, useState, useEffect, useRef, type CSSProperties } from 'react';
 
 // Lazy-load auth (perf: defers 125KB aws-amplify vendor chunk from initial load)
@@ -81,70 +82,25 @@ export const Navigation = ({ hidden = false }: { hidden?: boolean }) => {
   const navigate = useNavigate();
   const [isEventLive, setIsEventLive] = useState(false);
   const [isTournamentDay, setIsTournamentDay] = useState(false);
-  const [currentRoundSlug, setCurrentRoundSlug] = useState<string | null>(null);
+  const [liveTarget, setLiveTarget] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Candidates 2026 schedule — game days with their dates (YYYY-MM-DD)
-  // Rest days: April 2, 6, 10, 13
-  const CANDIDATES_GAME_DAYS: { date: string; slug: string }[] = [
-    { date: '2026-03-29', slug: 'round-1' },
-    { date: '2026-03-30', slug: 'round-2' },
-    { date: '2026-03-31', slug: 'round-3' },
-    { date: '2026-04-01', slug: 'round-4' },
-    { date: '2026-04-03', slug: 'round-5' },
-    { date: '2026-04-04', slug: 'round-6' },
-    { date: '2026-04-05', slug: 'round-7' },
-    { date: '2026-04-07', slug: 'round-8' },
-    { date: '2026-04-08', slug: 'round-9' },
-    { date: '2026-04-09', slug: 'round-10' },
-    { date: '2026-04-11', slug: 'round-11' },
-    { date: '2026-04-12', slug: 'round-12' },
-    { date: '2026-04-14', slug: 'round-13' },
-    { date: '2026-04-15', slug: 'round-14' },
-  ];
-
+  /*
+   * The Live link follows the 2026 World Championship (features/world-championship/
+   * match.ts, the one copy of its schedule; this file kept a second copy of the
+   * Candidates schedule until 2026-11-11). From now until the closing day it leads
+   * to the match: today's game page while one is on, the hub otherwise, so every
+   * page links to the hub while it is being indexed. After the match, /live-events.
+   */
   const checkTournamentStatus = () => {
     const now = new Date();
-    const today = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Nicosia' }); // YYYY-MM-DD in Cyprus time
-
-    // Check if games are currently being played (Cyprus time 14:00-22:00)
-    const cyprusTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Nicosia' }));
-    const hour = cyprusTime.getHours();
-    const isLive = hour >= 14 && hour < 22;
-
-    // Find today's round or the most recent past round
-    const todayRound = CANDIDATES_GAME_DAYS.find(gd => gd.date === today);
-    let bestSlug: string | null = null;
-
-    if (todayRound) {
-      bestSlug = todayRound.slug;
-    } else {
-      // Rest day or between rounds — find the last played round
-      for (const gd of CANDIDATES_GAME_DAYS) {
-        if (gd.date <= today) bestSlug = gd.slug;
-      }
-    }
-
-    // Tournament day = any day from first to last round (including rest days)
-    const tournamentStart = '2026-03-29';
-    const tournamentEnd = '2026-04-15';
-    const isDuringTournament = today >= tournamentStart && today <= tournamentEnd;
-
-    setIsEventLive(isDuringTournament && isLive && todayRound !== undefined);
-    setIsTournamentDay(isDuringTournament);
-
-    /**
-     * Only deep-link to a round while the tournament is actually running.
-     *
-     * The loop above walks every game day and keeps the last one that is <=
-     * today, so once the event ends it pins to the FINAL round forever — the
-     * Candidates finished 2026-04-15 and the sitewide "Live" nav item had been
-     * pointing at /candidates-2026/round-14 ever since. That page is
-     * `noindex, follow`, so every page on the site was spending an internal
-     * link on a URL Google is told to drop, instead of on /live-events, which
-     * the fallback branch already existed to serve but could never reach.
-     */
-    setCurrentRoundSlug(isDuringTournament ? bestSlug : null);
+    const { duringMatch, todaysGame, liveNow } = calendarState(now);
+    const beforeOrDuring = genevaDate(now) <= MATCH_LAST_DAY;
+    setIsEventLive(liveNow);
+    setIsTournamentDay(duringMatch);
+    setLiveTarget(
+      todaysGame ? gamePath(todaysGame.game) : beforeOrDuring ? MATCH_PATH : null,
+    );
   };
 
   useEffect(() => {
@@ -181,7 +137,7 @@ export const Navigation = ({ hidden = false }: { hidden?: boolean }) => {
     { to: '/analysis', icon: BarChart3, label: 'Analysis' },
     { to: '/champions', icon: Users, label: 'Champions' },
     { to: '/news', icon: Newspaper, label: 'News' },
-    { to: currentRoundSlug ? `/candidates-2026/${currentRoundSlug}` : '/live-events', icon: Radio, label: 'Live', isLive: isEventLive, isTournamentDay },
+    { to: liveTarget ?? '/live-events', icon: Radio, label: 'Live', isLive: isEventLive, isTournamentDay },
   ];
 
   /*

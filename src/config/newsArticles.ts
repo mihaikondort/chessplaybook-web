@@ -30,9 +30,9 @@ export interface NewsArticle {
 export const newsArticles: NewsArticle[] = [
   {
     category: 'Title Match Build-up',
-    title: 'Geneva, 25 November: The World Championship Has a Date',
+    title: 'Geneva, 24 November: The World Championship Schedule',
     excerpt:
-      'FIDE has confirmed the venue and dates for Gukesh vs Sindarov — Geneva, 25 November to 15 December, 14 classical games. The youngest title match ever played, what has been announced, and what has not.',
+      'Gukesh vs Sindarov, 14 classical games in Geneva from 24 November to 11 December. The day-by-day schedule, the time control, the tiebreaks and the prize fund.',
     date: '29 July 2026',
     href: '/news/world-championship-2026-geneva',
     image: '/assets/news/title-matches-2026/geneva-jet-deau.webp',

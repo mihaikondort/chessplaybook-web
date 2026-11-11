@@ -1,13 +1,22 @@
 import { Link } from 'react-router-dom';
 import SeoHead from '@/components/SeoHead';
+import { MATCH_DAYS, MATCH_PATH } from '@/features/world-championship/match';
 
 /**
- * World Championship 2026 announced: Geneva, 25 November - 15 December.
+ * World Championship 2026: Geneva, games 24 November - 11 December.
  *
  * Third piece of the title-match build-up series (M2 work-queue item 2), and the
  * "on announcement" half that was deliberately held back until FIDE published
  * dates and venue. It did so on 2026-07-28; this went up the following day.
- * Brief: docs/Master Plan - Active/M2/WCH_2026_ANNOUNCEMENT_BRIEF.md
+ * Brief: docs/Master Plan - Done/M2/WCH_2026_ANNOUNCEMENT_BRIEF.md
+ *
+ * UPDATED 2026-11-11. FIDE confirmed the venue, the day-by-day schedule, the
+ * time control, the tiebreaks and the prize fund on 2026-09-14, and this page
+ * still said 25 Nov - 15 Dec with all of it "not yet announced" for two months.
+ * The July dates are superseded and are not mentioned. Schedule source: the
+ * schedule graphic in FIDE's 14 Sep article (the per-game dates are in the image
+ * only, not in its text). Game 1's 15:00 CET start is Chess.com's (10 Nov); no
+ * source gives the other games' start time, so the page does not claim one.
  *
  * ---------------------------------------------------------------------------
  * THIS IS A LOOKUP PAGE FIRST AND AN ARTICLE SECOND.
@@ -27,18 +36,18 @@ import SeoHead from '@/components/SeoHead';
  *
  * Evidentiary notes, kept here rather than in the body:
  *
- *   - Dates are FIDE's own (25 Nov - 15 Dec). Wikipedia carried a PROVISIONAL
- *     23 Nov - 17 Dec. It is superseded and is deliberately not mentioned:
- *     printing a dead date range on the page whose entire job is answering
- *     "when" would be worse than saying nothing.
- *   - The playing venue, ceremony dates, rest days and round schedule are NOT
- *     yet announced. The page says so explicitly. Gaps stated as gaps read as
- *     current; gaps left silent read as omissions.
- *   - The US$2.5M prize fund is NOT in FIDE's release. It is attributed in the
- *     body to the reporting it comes from, and must stay attributed.
+ *   - Dates are FIDE's 14 Sep schedule. Earlier ranges (FIDE's own July
+ *     25 Nov - 15 Dec, Wikipedia's provisional 23 Nov - 17 Dec) are superseded
+ *     and deliberately not mentioned: printing a dead date range on the page
+ *     whose entire job is answering "when" would be worse than saying nothing.
+ *   - Still unannounced: the start time of games 2-14 and the broadcast
+ *     arrangements. The page says so. Gaps stated as gaps read as current;
+ *     gaps left silent read as omissions.
+ *   - The US$2.5M prize fund IS in FIDE's 14 Sep release now (US$200,000 per
+ *     game won, the rest split equally), so it is cited to FIDE.
  *   - "Both players are 20" is true at the first move and FALSE by the end:
- *     Sindarov was born 8 Dec 2005 and turns 21 on 8 December, mid-match. Every
- *     wire report is running the unqualified version. Do not copy it.
+ *     Sindarov was born 8 Dec 2005 and turns 21 on 8 December, the day of game
+ *     12. Every wire report is running the unqualified version. Do not copy it.
  *   - Ratings and ranks are the July 2026 FIDE list, consistent with the
  *     head-to-head piece: Sindarov 2777 (4th), Gukesh 2717 (26th). The LIVE
  *     figure for Gukesh is 2703, post-Chennai. Both pages carry both numbers
@@ -111,7 +120,7 @@ function FactRow({ label, value, note }: { label: string; value: string; note?: 
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 border-b border-border/60 last:border-b-0">
       <span className="text-sm text-muted-foreground uppercase tracking-wider">{label}</span>
-      <span className="text-right">
+      <span className="ml-auto text-right">
         <span className="text-base sm:text-lg font-semibold text-foreground">{value}</span>
         {note && <span className="block text-xs text-muted-foreground mt-0.5">{note}</span>}
       </span>
@@ -136,13 +145,13 @@ const WorldChampionship2026Announced = () => {
               Title Match Build-up &middot; Part Three
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-playfair font-bold text-foreground mb-4 leading-tight">
-              Geneva, 25 November
+              Geneva, 24 November
             </h1>
             <h2 className="text-xl sm:text-2xl font-playfair text-link mb-8">
-              The youngest World Championship match in history finally has a date and a place
+              The youngest World Championship match in history: the venue, the schedule and the rules
             </h2>
 
-            <p className="text-muted-foreground text-sm">Published 29 July 2026</p>
+            <p className="text-muted-foreground text-sm">Published 29 July 2026 &middot; Updated 11 November 2026</p>
           </div>
         </div>
 
@@ -156,15 +165,48 @@ const WorldChampionship2026Announced = () => {
             */}
             <section className="mb-12 bg-card border border-border rounded-lg p-5 sm:p-7">
               <h2 className="text-sm font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
-                FIDE World Championship 2026 &mdash; the details
+                FIDE World Championship 2026: the details
               </h2>
               <FactRow label="Players" value="Gukesh Dommaraju vs Javokhir Sindarov" note="Reigning champion vs Candidates winner" />
-              <FactRow label="Dates" value="25 November &ndash; 15 December 2026" />
-              <FactRow label="City" value="Geneva, Switzerland" note="Playing venue not yet announced" />
-              <FactRow label="Games" value="14 classical" />
-              <FactRow label="To win" value="7&frac12; points" note="The match stops the moment someone reaches it" />
-              <FactRow label="If it is 7&ndash;7" value="Rapid and blitz tiebreaks" note="Detailed tiebreak format not yet published" />
-              <FactRow label="Time control" value="Not yet announced" note="The 2024 title match used 120 minutes for 40 moves, then 30 minutes with a 30-second increment from move 41" />
+              <FactRow label="Games" value="24 November &ndash; 11 December 2026" note="Opening ceremony 22 November. Tiebreak, if needed, and closing ceremony 12 December." />
+              <FactRow label="Game 1" value="Tuesday 24 November, 15:00 CET" note="14:00 UTC, 19:30 in India" />
+              <FactRow label="Venue" value="Fondation Martin Bodmer, Cologny" note="Geneva, Switzerland" />
+              <FactRow label="Format" value="14 classical games" note="The first to 7&frac12; points wins, and the match stops there" />
+              <FactRow label="Time control" value="120 minutes for 40 moves, then 30 minutes" note="Plus 30 seconds a move from move 41. No draw offers before Black's 40th move." />
+              <FactRow label="If it is 7&ndash;7" value="Rapid and blitz tiebreaks, 12 December" note="Four games at 15+10, then two at 10+5, then two at 3+2, then single 3+2 games until someone wins" />
+              <FactRow label="Prize fund" value="US$2.5 million" note="US$200,000 for each game won, the rest split equally" />
+            </section>
+
+            {/*
+              THE SCHEDULE. Second lookup block, still above all prose: "Gukesh
+              Sindarov schedule" is one of the queries this page answers. From the
+              schedule graphic in FIDE's 14 Sep article.
+            */}
+            <section className="mb-12 bg-card border border-border rounded-lg p-5 sm:p-7">
+              <h2 className="text-sm font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
+                Day by day
+              </h2>
+              <ol className="sm:columns-2 sm:gap-x-8">
+                {MATCH_DAYS.map(({ date, label, title, kind }) => (
+                  <li
+                    key={date}
+                    className="break-inside-avoid flex items-baseline justify-between gap-4 py-2 border-b border-border/60"
+                  >
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">{label}</span>
+                    <span className={`text-sm text-right ${kind !== 'game' ? 'text-muted-foreground' : 'font-semibold text-foreground'}`}>
+                      {title}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p className="text-xs text-muted-foreground mt-3">
+                Game 1 starts at 15:00 in Geneva. FIDE has not yet published the start time of the other games.
+              </p>
+              <p className="mt-4">
+                <Link to={MATCH_PATH} className="text-sm px-4 py-2 rounded-md bg-primary/10 text-link hover:bg-primary/20 transition-colors inline-block">
+                  Follow the match live
+                </Link>
+              </p>
             </section>
 
             {/*
@@ -182,17 +224,16 @@ const WorldChampionship2026Announced = () => {
               priority
             />
             <p className="text-sm text-muted-foreground -mt-3 mb-10 italic">
-              Geneva will host the World Championship from 25 November. The playing venue inside the
-              city has not been announced.
+              The match is played at the Fondation Martin Bodmer in Cologny, on the edge of Geneva.
             </p>
 
             {/* -- Intro ----------------------------------------------------- */}
             <section className="mb-12">
               <p className="text-muted-foreground leading-relaxed mb-4">
-                FIDE confirmed on 28 July that the 2026 World Chess Championship will be played in
-                Geneva, from 25 November to 15 December. It is the first time the title match has been
-                held in Switzerland since Vladimir Kramnik defended against Peter Leko in Brissago in
-                2004 &mdash; a gap of twenty-two years.
+                FIDE named Geneva as the host on 28 July, and published the full schedule and the
+                rules on 14 September. Game 1 is on 24 November and game 14 on 11 December. It is the
+                first title match in Switzerland since Vladimir Kramnik defended against Peter Leko in
+                Brissago in 2004, twenty-two years ago.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-4">
                 The choice of a neutral country is the point. The champion is Indian, the challenger is
@@ -212,25 +253,26 @@ const WorldChampionship2026Announced = () => {
               </p>
             </section>
 
-            {/* -- Still unannounced ----------------------------------------- */}
+            {/* -- The rules -------------------------------------------------- */}
             <section className="mb-12">
               <h2 className="text-2xl font-playfair font-bold text-foreground mb-4 border-b border-primary/30 pb-2">
-                What Has Not Been Announced Yet
+                The Rules
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                FIDE has given the city, the dates and the format. Still to come:
+                The time control is the one the 2024 match used: 120 minutes for the first 40 moves, then
+                30 minutes for the rest of the game, with 30 seconds added for every move from move 41.
+                Neither player may offer a draw before Black&rsquo;s 40th move.
               </p>
-              <ul className="text-muted-foreground leading-relaxed space-y-2 mb-4 list-disc pl-5">
-                <li>the playing venue inside Geneva</li>
-                <li>the opening and closing ceremony dates</li>
-                <li>the round-by-round schedule and the rest days</li>
-                <li>the match regulations, including the time control and the tiebreak format</li>
-                <li>ticketing and broadcast arrangements</li>
-              </ul>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                If it is 7&ndash;7 after fourteen games, the title is decided on 12 December. They play
+                four rapid games at 15 minutes plus 10 seconds a move. If it is still level, two games at
+                10 minutes plus 5 seconds. Then two blitz games at 3 minutes plus 2 seconds, and after
+                that single blitz games until one of them wins one.
+              </p>
               <p className="text-muted-foreground leading-relaxed">
-                FIDE has said these will follow in the coming weeks. One figure already circulating is
-                the prize fund: reporting around the announcement puts it at US$2.5 million, matching the
-                last title match, though that number does not appear in FIDE&rsquo;s own release.
+                The prize fund is US$2.5 million. Each game won is worth US$200,000, and the rest is split
+                equally. FIDE has not yet said where the match will be broadcast, or when games 2 to 14
+                start.
               </p>
             </section>
 
@@ -246,11 +288,10 @@ const WorldChampionship2026Announced = () => {
               </p>
               <p className="text-muted-foreground leading-relaxed mb-4">
                 There is a detail in those dates worth noticing. Sindarov turns twenty-one on 8 December,
-                a week before the scheduled finish. Whether that happens with the match still running
-                depends on the match itself: the title is decided the moment someone reaches 7&frac12;
-                points, and a one-sided fortnight would have the thing settled before his birthday.
-                Should it go the distance, the youngest World Championship in history will finish with
-                only one twenty-year-old still in it.
+                the day of game 12. Whether he plays it depends on the match itself: the title is decided
+                the moment someone reaches 7&frac12; points, and a one-sided match would be over before
+                his birthday. If it goes that far, the youngest World Championship in history will finish
+                with only one twenty-year-old still in it.
               </p>
               <p className="text-muted-foreground leading-relaxed">
                 For scale: Garry Kasparov was 22 when he became the youngest World Champion in 1985, and
@@ -337,13 +378,12 @@ const WorldChampionship2026Announced = () => {
             {/* -- Close ------------------------------------------------------ */}
             <section className="mb-12">
               <h2 className="text-2xl font-playfair font-bold text-foreground mb-4 border-b border-primary/30 pb-2">
-                What Happens Between Now And November
+                What The Match Has To Answer
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Four months. Both players will have tournaments to play and preparation to hide, and the
-                rating list will keep moving in the meantime &mdash; which matters more than usual this
-                time, because the gap between champion and challenger is one of the things the match is
-                being asked to explain.
+                The rating gap between champion and challenger is one of the things the match is being
+                asked to explain. Fourteen games against the same opponent is a far better test than any
+                rating list.
               </p>
               <p className="text-muted-foreground leading-relaxed">
                 The women&rsquo;s title match runs on its own track, and we previewed that separately.
@@ -399,18 +439,26 @@ const WorldChampionship2026Announced = () => {
               </h3>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>
-                  Venue, dates, format and official quotes:{' '}
-                  <a href="https://www.fide.com/geneva-to-host-fide-world-championship-match-2026/" className="underline hover:text-link" target="_blank" rel="noopener noreferrer">
-                    FIDE announcement, 28 July 2026
+                  Venue, schedule, time control, tiebreaks and prize fund:{' '}
+                  <a href="https://www.fide.com/salesforce-fide-world-championship-match-2026-schedule-format-and-prize-fund-confirmed/" className="underline hover:text-link" target="_blank" rel="noopener noreferrer">
+                    FIDE, 14 September 2026
                   </a>
                 </li>
                 <li>
-                  Announcement coverage:{' '}
+                  Host city and official quotes:{' '}
+                  <a href="https://www.fide.com/geneva-to-host-fide-world-championship-match-2026/" className="underline hover:text-link" target="_blank" rel="noopener noreferrer">
+                    FIDE announcement, 28 July 2026
+                  </a>
+                  ; coverage by{' '}
                   <a href="https://en.chessbase.com/post/geneva-to-host-fide-world-championship-match-2026" className="underline hover:text-link" target="_blank" rel="noopener noreferrer">
                     ChessBase
                   </a>
-                  . The 2026 match regulations have not been published; the 2024 time control is given
-                  for comparison only
+                </li>
+                <li>
+                  Game 1 start time:{' '}
+                  <a href="https://www.chess.com/news/view/gukesh-sindarov-predictions-kasparov-nakamura" className="underline hover:text-link" target="_blank" rel="noopener noreferrer">
+                    Chess.com, 10 November 2026
+                  </a>
                 </li>
                 <li>
                   Ratings and world rankings, July 2026 FIDE list:{' '}
@@ -450,10 +498,6 @@ const WorldChampionship2026Announced = () => {
                     CC BY-SA 2.0
                   </a>
                   , cropped, resized and converted to WebP); Sindarov by FIDE / Niki Riga
-                </li>
-                <li>
-                  Prize fund figure reported by the Indian Express; it does not appear in FIDE&rsquo;s
-                  announcement and is attributed rather than confirmed here
                 </li>
               </ul>
             </section>

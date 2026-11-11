@@ -365,6 +365,8 @@ describe('the real route table', () => {
     /* E4b-1, E5: the route pages load the game and own the SEO; the board page is one shared component. */
     'src/pages/GameViewer.tsx': 'src/components/game-viewer/GameViewerWorkspace.tsx',
     'src/pages/live-game/LiveGameViewer.tsx': 'src/components/game-viewer/GameViewerWorkspace.tsx',
+    /* 2026-11-11: both through LiveRoundGame, which renders the same shared component. */
+    'src/pages/WorldChampionship2026Game.tsx': 'src/components/game-viewer/GameViewerWorkspace.tsx',
   };
   const rendersWorkspace = (file: string) =>
     /<Workspace[\s>]/.test(readFileSync(WORKSPACE_VIA[file] ?? file, 'utf8'));

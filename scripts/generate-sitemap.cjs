@@ -146,6 +146,7 @@ const LASTMOD = {
   // Event hubs: the events are over; these are archival end dates.
   worldCup2025: '2025-11-27',
   candidates2026: '2026-04-16',
+  worldChampionship2026: '2026-11-11',
   // Articles: publish dates.
   news: '2026-07-27',
   articleCandidatesPreview: '2026-03-27',
@@ -153,7 +154,7 @@ const LASTMOD = {
   articleRound1: '2026-03-29',
   articleRound3: '2026-03-31',
   articleConclusion: '2026-07-25',
-  articleWch2026Geneva: '2026-07-29',
+  articleWch2026Geneva: '2026-11-11',
   articleSindarovGukesh: '2026-07-27',
   articleVaishaliJu: '2026-07-27',
   legal: '2026-10-15',
@@ -236,6 +237,15 @@ function generateSitemap() {
     LASTMOD.worldCup2025,
     'monthly',
     0.6
+  ));
+
+  // The 2026 World Championship match hub: live from 24 Nov, the score and the
+  // games. Its game pages (/world-championship-2026/game-N) are noindex.
+  urls.push(createUrlEntry(
+    DOMAIN + '/world-championship-2026',
+    LASTMOD.worldChampionship2026,
+    'daily',
+    0.9
   ));
 
   // FIDE Candidates Tournament 2026 — event over 2026-04-16, archival now.

@@ -26,6 +26,7 @@ export const Footer = () => {
     {
       title: "Watch",
       links: [
+        { label: "World Championship 2026", to: "/world-championship-2026" },
         { label: "Live Events", to: "/live-events" },
         { label: "Tournament Schedule", to: "/world-championship-cycle" },
         { label: "Candidates 2026", to: "/candidates-2026" },

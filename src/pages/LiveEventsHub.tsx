@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Trophy, Calendar, ChevronRight, Clock, MapPin, Users, Radio, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import SeoHead from '@/components/SeoHead';
+import { MATCH_LAST_DAY, MATCH_PATH, SCHEDULED_GAMES, calendarState, genevaDate } from '@/features/world-championship/match';
 
 interface EventStatus {
   isLive: boolean;
@@ -13,52 +14,37 @@ interface EventStatus {
   countdown?: string;
 }
 
-function getCandidatesStatus(): EventStatus {
+/** The featured event is the 2026 World Championship match (features/world-championship/match.ts). */
+function getMatchStatus(): EventStatus {
   const now = new Date();
-  const start = new Date('2026-03-29T13:30:00Z');
-  const end = new Date('2026-04-16T20:00:00Z');
+  const { duringMatch, todaysGame, liveNow } = calendarState(now);
+  const first = SCHEDULED_GAMES[0].startsAt;
 
-  if (now < start) {
-    const diff = start.getTime() - now.getTime();
+  if (liveNow && todaysGame) {
+    return { isLive: true, isUpcoming: false, isFinished: false, statusText: `Game ${todaysGame.game} in progress` };
+  }
+  if (genevaDate(now) > MATCH_LAST_DAY) {
+    return { isLive: false, isUpcoming: false, isFinished: true, statusText: 'Match concluded' };
+  }
+  if (now < first) {
+    const diff = first.getTime() - now.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const countdown = days > 0 ? `Starts in ${days}d ${hours}h` : `Starts in ${hours}h`;
-    return { isLive: false, isUpcoming: true, isFinished: false, statusText: 'Starting Soon', countdown };
+    const countdown = days > 0 ? `Game 1 in ${days}d ${hours}h` : `Game 1 in ${hours}h`;
+    return { isLive: false, isUpcoming: true, isFinished: false, statusText: 'Starting soon', countdown };
   }
-
-  if (now > end) {
-    return { isLive: false, isUpcoming: false, isFinished: true, statusText: 'Tournament Concluded' };
-  }
-
-  // During tournament - check Cyprus time for playing hours (15:30-22:00 local)
-  const cyprusTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Nicosia' }));
-  const hour = cyprusTime.getHours();
-  const minute = cyprusTime.getMinutes();
-  const timeValue = hour + minute / 60;
-  const isPlaying = timeValue >= 15.5 && timeValue < 22;
-
-  // Rest days: April 2, 6, 10, 13
-  const dayOfMonth = cyprusTime.getDate();
-  const month = cyprusTime.getMonth(); // 3 = April
-  const isRestDay = month === 3 && [2, 6, 10, 13].includes(dayOfMonth);
-
-  if (isRestDay) {
-    return { isLive: false, isUpcoming: false, isFinished: false, statusText: 'Rest Day' };
-  }
-
-  if (isPlaying) {
-    return { isLive: true, isUpcoming: false, isFinished: false, statusText: 'Games in Progress' };
-  }
-
-  return { isLive: false, isUpcoming: false, isFinished: false, statusText: 'Next Round Soon' };
+  return {
+    isLive: false, isUpcoming: false, isFinished: false,
+    statusText: duringMatch && !todaysGame ? 'Rest day' : 'Next game soon',
+  };
 }
 
 export default function LiveEventsHub() {
-  const [status, setStatus] = useState<EventStatus>(getCandidatesStatus);
+  const [status, setStatus] = useState<EventStatus>(getMatchStatus);
 
   useEffect(() => {
-    setStatus(getCandidatesStatus());
-    const interval = setInterval(() => setStatus(getCandidatesStatus()), 60000);
+    setStatus(getMatchStatus());
+    const interval = setInterval(() => setStatus(getMatchStatus()), 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -68,31 +54,19 @@ export default function LiveEventsHub() {
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "SportsEvent",
-          "name": "FIDE Candidates Tournament 2026",
-          "startDate": "2026-03-29",
-          "endDate": "2026-04-16",
-          "location": { "@type": "Place", "name": "Cap St George's Hotel & Resort", "address": { "@type": "PostalAddress", "addressLocality": "Paphos", "addressCountry": "CY" } },
+          "name": "FIDE World Championship Match 2026",
+          "startDate": "2026-11-24T15:00:00+01:00",
+          "endDate": "2026-12-12",
+          "eventStatus": "https://schema.org/EventScheduled",
+          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+          "location": { "@type": "Place", "name": "Fondation Martin Bodmer", "address": { "@type": "PostalAddress", "addressLocality": "Cologny", "addressRegion": "Geneva", "addressCountry": "CH" } },
           "organizer": { "@type": "Organization", "name": "FIDE", "url": "https://www.fide.com" },
-          "performer": [
-            { "@type": "Person", "name": "Fabiano Caruana" },
-            { "@type": "Person", "name": "Hikaru Nakamura" },
-            { "@type": "Person", "name": "Praggnanandhaa Rameshbabu" },
-            { "@type": "Person", "name": "Wei Yi" },
-            { "@type": "Person", "name": "Anish Giri" },
-            { "@type": "Person", "name": "Javokhir Sindarov" },
-            { "@type": "Person", "name": "Matthias Bluebaum" },
-            { "@type": "Person", "name": "Andrey Esipenko" }
+          "competitor": [
+            { "@type": "Person", "name": "Gukesh Dommaraju" },
+            { "@type": "Person", "name": "Javokhir Sindarov" }
           ],
-          "url": "https://www.chessplaybook.com/candidates-2026",
-          "sport": "Chess",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD",
-            "availability": "https://schema.org/InStock",
-            "validFrom": "2026-03-01",
-            "url": "https://www.chessplaybook.com/candidates-2026"
-          }
+          "url": "https://www.chessplaybook.com/world-championship-2026",
+          "sport": "Chess"
         })}</script>
       </SeoHead>
 
@@ -114,7 +88,7 @@ export default function LiveEventsHub() {
               </p>
             </div>
 
-            {/* Featured Event: Candidates 2026 */}
+            {/* Featured Event: the 2026 World Championship match */}
             <Card className={`mb-8 overflow-hidden border-2 ${
               status.isLive ? 'border-live/50' :
               status.isUpcoming ? 'border-primary/50' :
@@ -162,55 +136,54 @@ export default function LiveEventsHub() {
                     </div>
 
                     <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-foreground mb-4">
-                      FIDE Candidates Tournament 2026
+                      World Championship 2026: Gukesh vs Sindarov
                     </h2>
 
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-6">
                       <span className="flex items-center gap-1.5">
                         <MapPin className="w-4 h-4 text-link" />
-                        Paphos, Cyprus
+                        Geneva, Switzerland
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4 text-link" />
-                        March 29 - April 16, 2026
+                        24 November - 11 December 2026
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Users className="w-4 h-4 text-link" />
-                        8 Players, 14 Rounds
+                        14 games, first to 7&frac12;
                       </span>
                     </div>
 
                     <p className="text-muted-foreground leading-relaxed mb-6 max-w-2xl">
-                      The world's top grandmasters battle for the right to challenge World Champion Gukesh.
-                      Caruana, Nakamura, Praggnanandhaa, Wei Yi, Giri, Sindarov, Bluebaum, and Esipenko compete
-                      in a double round-robin format.
+                      World Champion Gukesh Dommaraju defends his title against Javokhir Sindarov, who won the
+                      Candidates in Cyprus without losing a game.
                     </p>
 
                     <div className="flex flex-wrap gap-3">
                       <Button className="gap-2 group" asChild>
-                        <Link to="/candidates-2026">
+                        <Link to={MATCH_PATH}>
                           {status.isLive ? (
                             <>
                               <Radio className="w-4 h-4" />
-                              Watch Live Games
+                              Watch the game live
                             </>
-                          ) : status.isUpcoming ? (
+                          ) : status.isFinished ? (
                             <>
-                              <Calendar className="w-4 h-4" />
-                              View Schedule
+                              <Trophy className="w-4 h-4" />
+                              See the match
                             </>
                           ) : (
                             <>
-                              <Trophy className="w-4 h-4" />
-                              View Tournament
+                              <Calendar className="w-4 h-4" />
+                              Score and schedule
                             </>
                           )}
                           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
                       </Button>
                       <Button variant="outline" className="gap-2" asChild>
-                        <Link to="/news/candidates-2026">
-                          Tournament Preview
+                        <Link to="/news/world-championship-2026-geneva">
+                          Schedule and rules
                         </Link>
                       </Button>
                     </div>
@@ -219,37 +192,7 @@ export default function LiveEventsHub() {
               </CardContent>
             </Card>
 
-            {/* Upcoming: World Championship */}
-            <Card className="mb-8 border-border">
-              <CardHeader>
-                <CardTitle className="text-link flex items-center gap-2 font-playfair">
-                  <Calendar className="w-5 h-5" />
-                  Upcoming Events
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="border-l-2 border-primary/30 pl-4 py-2">
-                  <h3 className="text-lg font-semibold text-foreground mb-1">
-                    World Chess Championship 2026
-                  </h3>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2 flex-wrap">
-                    <span className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-link" />
-                      TBD
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-link" />
-                      Nov-Dec 2026
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    World Champion Gukesh vs Candidates Winner for the ultimate title.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Finished: World Cup 2025 */}
+            {/* Finished: Candidates 2026 and World Cup 2025 */}
             <Card className="mb-8 border-border/50">
               <CardHeader>
                 <CardTitle className="text-muted-foreground flex items-center gap-2 font-playfair">
@@ -257,7 +200,33 @@ export default function LiveEventsHub() {
                   Completed Events
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
+                      FIDE Candidates Tournament 2026
+                    </h3>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5" />
+                        Paphos, Cyprus
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Mar 29 - Apr 16, 2026
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Javokhir Sindarov won with 10 out of 14 and earned the title match.
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" className="gap-1 shrink-0" asChild>
+                    <Link to="/candidates-2026">
+                      View Results
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </Button>
+                </div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-semibold text-foreground mb-1">

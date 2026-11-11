@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { PORTRAIT_CREDITS, PORTRAIT_DIR, portraitPath } from './championPortraits';
+import { PLAYER_PORTRAIT_CREDITS, PORTRAIT_CREDITS, PORTRAIT_DIR, portraitPath } from './championPortraits';
 
 /*
   Two places name the portrait files: players_list.json (static) and the API
@@ -30,8 +30,12 @@ describe('champion portraits', () => {
     expect(PORTRAIT_CREDITS.map((c) => c.champion).sort()).toEqual([...names].sort());
   });
 
+  it.each(PLAYER_PORTRAIT_CREDITS.map((c) => c.champion))('the portrait file for player %s exists', (name) => {
+    expect(existsSync(join(process.cwd(), 'public', portraitPath(name)))).toBe(true);
+  });
+
   it('gives every attribution licence a deed link', () => {
-    for (const c of PORTRAIT_CREDITS) {
+    for (const c of [...PORTRAIT_CREDITS, ...PLAYER_PORTRAIT_CREDITS]) {
       if (/^CC BY/.test(c.licence)) expect(c.licenceUrl, c.champion).toMatch(/^https:\/\/creativecommons\.org\//);
       expect(c.source, c.champion).toMatch(/^https:\/\/commons\.wikimedia\.org\/wiki\/File:/);
     }

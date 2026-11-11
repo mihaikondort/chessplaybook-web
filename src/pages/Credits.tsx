@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import SeoHead from '@/components/SeoHead';
-import { PORTRAIT_CREDITS } from '@/config/championPortraits';
+import { PLAYER_PORTRAIT_CREDITS, PORTRAIT_CREDITS } from '@/config/championPortraits';
 
 const Credits = () => {
   return (
@@ -288,7 +288,7 @@ const Credits = () => {
                   and the licence to be shown, and the changes to be stated. */}
               <Card id="portraits">
                 <CardHeader>
-                  <CardTitle>Champion Portraits</CardTitle>
+                  <CardTitle>Player Portraits</CardTitle>
                   <CardDescription>
                     Photos from Wikimedia Commons
                   </CardDescription>
@@ -299,7 +299,7 @@ const Credits = () => {
                     Portraits made from a CC BY-SA photo are shared under the same licence.
                   </p>
                   <ul className="space-y-2 text-sm">
-                    {PORTRAIT_CREDITS.map((credit) => (
+                    {[...PORTRAIT_CREDITS, ...PLAYER_PORTRAIT_CREDITS].map((credit) => (
                       <li key={credit.champion} className="flex flex-wrap gap-x-2 gap-y-0.5 text-muted-foreground">
                         <span className="font-semibold text-foreground">
                           {credit.champion}{credit.year ? `, ${credit.year}` : ''}

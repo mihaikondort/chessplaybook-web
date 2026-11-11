@@ -26,6 +26,16 @@
     "heading": "FIDE Candidates Tournament 2026",
     "body": "Coverage of the FIDE Candidates Tournament 2026 in Paphos, Cyprus, won by Javokhir Sindarov."
   },
+  "world-championship-2026": {
+    "title": "World Chess Championship 2026 Live: Gukesh vs Sindarov",
+    "description": "Follow Gukesh vs Sindarov live: the score, today's game on a live board, and every game of the 2026 World Championship in Geneva, 24 Nov to 11 Dec.",
+    "ogTitle": "Gukesh vs Sindarov: the World Championship 2026, live",
+    "ogDescription": "The score, the live board and every game of the 2026 World Championship match in Geneva.",
+    "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/geneva-jet-deau.webp",
+    "keywords": "world chess championship 2026 live, Gukesh vs Sindarov live, Gukesh Sindarov score, world championship 2026 games, Gukesh Sindarov game 1",
+    "heading": "Gukesh vs Sindarov",
+    "body": "The 2026 World Chess Championship in Geneva: Gukesh Dommaraju against Javokhir Sindarov, fourteen classical games from 24 November to 11 December, first to 7.5 points. The match score, each game on a live board, and the schedule."
+  },
   "champion-challenge": {
     "title": "Champion Challenge — Play Like a World Champion | Chess Playbook",
     "description": "Play real positions from World Champion games — not tactics puzzles. Choose your move, then see what the champion played and why.",
@@ -199,17 +209,17 @@
     "dateModified": "2026-07-27"
   },
   "news/world-championship-2026-geneva": {
-    "title": "World Chess Championship 2026: Geneva, 25 Nov – 15 Dec",
-    "description": "FIDE has confirmed it: Gukesh vs Sindarov in Geneva, 25 November to 15 December 2026. Dates, venue, format, time control, and what is still unannounced.",
-    "ogTitle": "Geneva, 25 November: The World Championship Has a Date",
-    "ogDescription": "Gukesh vs Sindarov, Geneva, 25 November to 15 December. Fourteen classical games, and the youngest title match ever played.",
+    "title": "World Chess Championship 2026: Schedule, 24 Nov – 11 Dec",
+    "description": "Gukesh vs Sindarov in Geneva: game 1 on 24 November at 15:00 CET, game 14 on 11 December. The day-by-day schedule, venue, time control, tiebreaks and prize fund.",
+    "ogTitle": "Geneva, 24 November: The World Championship Schedule",
+    "ogDescription": "Gukesh vs Sindarov, 14 classical games in Geneva from 24 November to 11 December. The youngest title match ever played.",
     "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/geneva-jet-deau.webp",
-    "keywords": "world chess championship 2026, Gukesh vs Sindarov dates, world championship 2026 venue, Geneva chess championship, when is the Gukesh Sindarov match",
-    "heading": "World Chess Championship 2026: Geneva, 25 November – 15 December",
-    "body": "FIDE has confirmed Geneva, Switzerland as the host of the 2026 World Chess Championship between Gukesh Dommaraju and Javokhir Sindarov, running 25 November to 15 December over 14 classical games. The dates, the format, the time control, and the details still to be announced.",
+    "keywords": "world chess championship 2026, Gukesh vs Sindarov schedule, Gukesh vs Sindarov dates, world championship 2026 venue, Geneva chess championship, when is the Gukesh Sindarov match",
+    "heading": "World Chess Championship 2026: Geneva, 24 November – 11 December",
+    "body": "Gukesh Dommaraju defends the World Chess Championship against Javokhir Sindarov at the Fondation Martin Bodmer in Cologny, Geneva. Fourteen classical games from 24 November to 11 December 2026, with tiebreaks on 12 December if it is 7-7. The day-by-day schedule, the time control, the tiebreak format and the prize fund.",
     "articleType": "NewsArticle",
     "datePublished": "2026-07-29",
-    "dateModified": "2026-07-29"
+    "dateModified": "2026-11-11"
   },
   "play": {
     "title": "Play vs Computer - Chess Playbook",
