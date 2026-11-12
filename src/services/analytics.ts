@@ -340,6 +340,17 @@ type GA4Event =
   | { name: 'plan_offer_shown'; params: { form: string; area: string } }
   | { name: 'plan_offer_answered'; params: { form: string; area: string; accepted: boolean } }
   /*
+    Email reminders (EMAIL_REMINDERS_IMPLEMENTATION_PLAN C5). `source` is where it happened:
+    the live card's offer (`first_session`), plan setup, the training record, or the
+    /reminders page an email links to.
+  */
+  | { name: 'reminder_offer_shown'; params: { signed_in: boolean } }
+  | { name: 'reminder_offer_accepted'; params: { signed_in: boolean } }
+  | { name: 'reminder_offer_dismissed'; params: { signed_in: boolean } }
+  | { name: 'reminder_sign_in_started'; params: { source: string } }
+  | { name: 'reminder_turned_on'; params: { source: string } }
+  | { name: 'reminder_turned_off'; params: { source: string } }
+  /*
     `surface` SAYS WHERE IT HAPPENED, and it exists because the plan moved onto
     a page of its own on 2026-08-06 (A7).
 

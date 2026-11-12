@@ -231,13 +231,15 @@ export async function fetchPuzzles(options?: {
   return shuffled.slice(0, options?.count ?? 5).map(asOffline);
 }
 
-export async function fetchDailyPuzzle(): Promise<PuzzleData | null> {
+/** `date` (YYYY-MM-DD) asks for that date's daily: the reminder email's link. */
+export async function fetchDailyPuzzle(date?: string): Promise<PuzzleData | null> {
   const isOnline = await checkApi();
 
   if (isOnline) {
     try {
       const headers = await getRequestHeaders();
-      const res = await fetch(`${API_URL}/api/puzzles/daily`, { headers });
+      const query = date ? `?date=${encodeURIComponent(date)}` : '';
+      const res = await fetch(`${API_URL}/api/puzzles/daily${query}`, { headers });
       if (res.ok) {
         const json = await res.json();
         if (json.success) return json.data;

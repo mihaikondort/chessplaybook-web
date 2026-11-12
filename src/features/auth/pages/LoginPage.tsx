@@ -23,7 +23,10 @@ export default function LoginPage() {
   */
   const from = returnToFrom(location.search) || (location.state as any)?.from || '/';
 
-  const [email, setEmail] = useState('');
+  const query = new URLSearchParams(location.search);
+  // Arrived from the code page with the account confirmed but not signed in.
+  const confirmed = query.get('confirmed') === '1';
+  const [email, setEmail] = useState(query.get('email') || '');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +41,10 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (err: any) {
       if (err.name === 'UserNotConfirmedException') {
-        navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+        const params = new URLSearchParams({ email });
+        const returnTo = returnToFrom(location.search);
+        if (returnTo) params.set('returnTo', returnTo);
+        navigate(`/verify-email?${params.toString()}`);
       } else if (err.name === 'NotAuthorizedException') {
         setError('Incorrect email or password.');
       } else if (err.name === 'UserNotFoundException') {
@@ -76,7 +82,11 @@ export default function LoginPage() {
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
               <CardTitle className="font-playfair text-2xl">Welcome back</CardTitle>
-              <CardDescription>Sign in to your Chess Playbook account</CardDescription>
+              <CardDescription>
+                {confirmed
+                  ? 'Your email is confirmed. Sign in to continue.'
+                  : 'Sign in to your Chess Playbook account'}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Button

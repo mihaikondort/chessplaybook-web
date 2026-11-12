@@ -25,6 +25,7 @@ import { Target, ArrowLeft, AlertCircle, CalendarDays, ChevronRight } from 'luci
 import { setAreaPreference, fetchActivePlan, type TrainingPlan } from '../services/PlanApi';
 import { deriveNext } from '../hooks/usePlan';
 import { logGA4Event } from '@/services/analytics';
+import { RemindersSwitch } from '@/features/reminders/RemindersSwitch';
 import {
   fetchPuzzleProgress,
   AREA_LABELS,
@@ -855,6 +856,33 @@ function RecordShell({ data, plan, signedIn }: {
       <Patterns patterns={data.motifs ?? []} evidence={data.evidence} />
 
       <Totals summary={summary} />
+
+      <RemindersSection signedIn={signedIn} />
     </div>
+  );
+}
+
+/*
+  EMAIL REMINDERS (EMAIL_REMINDERS_IMPLEMENTATION_PLAN, C3). At the foot of the record,
+  with the page's other asks: the player came to read the record. A guest who chose
+  "Sign in" from a reminder offer comes back here with `?reminders=1`, and the section is
+  scrolled into view with its switch OFF, because consent has to be their own tap.
+*/
+function RemindersSection({ signedIn }: { signedIn: boolean }) {
+  const location = useLocation();
+  const ref = useRef<HTMLElement>(null);
+  const asked = new URLSearchParams(location.search).get('reminders') === '1';
+  useEffect(() => {
+    if (asked) ref.current?.scrollIntoView({ block: 'center' });
+  }, [asked]);
+  return (
+    <section ref={ref} aria-labelledby="reminders-heading" role="region" data-testid="reminders-section">
+      <h2 id="reminders-heading" className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
+        Email reminders
+      </h2>
+      <div className="surface-card rounded-lg p-4">
+        <RemindersSwitch signedIn={signedIn} source="record" />
+      </div>
+    </section>
   );
 }

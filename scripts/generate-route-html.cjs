@@ -202,7 +202,8 @@ function stripWebsiteJsonLd(html, routeKey) {
  * exactly the invisible-difference-between-served-and-rendered state that caused
  * the original bug, pointing the other way.
  */
-const NOINDEX_ROUTES = new Set(['puzzles/plan', 'puzzles/progress']);
+// `reminders` (2026-11-12): one person's email setting, reached from their own emails.
+const NOINDEX_ROUTES = new Set(['puzzles/plan', 'puzzles/progress', 'reminders']);
 
 /*
   A NON-PRODUCTION SITE IS noindex IN FULL (#34).

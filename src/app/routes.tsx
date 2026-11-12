@@ -42,6 +42,7 @@ const LiveGameViewer = lazy(() => lazyRetry(() => import("@/pages/live-game/Live
 const Privacy = lazy(() => lazyRetry(() => import("@/pages/Privacy")));
 const Terms = lazy(() => lazyRetry(() => import("@/pages/Terms")));
 const Contact = lazy(() => lazyRetry(() => import("@/pages/Contact")));
+const Reminders = lazy(() => lazyRetry(() => import("@/pages/Reminders")));
 const Credits = lazy(() => lazyRetry(() => import("@/pages/Credits")));
 const WorldChampionshipCycle = lazy(() => lazyRetry(() => import("@/pages/WorldChampionshipCycle")));
 const Play = lazy(() => lazyRetry(() => import("@/features/play/pages/PlayComputer")));
@@ -321,6 +322,7 @@ export function AppRoutes() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/reminders" element={<Reminders />} />
         <Route path="/credits" element={<Credits />} />
         <Route path="/world-championship-cycle" element={<WorldChampionshipCycle />} />
 

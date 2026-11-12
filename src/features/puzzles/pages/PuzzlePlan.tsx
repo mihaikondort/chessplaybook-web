@@ -32,6 +32,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, CalendarDays } from 'lucide-react';
 import SeoHead from '@/components/SeoHead';
 import { useAuth } from '@/features/auth/AuthContext';
+import { RemindersSwitch } from '@/features/reminders/RemindersSwitch';
 import { logGA4Event } from '@/services/analytics';
 import { usePlan } from '../hooks/usePlan';
 import { PlanDetails } from '../components/plan/PlanDetails';
@@ -221,6 +222,7 @@ export default function PuzzlePlan() {
             onCancel={() => setConfiguring(false)}
             busy={busy}
             error={error}
+            reminders={<RemindersSwitch signedIn={!!user} source="plan" compact />}
           />
         ) : plan ? (
           <PlanDetails

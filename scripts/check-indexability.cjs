@@ -340,6 +340,9 @@ const DELIBERATELY_UNSITEMAPPED = new Map([
     "one person's own training plan; same reason as the record above — it " +
     'renders empty to a crawler, and it is reached from the trainer rather ' +
     'than from search'],
+  ['/reminders',
+    "one person's email reminder setting; it is reached from the link in their own " +
+    'emails, and a crawler sees nothing to index'],
 ]);
 
   /*

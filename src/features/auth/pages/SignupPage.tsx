@@ -11,6 +11,7 @@ import { returnToFrom, stashReturnTo } from '../utils/returnTo';
 export default function SignupPage() {
   const { signUpWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const returnTo = returnToFrom(window.location.search);
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -31,9 +32,12 @@ export default function SignupPage() {
     try {
       const { nextStep } = await signUpWithEmail(email, password, username);
       if (nextStep === 'CONFIRM_SIGN_UP') {
-        navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+        // The destination rides along, so a confirmed account lands where it was going.
+        const params = new URLSearchParams({ email });
+        if (returnTo) params.set('returnTo', returnTo);
+        navigate(`/verify-email?${params.toString()}`);
       } else {
-        navigate('/', { replace: true });
+        navigate(returnTo || '/', { replace: true });
       }
     } catch (err: any) {
       if (err.name === 'UsernameExistsException') {

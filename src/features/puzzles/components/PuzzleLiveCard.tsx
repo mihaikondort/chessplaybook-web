@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { CheckCircle2, ChevronRight, Compass, Eye, Lightbulb, RotateCcw, Signal, Target, WifiOff, XCircle } from 'lucide-react';
 import { Action, LiveStatus } from './TrainerUI';
 
@@ -100,6 +101,13 @@ export interface PuzzleLiveCardProps {
    * measurable in it, never 0.
    */
   runOutcome?: { rating: number; realized: number; total: number } | null;
+  /**
+   * The one reminder offer (owner, C0 2026-11-12), shown in the same empty slot as the run
+   * outcome and for the same reason: after a SOLVE the slot holds nothing, so the offer
+   * costs no height. The run's outcome wins when both apply; the offer is asked for again
+   * at the next solve.
+   */
+  offer?: ReactNode;
   onNextPuzzle: () => void;
   onShowSolution: () => void;
   /**
@@ -114,7 +122,7 @@ export function PuzzleLiveCard({
   status, message, rating, prompt, opening = null, isDailyPuzzle = false, missedLabel = null,
   exploring, isMidSolve, announcement, loading, sessionId,
   filterFoundNothing = false, onClearFilter, runOutcome = null,
-  serverUnreachable = false,
+  serverUnreachable = false, offer = null,
   onNextPuzzle, onShowSolution, onExplain,
 }: PuzzleLiveCardProps) {
   const revealable = status === 'playing' || status === 'failed';
@@ -197,7 +205,7 @@ export function PuzzleLiveCard({
             : runOutcome
               ? `Run performance: ${runOutcome.rating}, scored ${
                 runOutcome.realized.toFixed(1)} of ${runOutcome.total}`
-              : null}
+              : status === 'correct' ? offer : null}
         announce={announcement}
       />
 

@@ -1,6 +1,7 @@
 import { ArrowLeft, CalendarDays, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { RemindersSwitch } from '@/features/reminders/RemindersSwitch';
 import { buildPlanCalendar } from '../../lib/planCalendar';
 import type { PlanItem, TrainingPlan } from '../../services/PlanApi';
 import { PlanCalendar } from './PlanCalendar';
@@ -53,6 +54,11 @@ export function PlanDetails({
           <span><strong className="text-foreground">{plan.sessionsPerWeek}</strong> sessions/week</span>
           <span><strong className="text-foreground">{plan.positionsPerSession}</strong> per session</span>
           <span><strong className="text-foreground">{plan.progress.positionsDone}</strong>/{plan.progress.positions} positions</span>
+        </div>
+        {/* Reminders where the commitment is made (owner, 2026-11-12: the switch was "a bit
+            too hidden", at the foot of the training record and in plan setup only). */}
+        <div className="mt-1.5 border-t border-border/60 pt-1.5" data-testid="plan-reminders">
+          <RemindersSwitch signedIn={signedIn} source="plan" compact />
         </div>
         {confirmStop ? (
           <div className="mt-2 rounded-lg border border-destructive/40 bg-destructive/5 p-2">

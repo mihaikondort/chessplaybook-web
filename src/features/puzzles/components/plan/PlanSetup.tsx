@@ -9,6 +9,7 @@
  *
  * PRD §6.4.0: the questions are about the player's life, not their chess.
  */
+import type { ReactNode } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import {
   FREQUENCIES, LENGTHS, DURATIONS,
@@ -151,12 +152,18 @@ export interface PlanSetupProps {
    * that already draw the container.
    */
   boxed?: boolean;
+  /**
+   * The reminders switch (EMAIL_REMINDERS_IMPLEMENTATION_PLAN, C3), passed in by the page,
+   * which knows whether the player is signed in. A plan's session days are exactly when a
+   * reminder helps, so the offer sits where the plan is built.
+   */
+  reminders?: ReactNode;
 }
 
 export function PlanSetup({
   sessionsPerWeek, positionsPerSession, weeks,
   onSessionsPerWeek, onPositionsPerSession, onWeeks,
-  onGenerate, onCancel, busy = false, error = null, boxed = true,
+  onGenerate, onCancel, busy = false, error = null, boxed = true, reminders = null,
 }: PlanSetupProps) {
   return (
     <div
@@ -167,6 +174,7 @@ export function PlanSetup({
       <Row label="Sessions a week" values={FREQUENCIES} value={sessionsPerWeek} onPick={onSessionsPerWeek} />
       <PositionsRow value={positionsPerSession} onPick={onPositionsPerSession} />
       <Row label="Weeks" values={DURATIONS} value={weeks} onPick={onWeeks} />
+      {reminders && <div className="mt-3" data-testid="plan-reminders">{reminders}</div>}
       {/*
         THE TWO CONTROLS SIT RIGHT (owner, 2026-08-06: "lets have the buttons on
         the right hand side, is that possible?").

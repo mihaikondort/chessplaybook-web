@@ -74,6 +74,15 @@ const Privacy = () => {
                   We also keep the page you came from, your browser and your screen size. We use them only to
                   answer you and to fix problems. They are deleted when you delete your account, or when you ask us.
                 </p>
+
+                <h3 className="text-xl font-semibold text-link mb-3">Reminder Emails</h3>
+                <p className="text-muted-foreground mb-4">
+                  If you are signed in and turn on reminder emails, we send them to your account's email address.
+                  They come on your training plan's session days and after you have been away from training for a
+                  few days. We keep when you turned them on, the wording you agreed to, your time zone, and which
+                  emails we sent and whether you clicked their link. Every email has a link to stop them, and they
+                  are deleted when you delete your account.
+                </p>
               </section>
 
               <section className="mb-8">
@@ -103,6 +112,7 @@ const Privacy = () => {
                   <li>Identify and fix technical issues</li>
                   <li>Understand which content is most valuable to visitors</li>
                   <li>Measure the effectiveness of our advertising campaigns</li>
+                  <li>Send the reminder emails you turn on, and nothing else</li>
                 </ul>
               </section>
 
@@ -182,7 +192,7 @@ const Privacy = () => {
                   <li><strong>Google Analytics:</strong> For website analytics (subject to Google's privacy policy)</li>
                   <li><strong>Google Ads:</strong> For advertising, conversion tracking, and Customer Match (subject to Google's advertising policies)</li>
                   <li><strong>Meta Platforms (Facebook / Instagram):</strong> For advertising measurement and audience building via Meta Pixel (subject to Meta's privacy policy)</li>
-                  <li><strong>AWS (Amazon Web Services):</strong> For content delivery, hosting, and authentication</li>
+                  <li><strong>AWS (Amazon Web Services):</strong> For content delivery, hosting, authentication, and sending the emails you ask for</li>
                 </ul>
               </section>
 

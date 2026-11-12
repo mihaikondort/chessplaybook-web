@@ -61,6 +61,13 @@ export function usePuzzleBoard(
       the daily puzzle permanently - see the note at the skip itself.
     */
     arrivedWithFilter?: boolean;
+    /*
+      `?daily=YYYY-MM-DD` (2026-11-12): the reminder email showed that date's daily
+      board and its button must open exactly that puzzle, even in a browser that has
+      already been shown today's, and even after midnight UTC. The server accepts
+      today or up to a week back and answers today for anything else.
+    */
+    dailyDate?: string | null;
   } = {},
 ) {
   const [puzzleState, puzzleActions] = usePuzzle();
@@ -310,6 +317,9 @@ export function usePuzzleBoard(
   /* Read by the mount-only daily effect, which cannot see a prop directly. */
   const arrivedWithFilterRef = useRef(false);
   arrivedWithFilterRef.current = options.arrivedWithFilter === true;
+  /* A dated daily asked for by a link (the reminder email's "Solve today's puzzle"). */
+  const dailyDateRef = useRef<string | null>(null);
+  dailyDateRef.current = options.dailyDate ?? null;
   /*
     Which run the puzzle ON SCREEN was served under. Captured at the draw, not
     read when the attempt lands: a run started while a puzzle is already up does
@@ -520,11 +530,15 @@ export function usePuzzleBoard(
       (PuzzleTrainer.tsx:1147) and so does this one now. Counterfactual: with the
       old condition a saved theme draws `next?theme=fork` where the daily belongs.
     */
-    if (seen === today || arrivedWithFilterRef.current) { void nextPuzzle(); return; }
+    /* A dated link always opens its daily: that is the only thing the link is for. */
+    const askedDate = dailyDateRef.current;
+    if (!askedDate && (seen === today || arrivedWithFilterRef.current)) { void nextPuzzle(); return; }
 
-    try { localStorage.setItem(DAILY_SEEN_KEY, today); } catch { /* quota */ }
+    if (!askedDate || askedDate === today) {
+      try { localStorage.setItem(DAILY_SEEN_KEY, today); } catch { /* quota */ }
+    }
     const dailyToken = ++drawTokenRef.current;
-    fetchDailyPuzzle()
+    fetchDailyPuzzle(askedDate ?? undefined)
       .then(daily => {
         /* A draw started while the daily was in flight wins: the player has
            asked for something newer than the page's opening move. */

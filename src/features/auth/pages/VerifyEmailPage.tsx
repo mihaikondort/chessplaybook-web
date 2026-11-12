@@ -7,12 +7,15 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '../AuthContext';
 import { trackLead, trackCompleteRegistration } from '@/services/metaPixel';
+import { returnToFrom } from '../utils/returnTo';
 
 export default function VerifyEmailPage() {
   const { confirmEmail, resendCode } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') || '';
+  // Where the player was going when they chose to create an account.
+  const returnTo = returnToFrom(`?${searchParams.toString()}`);
 
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +27,7 @@ export default function VerifyEmailPage() {
     setError('');
     setIsLoading(true);
     try {
-      await confirmEmail(email, code.trim());
+      const result = await confirmEmail(email, code.trim());
       // Meta Pixel: registration finalised. Fire both Lead (sign-up
       // intent captured + completed) and CompleteRegistration (account
       // is ready to use). Meta's optimisation can use whichever event
@@ -32,7 +35,14 @@ export default function VerifyEmailPage() {
       // recommended pattern.
       trackLead();
       trackCompleteRegistration();
-      navigate('/', { replace: true });
+      if (result?.signedIn) {
+        navigate(returnTo || '/', { replace: true });
+      } else {
+        // Confirmed but not signed in (see confirmEmail): sign in once, then on.
+        const params = new URLSearchParams({ confirmed: '1', email });
+        if (returnTo) params.set('returnTo', returnTo);
+        navigate(`/login?${params.toString()}`, { replace: true });
+      }
     } catch (err: any) {
       if (err.name === 'CodeMismatchException') {
         setError('Invalid verification code. Please try again.');

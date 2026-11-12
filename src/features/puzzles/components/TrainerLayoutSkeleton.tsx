@@ -27,6 +27,9 @@ import { Workspace, type WorkspaceMode } from '@/components/workspace/Workspace'
 import { slot, footSlot } from '@/components/workspace/slots';
 import { isRatingProvisional } from '../lib/provisionalRating';
 import SeoHead from '@/components/SeoHead';
+import { useAuth } from '@/features/auth/AuthContext';
+import { useReminderOffer } from '@/features/reminders/useReminderOffer';
+import { ReminderOfferLine } from '@/features/reminders/ReminderOfferLine';
 import RouteHeading from '@/components/RouteHeading';
 import { CheckCircle2, Clock, History, Minimize2, PieChart, TrendingUp, XCircle, Zap } from 'lucide-react';
 
@@ -111,10 +114,16 @@ export default function TrainerLayoutSkeleton() {
     const fromUrl = resolveLinkedFilters(params, '');
     return { ...fromUrl, fromLink: Boolean(fromUrl.theme || fromUrl.area) };
   });
+  /* `?daily=YYYY-MM-DD`, the reminder email's "Solve today's puzzle": read once, at mount. */
+  const [dailyDate] = useState(() => {
+    const asked = new URLSearchParams(window.location.search).get('daily');
+    return asked && /^\d{4}-\d{2}-\d{2}$/.test(asked) ? asked : null;
+  });
   const puzzle = usePuzzleBoard({
     attemptRecordedFor,
     /* Only a filter that arrived in the URL skips the daily puzzle. */
     arrivedWithFilter: linked.fromLink,
+    dailyDate,
     draw: run.draw ?? {
       /* Free solving: `adaptive` in auto mode, so the window is derived from the
          player's own attempt log server-side rather than from a streak counter
@@ -377,6 +386,20 @@ export default function TrainerLayoutSkeleton() {
     the mount that performs the restore, so a state flag keyed on the id is
     cleared a tick after being set.
   */
+  /*
+    THE ONE REMINDER OFFER (EMAIL_REMINDERS_IMPLEMENTATION_PLAN C2, owner C0): after a solve,
+    in the live card's empty detail slot. While it is on screen it HOLDS auto-advance, like a
+    deliberate act would: the offer is made once, ever, and a player with Auto next on would
+    otherwise see it for 1.2 seconds and lose it.
+  */
+  const { user } = useAuth();
+  const reminderOffer = useReminderOffer({
+    status: puzzle.puzzleState.status,
+    puzzleId: puzzle.puzzleState.puzzle?.id ?? null,
+    signedIn: !!user,
+    confirmedSolves: record.progress.totalSolved,
+  });
+
   const AUTO_ADVANCE_MS = 1200;
   const [autoAdvanceCancelled, setAutoAdvanceCancelled] = useState(false);
   const resumedResolvedIdRef = useRef<string | null>(null);
@@ -396,6 +419,7 @@ export default function TrainerLayoutSkeleton() {
     && puzzle.puzzleState.status === 'correct'
     && resumedResolvedIdRef.current !== puzzle.puzzleState.puzzle?.id
     && !runFinished
+    && !reminderOffer.visible
     && !puzzle.loading;
 
   useEffect(() => {
@@ -621,6 +645,14 @@ export default function TrainerLayoutSkeleton() {
                   : null}
                 filterFoundNothing={puzzle.filterFoundNothing}
                 serverUnreachable={puzzle.serverUnreachable}
+                offer={reminderOffer.visible ? (
+                  <ReminderOfferLine
+                    state={reminderOffer.state}
+                    signedIn={!!user}
+                    onAccept={reminderOffer.accept}
+                    onDismiss={reminderOffer.dismiss}
+                  />
+                ) : null}
                 /*
                   Cleared AND redrawn in one act, with the cleared values passed
                   explicitly: this closure still holds the old filter.

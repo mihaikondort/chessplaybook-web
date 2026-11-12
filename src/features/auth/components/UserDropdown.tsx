@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, LogOut, ChevronDown, LayoutDashboard, Target, CalendarDays, MessageSquare } from 'lucide-react';
+import { User, LogOut, ChevronDown, LayoutDashboard, Target, CalendarDays, MessageSquare, Mail } from 'lucide-react';
 import { contactHref } from '@/components/support/ReportProblemLink';
 import { logGA4Event } from '@/services/analytics';
 import { useAuth } from '../AuthContext';
@@ -9,6 +9,38 @@ export function UserDropdown() {
   const { user, isLoading, signOutUser } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  /*
+    CLOSED BY ANY PRESS OUTSIDE IT, AND BY ESCAPE (owner, 2026-11-12: it closed only from the
+    avatar, "especially on mobile this is an issue").
+
+    It had a `fixed inset-0` backdrop for this, and the backdrop never covered the screen. A
+    fixed element fills its nearest ancestor with a `transform`, `filter`, `backdrop-filter` or
+    `contain`, not the viewport, and the nav has `backdrop-blur`: measured at 1917x920 the
+    backdrop was the nav bar, 1902x58, so a click on the page did nothing. On a phone the menu
+    sits in the hamburger panel, whose animation leaves a `transform`, and the backdrop was that
+    panel, 343x606. A listener on the document cannot be trapped by any ancestor.
+
+    It also does not swallow the press: tapping a link outside closes the menu AND follows the
+    link, where the backdrop took the first tap for itself. `pointerdown`, so it closes as the
+    finger lands, as a native menu does.
+  */
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
 
   const handleSignOut = async () => {
     setOpen(false);
@@ -30,7 +62,7 @@ export function UserDropdown() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       {/*
         THE NAME IS THE ACCESSIBLE NAME NOW THAT IT IS NOT ON SCREEN (#55). The
         trigger is an avatar and a chevron, so without `aria-label` a screen
@@ -58,10 +90,7 @@ export function UserDropdown() {
 
       {open && (
         <>
-          {/* Backdrop */}
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-
-          {/* Dropdown */}
+          {/* Dropdown. No backdrop: see the listener above for why one cannot work here. */}
           <div className="absolute right-0 mt-1 w-48 rounded-lg border border-border bg-card shadow-lg z-50 py-1">
             <div className="px-3 py-2 border-b border-border">
               <p className="text-xs text-muted-foreground">Signed in as</p>
@@ -124,6 +153,17 @@ export function UserDropdown() {
             >
               <CalendarDays className="h-4 w-4" />
               Training plan
+            </Link>
+
+            {/* Email reminders, where people look for a setting about their account (owner,
+                2026-11-12: the switch was "a bit too hidden"). */}
+            <Link
+              to="/reminders"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            >
+              <Mail className="h-4 w-4" />
+              Reminder emails
             </Link>
 
             {/* #44: a way to us from the account, where access questions land. */}

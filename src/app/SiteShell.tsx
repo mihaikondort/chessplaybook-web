@@ -2,6 +2,7 @@ import { useContext, useMemo, useState, type ReactNode } from 'react';
 import { ChromeContext, type Chrome } from './chromeContext';
 import { Outlet } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
+import { useReminderClick } from '@/features/reminders/useReminderClick';
 
 /**
  * WHAT THIS IS FOR.
@@ -45,6 +46,8 @@ export function useChrome(): Chrome {
 export function SiteShell({ children }: { children?: ReactNode }) {
   const [chromeHidden, setChromeHidden] = useState(false);
   const value = useMemo(() => ({ setChromeHidden, chromeHidden }), [chromeHidden]);
+  // A reminder email's link lands on more than one page, so the shell reports it.
+  useReminderClick();
 
   return (
     <ChromeContext.Provider value={value}>

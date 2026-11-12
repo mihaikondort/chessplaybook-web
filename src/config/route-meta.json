@@ -72,6 +72,15 @@
     "heading": "Contact Us",
     "body": "Get in touch with the Chess Playbook team."
   },
+  "reminders": {
+    "title": "Reminder Emails | Chess Playbook",
+    "description": "Stop or change the reminder emails Chess Playbook sends you.",
+    "ogTitle": "Reminder Emails",
+    "ogDescription": "Stop or change the reminder emails Chess Playbook sends you.",
+    "keywords": "chess playbook reminders, unsubscribe",
+    "heading": "Reminder emails",
+    "body": "Stop or change the reminder emails Chess Playbook sends you."
+  },
   "credits": {
     "title": "Credits & Attribution - Chess Playbook",
     "description": "Credits and attributions for technologies, data sources, and organizations that power Chess Playbook.",

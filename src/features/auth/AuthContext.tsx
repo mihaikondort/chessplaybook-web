@@ -6,6 +6,7 @@ import {
   signUp,
   signOut,
   confirmSignUp,
+  autoSignIn,
   resendSignUpCode,
   resetPassword,
   confirmResetPassword,
@@ -32,7 +33,7 @@ interface AuthContextType {
   isLoading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, username: string) => Promise<{ nextStep: string }>;
-  confirmEmail: (email: string, code: string) => Promise<void>;
+  confirmEmail: (email: string, code: string) => Promise<{ signedIn: boolean }>;
   resendCode: (email: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOutUser: () => Promise<void>;
@@ -196,9 +197,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { nextStep: nextStep.signUpStep };
   };
 
+  /*
+    CONFIRMING AN EMAIL NEVER SIGNED ANYONE IN (owner, staging, 2026-11-12).
+    `signUp` asks for `autoSignIn`, but in Amplify v6 that only PREPARES it:
+    `confirmSignUp` answers `COMPLETE_AUTO_SIGN_IN` and the sign-in happens only
+    when `autoSignIn()` is called. Nothing called it, so since accounts launched
+    (2026-03-26) every email sign-up landed on the homepage signed out, and
+    `loadUser` here found no session.
+
+    The prepared sign-in lives in memory, so it is gone after a reload of the
+    code page, and it never exists when the code page was reached from a sign-in
+    attempt (`UserNotConfirmedException`). Then the account is confirmed but
+    not signed in, and the caller sends the player to sign in.
+  */
   const confirmEmail = async (email: string, code: string) => {
-    await confirmSignUp({ username: email, confirmationCode: code });
+    const { nextStep } = await confirmSignUp({ username: email, confirmationCode: code });
+    if (nextStep.signUpStep !== 'COMPLETE_AUTO_SIGN_IN') return { signedIn: false };
+    try {
+      const { isSignedIn } = await autoSignIn();
+      if (!isSignedIn) return { signedIn: false };
+    } catch {
+      return { signedIn: false };
+    }
     await loadUser();
+    return { signedIn: true };
   };
 
   const resendCode = async (email: string) => {
