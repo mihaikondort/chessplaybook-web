@@ -322,7 +322,9 @@ export async function fetchPuzzleHints(id: string): Promise<PuzzleHints> {
 
 export async function fetchPuzzleExplanation(id: string): Promise<PuzzleExplanation> {
   try {
-    const res = await fetch(`${API_URL}/api/puzzles/${encodeURIComponent(id)}/explanation`);
+    // Who asked: the funnel counts a puzzle explanation opened (#46).
+    const headers = await getRequestHeaders().catch(() => ({}));
+    const res = await fetch(`${API_URL}/api/puzzles/${encodeURIComponent(id)}/explanation`, { headers });
     if (!res.ok) return { status: 'unavailable' };
     const json = await res.json();
     return json?.data ?? { status: 'unavailable' };

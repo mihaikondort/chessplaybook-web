@@ -5,6 +5,8 @@ import { AppRoutes } from "@/app/routes";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { trackPageView as trackMetaPixelPageView } from "@/services/metaPixel";
 import { usePresenceHeartbeat } from "@/hooks/usePresenceHeartbeat";
+import { captureFirstTouch, recordVisit } from "@/services/funnel";
+import { isPrerendering, onPrerenderActivated } from "@/services/prerender";
 
 // ---------------------------------------------------------------------------
 // Analytics: deferred loading
@@ -50,6 +52,7 @@ const App = () => {
       <Providers>
         <BrowserRouter>
           <PresenceHeartbeat />
+          <FunnelVisit />
           <MetaPixelRouteListener />
           <AppRoutes />
         </BrowserRouter>
@@ -60,6 +63,25 @@ const App = () => {
 
 function PresenceHeartbeat() {
   usePresenceHeartbeat();
+  return null;
+}
+
+/**
+ * The funnel's first touch and daily visit (#46). The first touch is read from the page
+ * the browser loaded, so it runs once, before any navigation; a prerendered page waits
+ * until someone actually sees it. A tab left open past midnight records the new day
+ * when it is looked at again.
+ */
+function FunnelVisit() {
+  useEffect(() => {
+    const start = () => { captureFirstTouch(); void recordVisit(); };
+    const onVisible = () => { if (document.visibilityState === 'visible' && !isPrerendering()) void recordVisit(); };
+    document.addEventListener('visibilitychange', onVisible);
+    let stop: (() => void) | undefined;
+    if (isPrerendering()) stop = onPrerenderActivated(start);
+    else start();
+    return () => { document.removeEventListener('visibilitychange', onVisible); stop?.(); };
+  }, []);
   return null;
 }
 

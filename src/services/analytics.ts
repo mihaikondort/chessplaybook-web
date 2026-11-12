@@ -401,7 +401,14 @@ type GA4Event =
   /* #44: a way to the contact form was pressed, and from where. */
   | { name: 'support_entry_clicked'; params: { surface: SupportSurface } }
   | { name: 'contact_form_failed'; params: { reason: 'invalid' | 'rate_limited' | 'network' | 'server' } }
-  | { name: 'signed_in'; params: { provider: 'google' | 'cognito' } };
+  | { name: 'signed_in'; params: { provider: 'google' | 'cognito' } }
+  /**
+   * An account was created (#46, funnel stage 4; GA4's recommended event name, for Ads).
+   * Email: when the code is confirmed. Google: when the sign-in started from the sign-up
+   * page. A first Google sign-in from the login page is a sign-up GA4 cannot see; the
+   * funnel's own record is `users.created_at` on the server, which sees every one.
+   */
+  | { name: 'sign_up'; params: { method: 'email' | 'google' } };
 
 /** The kinds of advice the training record gives. Mirrors `NextStep['kind']`. */
 export type TrainingRecordStep = 'replay' | 'plan' | 'untried' | 'stale' | 'weakness' | 'none';

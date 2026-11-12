@@ -207,7 +207,7 @@ export function useGameReview({
             bestMoves: string[];
             mateIn: (number | null)[];
           };
-        }>(cacheCheckUrl);
+        }>(cacheCheckUrl, { identified: true });
         if (cacheResp.cached && cacheResp.result) {
           const r = cacheResp.result;
           cached = {
@@ -305,6 +305,7 @@ export function useGameReview({
         const summaryResp = (await backendAPIClient.post(
           '/api/game-summary',
           summaryBody,
+          { identified: true },
         )) as unknown as Record<string, unknown>;
         if (summaryResp.success && summaryResp.summary) {
           summaryPayload = {
@@ -423,7 +424,7 @@ export function useGameReview({
           const cacheCheckResponse = await backendAPIClient.get<{
             cached: boolean;
             result?: Record<string, unknown>;
-          }>(cacheCheckUrl);
+          }>(cacheCheckUrl, { identified: true });
           if (cacheCheckResponse.cached && cacheCheckResponse.result) {
             cachedResult = cacheCheckResponse.result;
           }
@@ -517,7 +518,7 @@ export function useGameReview({
             if (policyEntry) body.lastMovePolicy = policyEntry.policy;
           }
         }
-        response = await backendAPIClient.post('/api/explain-position/v4', body) as unknown as Record<string, unknown>;
+        response = await backendAPIClient.post('/api/explain-position/v4', body, { identified: true }) as unknown as Record<string, unknown>;
       }
 
       if (response.success && response.structured) {

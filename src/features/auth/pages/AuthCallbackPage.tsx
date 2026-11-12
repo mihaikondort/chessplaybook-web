@@ -35,6 +35,7 @@ export default function AuthCallbackPage() {
         // for returning users.
         if (sessionStorage.getItem('cp_signup_intent') === '1') {
           sessionStorage.removeItem('cp_signup_intent');
+          logGA4Event({ name: 'sign_up', params: { method: 'google' } });
           trackLead();
           trackCompleteRegistration();
         }

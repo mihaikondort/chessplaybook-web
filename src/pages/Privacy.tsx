@@ -57,6 +57,16 @@ const Privacy = () => {
                   long gaps between heartbeats are not counted.
                 </p>
 
+                <h3 className="text-xl font-semibold text-link mb-3">Where You Came From, and Return Visits</h3>
+                <p className="text-muted-foreground mb-4">
+                  To see which of our ads and links bring players who stay, we keep, with the random identifier
+                  your browser gets on its first visit: the first page you opened, the campaign tags in that link
+                  (such as utm_campaign), whether it was a paid ad click, and the name of the site that sent you
+                  (for example google.com). We do not keep the full address you came from, your IP address, your
+                  browser details or the ad click's own code. We also keep the days on which you visited. If you
+                  create an account, these move to your account, and they are deleted when you delete it.
+                </p>
+
                 <h3 className="text-xl font-semibold text-link mb-3">Server Logs</h3>
                 <p className="text-muted-foreground mb-4">
                   Our hosting provider (AWS CloudFront) automatically collects standard server log information:

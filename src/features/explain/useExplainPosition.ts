@@ -106,7 +106,7 @@ export function useExplainPosition(
         const r = await backendAPIClient.get<{
           cached: boolean;
           result?: Record<string, unknown>;
-        }>(cacheCheckUrl);
+        }>(cacheCheckUrl, { identified: true });
         if (r.cached && r.result) cachedFromServer = r.result;
       } catch (cacheErr) {
         console.warn('[useExplainPosition] cache-check failed, falling back:', cacheErr);
@@ -135,6 +135,7 @@ export function useExplainPosition(
         response = await backendAPIClient.post(
           '/api/explain-position/v4',
           body,
+          { identified: true },
         ) as unknown as Record<string, unknown>;
       }
 

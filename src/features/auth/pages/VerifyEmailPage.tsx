@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '../AuthContext';
 import { trackLead, trackCompleteRegistration } from '@/services/metaPixel';
 import { returnToFrom } from '../utils/returnTo';
+import { logGA4Event } from '@/services/analytics';
 
 export default function VerifyEmailPage() {
   const { confirmEmail, resendCode } = useAuth();
@@ -35,6 +36,7 @@ export default function VerifyEmailPage() {
       // recommended pattern.
       trackLead();
       trackCompleteRegistration();
+      logGA4Event({ name: 'sign_up', params: { method: 'email' } });
       if (result?.signedIn) {
         navigate(returnTo || '/', { replace: true });
       } else {

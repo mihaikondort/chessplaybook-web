@@ -170,6 +170,20 @@ interface PlayerGamesResponse {
   };
 }
 
+/**
+ * The player's identity headers, for the endpoints that count a feature use (#46: Explain,
+ * the game report). Lazy, so the auth module stays out of pages that never ask; a failure
+ * sends the request without them rather than failing it.
+ */
+async function identityHeaders(): Promise<Record<string, string>> {
+  try {
+    const { getRequestHeaders } = await import('@/features/auth/utils/getAuthToken');
+    return await getRequestHeaders();
+  } catch {
+    return {};
+  }
+}
+
 class BackendAPIClient {
   private apiUrl: string;
   private cache: Map<string, any> = new Map();
@@ -221,13 +235,13 @@ class BackendAPIClient {
    * Generic POST wrapper with error handling.
    * Returns the full API response (not just data) so callers can check success/cached flags.
    */
-  async post<T = any>(endpoint: string, body: unknown): Promise<APIResponse<T>> {
+  async post<T = any>(endpoint: string, body: unknown, options: { identified?: boolean } = {}): Promise<APIResponse<T>> {
     const url = `${this.apiUrl}${endpoint}`;
 
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...(options.identified ? await identityHeaders() : {}), 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
 
@@ -260,11 +274,14 @@ class BackendAPIClient {
    * endpoints, prefer the private `fetch` helper which validates the
    * success flag.
    */
-  async get<T = any>(endpoint: string): Promise<T> {
+  async get<T = any>(endpoint: string, options: { identified?: boolean } = {}): Promise<T> {
     const url = `${this.apiUrl}${endpoint}`;
 
     try {
-      const response = await fetch(url, { method: 'GET' });
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: options.identified ? await identityHeaders() : undefined,
+      });
 
       if (!response.ok) {
         const error: APIError = await response.json().catch(() => ({
