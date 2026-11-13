@@ -35,6 +35,7 @@ export const Footer = () => {
     {
       title: "Learn",
       links: [
+        { label: "Opening Trainer", to: "/openings" },
         { label: "Explain a Position", to: "/explain" },
         { label: "Game Analysis", to: "/analysis" },
         { label: "World Champions", to: "/champions" },
