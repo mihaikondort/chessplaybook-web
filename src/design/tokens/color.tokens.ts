@@ -60,7 +60,7 @@ export const COLOR_ROLES = [
   'eval-white', 'eval-black',
   'medal-gold', 'medal-silver', 'medal-bronze',
   'clock-low', 'clock-low-foreground', 'clock-critical', 'clock-critical-foreground',
-  'feature-explain', 'feature-puzzles', 'feature-play', 'feature-challenge',
+  'feature-explain', 'feature-puzzles', 'feature-play', 'feature-challenge', 'feature-openings',
   'training-tactics', 'training-tactics-border', 'training-tactics-foreground',
   'training-middlegame', 'training-middlegame-border', 'training-middlegame-foreground',
   'training-endgame', 'training-endgame-border', 'training-endgame-foreground',
@@ -254,13 +254,14 @@ export const darkTheme: ColorTheme = {
     /*
       HOMEPAGE CARD IDENTITY (B5b), one hue per destination, like the training
       colours: Explain amber, Puzzles violet, Play emerald, Champion Challenge
-      red. Champion Games uses the primary gold and News is neutral. Dark values
-      are the -400 shades the icons drew.
+      red, the Opening Trainer sky. Champion Games uses the primary gold. Dark
+      values are the -400 shades the icons drew.
     */
     'feature-explain': '43 96% 56%',
     'feature-puzzles': '255 92% 76%',
     'feature-play': '158 64% 52%',
     'feature-challenge': '0 91% 71%',
+    'feature-openings': '198 93% 60%',
 
     /* B5c. The articles' accent (eyebrow labels, bullets, highlighted rows): the red-400 they drew. */
     editorial: '0 91% 71%',
@@ -468,6 +469,7 @@ export const lightTheme: ColorTheme = {
     'feature-puzzles': '262 83% 58%',
     'feature-play': '163 94% 24%',
     'feature-challenge': '0 72% 51%',
+    'feature-openings': '201 90% 30%',
 
     editorial: '0 72% 42%',
 
@@ -616,6 +618,7 @@ export function tailwindColors() {
       puzzles: ref('feature-puzzles'),
       play: ref('feature-play'),
       challenge: ref('feature-challenge'),
+      openings: ref('feature-openings'),
     },
   };
 }

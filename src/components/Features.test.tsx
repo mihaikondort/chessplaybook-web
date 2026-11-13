@@ -1,7 +1,7 @@
 /**
  * The homepage chooser grid is a measurement instrument (which card a visitor
  * picks, and from which position), so these tests pin the properties the *analysis*
- * depends on — array order, the event payload, and News staying quiet — not
+ * depends on — array order and the event payload — not
  * just "it renders".
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -48,21 +48,14 @@ describe('featureCards config', () => {
     expect(featureCards).toHaveLength(6);
   });
 
-  it('puts News last, because array order is grid order and position is measured', () => {
-    expect(featureCards[featureCards.length - 1].href).toBe('/news');
+  it('leads with the three Premium features, the Opening Trainer first', () => {
+    // Owner, 2026-11-13. They also need no opponent and no waiting. If this
+    // changes, the reading of click share by position changes with it.
+    expect(featureCards.slice(0, 3).map((c) => c.href)).toEqual(['/openings', '/puzzles', '/explain']);
   });
 
-  it('marks News — and only News — as secondary', () => {
-    const secondary = featureCards.filter((c) => c.tier === 'secondary');
-    expect(secondary.map((c) => c.href)).toEqual(['/news']);
-  });
-
-  it('leads with the two features that need no opponent and no waiting', () => {
-    // Ordering is by probability of a satisfying first experience for a cold
-    // visitor, not by aesthetics. If this changes, the analysis's reading of
-    // click share by position changes with it.
-    expect(featureCards[0].href).toBe('/explain');
-    expect(featureCards[1].href).toBe('/puzzles');
+  it('no longer carries a News card (News is in the nav)', () => {
+    expect(featureCards.some((c) => c.href === '/news')).toBe(false);
   });
 
   it('gives every card a mobile-safe title', () => {
@@ -91,14 +84,13 @@ describe('Features grid', () => {
   it('logs home_choice_click with the destination and its grid position', () => {
     renderGrid();
 
-    // The News card — last, and the one whose click share is most at risk of
-    // being misread, so it is the one worth pinning.
-    const newsIndex = featureCards.findIndex((c) => c.href === '/news');
-    fireEvent.click(screen.getAllByRole('link')[newsIndex]);
+    // The last card, so a position other than 0 is pinned too.
+    const lastIndex = featureCards.length - 1;
+    fireEvent.click(screen.getAllByRole('link')[lastIndex]);
 
     expect(logGA4Event).toHaveBeenCalledWith({
       name: 'home_choice_click',
-      params: { to: '/news', position: newsIndex },
+      params: { to: featureCards[lastIndex].href, position: lastIndex },
     });
   });
 

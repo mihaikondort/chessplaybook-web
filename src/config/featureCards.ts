@@ -7,8 +7,9 @@
  *
  * Order IS the grid order, left-to-right then top-to-bottom (3-up on desktop,
  * 2-up on mobile). It is NOT arbitrary: the cards are ranked by how likely a
- * cold visitor is to get a satisfying first experience. Explain and Puzzles
- * deliver in one click with no dependency on anyone else; Play depends on an
+ * cold visitor is to get a satisfying first experience. The Opening Trainer,
+ * Puzzles and Explain deliver in one click with no dependency on anyone else,
+ * and they are the Premium features (owner, 2026-11-13); Play depends on an
  * opponent existing, which — with the current pool — is the least reliable
  * promise on the page.
  *
@@ -17,7 +18,7 @@
  * exists to produce (`home_choice_click`), so presentation changes here are
  * changes to an experiment's stimulus, not just styling.
  */
-import { Lightbulb, Swords, Target, BookOpen, Newspaper } from 'lucide-react';
+import { Lightbulb, Swords, Target, BookOpen, GraduationCap } from 'lucide-react';
 import { MdPsychology } from 'react-icons/md';
 
 export interface FeatureCard {
@@ -37,24 +38,25 @@ export interface FeatureCard {
   badge?: string;
   /**
    * `secondary` cards are deliberately quieter: muted styling, and excluded
-   * from the rotating highlight. News is the only one — it is a browse
-   * destination, and it must not compete with the interactive actions above
-   * it. Before the grid became a single visible screen, being last was enough
-   * to keep it quiet; now it has to be carried by visual weight instead.
+   * from the rotating highlight. News was the only one until it left the grid
+   * on 2026-11-13; no card uses it now.
    */
   tier?: 'secondary';
 }
 
 export const featureCards: FeatureCard[] = [
+  // The first row (3-up on desktop) holds the three Premium features, the
+  // Opening Trainer first (owner, 2026-11-13). News left the grid that day: it
+  // stays one click away in the nav.
   {
-    icon: Lightbulb,
-    title: 'Explain a Position',
-    shortTitle: 'Explain',
-    description: 'See why a famous position works — in plain English, not engine numbers.',
-    cta: 'See why',
-    href: '/explain',
-    gradient: 'from-feature-explain/20 to-feature-explain/5',
-    iconColor: 'text-feature-explain',
+    icon: GraduationCap,
+    title: 'Opening Trainer',
+    shortTitle: 'Openings',
+    description: 'Learn the London, French or Slav move by move, then play it from memory.',
+    cta: 'Start learning',
+    href: '/openings',
+    gradient: 'from-feature-openings/20 to-feature-openings/5',
+    iconColor: 'text-feature-openings',
   },
   {
     icon: MdPsychology,
@@ -65,6 +67,16 @@ export const featureCards: FeatureCard[] = [
     href: '/puzzles',
     gradient: 'from-feature-puzzles/20 to-feature-puzzles/5',
     iconColor: 'text-feature-puzzles',
+  },
+  {
+    icon: Lightbulb,
+    title: 'Explain a Position',
+    shortTitle: 'Explain',
+    description: 'See why a famous position works — in plain English, not engine numbers.',
+    cta: 'See why',
+    href: '/explain',
+    gradient: 'from-feature-explain/20 to-feature-explain/5',
+    iconColor: 'text-feature-explain',
   },
   {
     icon: Swords,
@@ -98,20 +110,6 @@ export const featureCards: FeatureCard[] = [
     href: '/champions',
     gradient: 'from-primary/20 to-primary/5',
     iconColor: 'text-link',
-  },
-  // Last, and quiet, on purpose — see `tier` above. Do not move it up the array:
-  // position in this list is position in the grid, and the measurement reads
-  // click share by position.
-  {
-    icon: Newspaper,
-    title: 'News & Articles',
-    shortTitle: 'News',
-    description: 'Title matches, tournaments and the stories behind them.',
-    cta: 'Read now',
-    href: '/news',
-    gradient: 'from-muted-foreground/10 to-muted-foreground/5',
-    iconColor: 'text-muted-foreground',
-    tier: 'secondary',
   },
 ];
 

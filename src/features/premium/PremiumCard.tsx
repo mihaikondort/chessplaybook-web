@@ -14,7 +14,7 @@ import env from '@/config/env';
 import { getAuthHeader } from '@/features/auth/utils/getAuthToken';
 import { useAuth } from '@/features/auth/AuthContext';
 import {
-  fetchCheckoutSettings, loadPaddle, onCheckoutCompleted, openCheckout, previewPlans,
+  fetchCheckoutSettings, formatMinor, loadPaddle, onCheckoutCompleted, openCheckout, previewPlans,
   type CheckoutSettings, type Plans, type PremiumState,
 } from './paddleCheckout';
 
@@ -40,6 +40,7 @@ export function PremiumCard() {
   const [plans, setPlans] = useState<Plans | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [confirmRefund, setConfirmRefund] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -94,8 +95,28 @@ export function PremiumCard() {
     }
   };
 
+  /* A full refund within 30 days of a payment (owner, 2026-11-13). Two steps, because it ends Premium. */
+  const refund = async () => {
+    setBusy(true);
+    try {
+      const response = await fetch(`${env.apiBaseUrl}/api/premium/refund`, { method: 'POST', headers: await getAuthHeader() });
+      if (response.ok) {
+        setConfirmRefund(false);
+        setMessage(null);
+        setState(await fetchPremium());
+      } else {
+        setMessage('The refund could not be requested. Please try again, or write to support@chessplaybook.com.');
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const ends = day(state?.periodEndsAt ?? null);
   const cancelling = state?.scheduledChange?.startsWith('cancel@') ?? false;
+  const refundable = state?.refund?.available ?? null;
+  const refundAmount = refundable ? formatMinor(refundable.totalMinor, refundable.currency) : null;
+  const refundUntil = refundable ? day(refundable.until) : null;
 
   return (
     <Card data-testid="premium-card">
@@ -110,6 +131,28 @@ export function PremiumCard() {
                 <p>You have Premium.{ends && (cancelling ? ` It ends on ${ends}.` : ` It renews on ${ends}.`)}</p>
                 <Button variant="outline" onClick={manage} disabled={busy}>Manage your subscription</Button>
               </>
+            )}
+            {state.refund?.pending && (
+              <p className="text-muted-foreground">Your refund has been requested. Premium ends when Paddle confirms it.</p>
+            )}
+            {refundable && !state.refund?.pending && (
+              confirmRefund ? (
+                <div className="space-y-2">
+                  <p>
+                    Refund {refundAmount ?? 'your payment'} in full? Premium ends once the refund is confirmed
+                    {refundable.kind === 'subscription' ? ', and your subscription is cancelled.' : '.'}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="destructive" onClick={refund} disabled={busy}>Yes, refund me</Button>
+                    <Button variant="outline" onClick={() => setConfirmRefund(false)} disabled={busy}>Keep Premium</Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <Button variant="outline" onClick={() => setConfirmRefund(true)} disabled={busy}>Cancel and get a full refund</Button>
+                  {refundUntil && <p className="text-muted-foreground">A full refund is possible until {refundUntil}.</p>}
+                </div>
+              )
             )}
           </>
         ) : (

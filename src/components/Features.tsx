@@ -8,7 +8,7 @@
  * Layout is a hard requirement, not a preference: **all six cards must fit the
  * first mobile viewport**. That is why the mobile card is a fixed short height
  * rather than `aspect-square` — six square cards are ~570px of grid on their
- * own and push the last row into a second screen, which would turn "News was
+ * own and push the last row into a second screen, which would turn "the last card was
  * chosen least" into an artefact of scroll depth.
  *
  * MOTION. No auto-cycling highlight. The grid animates only in response to the

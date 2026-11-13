@@ -60,7 +60,7 @@ for (const s of ['background', 'card'] as ColorRole[]) {
   add(`focus ring on ${s}`, role('ring'), role(s), NON_TEXT);
   add(`border-strong on ${s}`, role('border-strong'), role(s), NON_TEXT);
   add(`primary as a boundary on ${s}`, role('primary'), role(s), NON_TEXT);
-  for (const x of ['feature-explain', 'feature-puzzles', 'feature-play', 'feature-challenge',
+  for (const x of ['feature-explain', 'feature-puzzles', 'feature-play', 'feature-challenge', 'feature-openings',
     'medal-gold', 'medal-silver', 'medal-bronze', 'cycle-swiss', 'cycle-circuit', 'cycle-rating'] as ColorRole[]) {
     add(`${x} icon on ${s}`, role(x), role(s), NON_TEXT);
   }

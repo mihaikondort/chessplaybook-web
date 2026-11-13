@@ -10,8 +10,9 @@
  * record which one was taken (`home_choice_click`). The hero, the live-tournament
  * spotlight, the champions showcase and the news teaser were all removed on
  * 2026-08-02 — a chooser with four scrolling sections underneath is not a
- * chooser. Their destinations are all still reachable: five of the six are grid
- * cards, and articles are one click further via /news.
+ * chooser. Their destinations are all still reachable: champion games and the
+ * Challenge are grid cards, and articles are one click away via /news in the nav
+ * (the News card left the grid on 2026-11-13 for the Opening Trainer).
  *
  * The <h1> comes from RouteHeading, i.e. from route-meta.json, which is also
  * what SeoHead renders and what the prerender bakes. The homepage is the
@@ -53,7 +54,7 @@ const Index = () => {
       <div className="bg-background flex flex-col">
         <main className="flex-1">
           {/* Deliberately compact. Every one of the six cards has to sit in the
-              first mobile viewport — that is what stops "News was chosen least"
+              first mobile viewport — that is what stops "the last card was chosen least"
               from being an artefact of scroll depth — and the heading is the
               only thing competing with them for that space. */}
           <div className="container max-w-6xl mx-auto px-4 pt-4 pb-3 md:pt-10 md:pb-6 text-center">
