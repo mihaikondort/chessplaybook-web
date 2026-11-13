@@ -303,6 +303,16 @@ function stagingFunctions(canonical) {
       ['https://api.chessplaybook.com', 'https://api.staging.chessplaybook.com'],
       ['wss://api.chessplaybook.com', 'wss://api.staging.chessplaybook.com'],
       ['https://chessplaybook-auth.auth.', 'https://chessplaybook-auth-staging.auth.'],
+      /*
+        PADDLE'S SANDBOX CHECKOUT, staging only (2026-11-13). Measured, not taken from Paddle's docs
+        (their CSP page is missing): what OUR page loads when Paddle.js opens a sandbox checkout. Card
+        processing, Stripe and Google Pay load inside Paddle's own frame, under Paddle's policy.
+        Production's policy gets the LIVE hosts at launch, measured again then.
+      */
+      ['https://connect.facebook.net; connect-src', 'https://connect.facebook.net https://cdn.paddle.com; connect-src'],
+      ['https://cognito-idp.us-east-1.amazonaws.com; img-src', 'https://cognito-idp.us-east-1.amazonaws.com https://sandbox-api.paddle.com https://o522631.ingest.sentry.io; img-src'],
+      ["style-src 'self' 'unsafe-inline';", "style-src 'self' 'unsafe-inline' https://sandbox-cdn.paddle.com;"],
+      ['https://www.youtube.com https://www.googletagmanager.com"', 'https://www.youtube.com https://www.googletagmanager.com https://sandbox-buy.paddle.com"'],
     ],
     'staging CSP function',
   );

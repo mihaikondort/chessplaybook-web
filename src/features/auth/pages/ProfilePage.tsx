@@ -7,6 +7,7 @@ import { getAuthHeader } from '../utils/getAuthToken';
 import { userPreferencesService, type ServerPreferences } from '@/services/UserPreferencesService';
 import env from '@/config/env';
 import { DeleteAccountCard } from '../components/DeleteAccountCard';
+import { PremiumCard } from '@/features/premium/PremiumCard';
 import { contactHref } from '@/components/support/ReportProblemLink';
 import { logGA4Event } from '@/services/analytics';
 
@@ -279,6 +280,9 @@ export default function ProfilePage() {
               Contact us
             </Link>
           </p>
+
+          {/* Premium: shown only where checkout is configured (staging until launch). */}
+          <PremiumCard />
 
           {profile?.username && <DeleteAccountCard username={profile.username} />}
 
