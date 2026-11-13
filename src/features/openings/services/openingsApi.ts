@@ -62,7 +62,8 @@ export interface RepertoireListing {
 }
 
 export class OpeningsApiError extends Error {
-  constructor(message: string, readonly status: number) {
+  /** The answer's body, when there was one (a daily limit's details, freePlanLimit.ts). */
+  constructor(message: string, readonly status: number, readonly body: unknown = null) {
     super(message);
   }
 }
@@ -173,7 +174,7 @@ async function sendJson<T>(method: 'GET' | 'POST', path: string, body?: unknown,
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
   const json = await res.json().catch(() => null);
-  if (!res.ok || !json?.success) throw new OpeningsApiError(json?.error ?? `Request failed (${res.status})`, res.status);
+  if (!res.ok || !json?.success) throw new OpeningsApiError(json?.error ?? `Request failed (${res.status})`, res.status, json);
   return json.data as T;
 }
 

@@ -4,6 +4,7 @@ import {
 } from '../services/openingsApi';
 import type { TrainingReport } from './useTrainingWalk';
 import { logGA4Event } from '@/services/analytics';
+import { dailyLimitMessage, readDailyLimit, reportDailyLimit } from '@/services/freePlanLimit';
 
 const NO_LINE: string[] = [];
 
@@ -71,7 +72,14 @@ export function useTrainingSession(repertoireId: string, active: boolean, from: 
       setState((st) => (st ? { ...st, open: s, lastScope: s.scope } : st));
       if (resume) setScope(s.scope);
     } catch (e) {
-      failed(e);
+      // The free plan's one session a day (a Resume of today's session is free).
+      const limit = e instanceof OpeningsApiError ? readDailyLimit(e.status, e.body) : null;
+      if (limit) {
+        reportDailyLimit(limit);
+        setSaveError(dailyLimitMessage(limit));
+      } else {
+        failed(e);
+      }
     } finally {
       setBusy(false);
     }

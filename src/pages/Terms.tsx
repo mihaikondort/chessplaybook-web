@@ -92,8 +92,8 @@ const Terms = () => {
                 <h2 className={H2}>The Free Plan and Premium</h2>
                 <p className={P}>
                   Puzzles, training plans, champion games, news and play are free. On the free plan, some
-                  features can have a daily limit, such as the game report, position explanations and Champion
-                  Challenge. Premium has no daily limits.
+                  features can have a daily limit, such as the game report, position explanations, Champion
+                  Challenge and opening training. Premium has no daily limits.
                 </p>
                 <p className={P}>Premium is a digital service with no human coaching. You can buy it as:</p>
                 <ul className={UL}>
