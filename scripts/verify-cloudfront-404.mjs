@@ -19,6 +19,8 @@
  *   node scripts/verify-cloudfront-404.mjs --counterfactual
  *
  * `--counterfactual` empties the route table and asserts the suite then FAILS.
+ * `--counterfactual-shell` empties the SHELL list (routes with no prerendered
+ * file, served /index.html so the CSP is added) and asserts the same.
  * A guard that passes in both directions proves nothing, which this project
  * has now written down three times.
  */
@@ -32,10 +34,13 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FUNCTION_FILE = path.join(ROOT, 'deploy/cloudfront-canonical-function.published.js'); // what is published (2026-11-13)
 const MANIFEST = path.join(ROOT, 'dist/_routes/manifest.tsv');
 
-const counterfactual = process.argv.includes('--counterfactual');
+const counterfactualShell = process.argv.includes('--counterfactual-shell');
+const counterfactual = process.argv.includes('--counterfactual') || counterfactualShell;
 
 let source = fs.readFileSync(FUNCTION_FILE, 'utf-8');
-if (counterfactual) {
+if (counterfactualShell) {
+  source = source.replace(/var SHELL = '[^']*'/, "var SHELL = ''");
+} else if (counterfactual) {
   source = source.replace(/var ROUTES = '[^']*'/, "var ROUTES = ''");
 }
 const handler = new Function(`${source}\nreturn handler;`)();
@@ -95,23 +100,43 @@ const SAMPLE = {
   ':username': 'someplayer',
 };
 
+/*
+ * WHICH URI REACHES S3 (2026-11-13). A page with a prerendered file must keep
+ * its URI, or it loses its own title, description and canonical to the
+ * homepage's. A page with none must be rewritten to /index.html: through the
+ * 403 error path it shipped with no CSP. The expectation comes from the
+ * MANIFEST, not from the function's SHELL list, so a wrong list fails here.
+ */
+const manifestKeys = fs.existsSync(MANIFEST)
+  ? fs
+      .readFileSync(MANIFEST, 'utf-8')
+      .split(/\r?\n/)
+      .filter(Boolean)
+      .map((line) => '/' + line.split('\t')[1])
+  : null;
+const prerendered = new Set(manifestKeys ?? []);
+
+function expectedUri(url) {
+  return url === '/' || prerendered.has(url) ? url : '/index.html';
+}
+
 for (const routePath of routePaths) {
   const concrete = routePath.replace(/:[A-Za-z0-9_]+/g, (p) => SAMPLE[p] ?? 'sample');
-  const { kind } = call(concrete);
+  const { kind, request } = call(concrete);
   check(`route ${routePath} -> ${concrete}`, kind === 'pass', `got ${kind}, expected pass-through`);
+  if (kind === 'pass' && manifestKeys) {
+    const want = expectedUri(concrete);
+    check(`route ${concrete} reaches S3 as ${want}`, request.uri === want, `got ${request.uri}`);
+  }
 }
 
 /* ------------------------------------------------------------- manifest */
 
-if (fs.existsSync(MANIFEST)) {
-  const keys = fs
-    .readFileSync(MANIFEST, 'utf-8')
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => '/' + line.split('\t')[1]);
-  for (const key of keys) {
-    const { kind } = call(key);
+if (manifestKeys) {
+  for (const key of manifestKeys) {
+    const { kind, request } = call(key);
     check(`prerendered ${key}`, kind === 'pass', `got ${kind}, expected pass-through`);
+    check(`prerendered ${key} keeps its own file`, request?.uri === key, `got ${request?.uri}`);
   }
 } else {
   check('manifest present', false, `${path.relative(ROOT, MANIFEST)} missing — run npm run build`);
@@ -134,8 +159,21 @@ const ASSETS = [
   '/placeholder.svg',
 ];
 for (const asset of ASSETS) {
-  const { kind } = call(asset);
+  const { kind, request } = call(asset);
   check(`asset ${asset}`, kind === 'pass', `got ${kind}, expected pass-through`);
+  check(`asset ${asset} is not rewritten`, request?.uri === asset, `got ${request?.uri}`);
+}
+
+/* The root and a shell page's query string are left alone. */
+{
+  const root = call('/');
+  check('root is not rewritten', root.request?.uri === '/', `got ${root.request?.uri}`);
+  const qs = call('/player/someplayer', { querystring: { tab: { value: 'games' } } });
+  check(
+    'a shell page keeps its query string',
+    qs.request?.uri === '/index.html' && qs.request.querystring.tab?.value === 'games',
+    JSON.stringify(qs.request),
+  );
 }
 
 /* ------------------------------------------ sitemap, an independent oracle */
@@ -335,13 +373,13 @@ const line = `verify-cloudfront-404: ${passed}/${results.length}`;
 if (counterfactual) {
   if (passed === results.length) {
     console.error(
-      `${line}\nCOUNTERFACTUAL FAILED: the suite passes with an EMPTY route table, ` +
-        'so it does not actually test route recognition.',
+      `${line}\nCOUNTERFACTUAL FAILED: the suite passes with an EMPTY ${counterfactualShell ? 'SHELL list' : 'route table'}, ` +
+        'so it does not actually test it.',
     );
     process.exit(1);
   }
   console.log(
-    `${line} — counterfactual OK: emptying the route table breaks ` +
+    `${line} — counterfactual OK: emptying the ${counterfactualShell ? 'SHELL list' : 'route table'} breaks ` +
       `${results.length - passed} check(s), as it must.`,
   );
   process.exit(0);

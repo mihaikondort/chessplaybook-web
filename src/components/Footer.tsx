@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { COMPANY } from '@/config/company';
 
 /**
  * The SITE footer, rendered once by the content layout route (#72).
@@ -50,6 +51,7 @@ export const Footer = () => {
         { label: "Credits", to: "/credits" },
         { label: "Privacy Policy", to: "/privacy" },
         { label: "Terms of Service", to: "/terms" },
+        { label: "Refund Policy", to: "/refund-policy" },
       ],
     },
   ];
@@ -113,7 +115,7 @@ export const Footer = () => {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm">
-            &copy; {currentYear} The Chess Playbook Team. All rights reserved.
+            &copy; {currentYear} {COMPANY.legalName}. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <a href="/credits" className="hover:text-link transition-colors">Credits & Attribution</a>

@@ -1,5 +1,6 @@
 // GENERATED from production by scripts/generate-cloudfront-function.cjs. Do not edit.
-var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva openings play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
+var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva openings play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress refund-policy reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
+var SHELL = 'auth/callback candidates-2026/: champion-challenge/: champions/:/best-games/: champions/:/games/: forgot-password game-history live-game/:/: login player/: profile reset-password signup verify-email world-championship-2026/: world-cup-2025/:'.split(' ');
 
 var NOT_FOUND_HTML =
   '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
@@ -26,12 +27,15 @@ var NOT_FOUND_HTML =
 
 function canonicalRoute(uri) {
   if (uri === '/') return '/';
+  return matchTable(ROUTES, uri);
+}
 
+function matchTable(table, uri) {
   var parts = uri.split('/'); // leading '' because uri starts with '/'
   var depth = parts.length - 1;
 
-  for (var i = 0; i < ROUTES.length; i++) {
-    var pattern = ROUTES[i].split('/');
+  for (var i = 0; i < table.length; i++) {
+    var pattern = table[i].split('/');
     if (pattern.length !== depth) continue;
 
     var ok = true;
@@ -102,6 +106,9 @@ function handler(event) {
   }
 
   if (host === 'staging.chessplaybook.com' && canonicalUri === uri) {
+    if (uri !== '/' && !looksLikeFile(uri) && matchTable(SHELL, uri) !== null) {
+      request.uri = '/index.html';
+    }
     return request;
   }
 

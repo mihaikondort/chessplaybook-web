@@ -7,6 +7,7 @@
 
 import SeoHead from '@/components/SeoHead';
 import { LEGAL_LAST_UPDATED, formatLegalDate } from '@/config/legalDates';
+import { COMPANY } from '@/config/company';
 import { Link } from 'react-router-dom';
 
 const Privacy = () => {
@@ -29,6 +30,10 @@ const Privacy = () => {
                 <p className="text-muted-foreground mb-4">
                   Chess Playbook ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy
                   explains how we collect, use, and safeguard your information when you visit our website.
+                </p>
+                <p className="text-muted-foreground mb-4">
+                  Chess Playbook is run by {COMPANY.legalName}, registration number (CUI) {COMPANY.registrationNumber},
+                  {' '}{COMPANY.address}, {COMPANY.country}. We are responsible for your personal data under this policy.
                 </p>
               </section>
 
@@ -83,6 +88,26 @@ const Privacy = () => {
                   When you use the contact form, we keep your message and the email address you give, if any.
                   We also keep the page you came from, your browser and your screen size. We use them only to
                   answer you and to fix problems. They are deleted when you delete your account, or when you ask us.
+                </p>
+
+                <h3 className="text-xl font-semibold text-link mb-3">Premium Purchases</h3>
+                <p className="text-muted-foreground mb-4">
+                  If you buy Premium, Paddle takes the payment as our reseller and Merchant of Record. When you
+                  are signed in, your account page loads Paddle's checkout to show prices in your currency, so
+                  Paddle sees your IP address. When you buy, we send Paddle your account's email address and our
+                  number for your account, so the purchase is linked to it. Paddle is responsible for the payment
+                  and billing details it collects, under its own{' '}
+                  <a href="https://www.paddle.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-link hover:underline">
+                    privacy notice
+                  </a>
+                  . We never see your card number.
+                </p>
+                <p className="text-muted-foreground mb-4">
+                  We keep your Paddle customer and subscription numbers, your plan, its status and renewal date,
+                  and for each payment its date, amount, currency and whether it was refunded. We use them to give
+                  you Premium and to handle refunds. They are deleted when you delete your account. We also keep
+                  a log of the notifications Paddle sends us, with Paddle's numbers and nothing that names you.
+                  Paddle keeps its own records of the sale, as the law requires of a seller.
                 </p>
 
                 <h3 className="text-xl font-semibold text-link mb-3">Reminder Emails</h3>
@@ -203,6 +228,7 @@ const Privacy = () => {
                   <li><strong>Google Ads:</strong> For advertising, conversion tracking, and Customer Match (subject to Google's advertising policies)</li>
                   <li><strong>Meta Platforms (Facebook / Instagram):</strong> For advertising measurement and audience building via Meta Pixel (subject to Meta's privacy policy)</li>
                   <li><strong>AWS (Amazon Web Services):</strong> For content delivery, hosting, authentication, and sending the emails you ask for</li>
+                  <li><strong>Paddle:</strong> Our reseller and Merchant of Record for Premium, responsible for the payment data it collects (subject to Paddle's privacy notice)</li>
                 </ul>
               </section>
 
@@ -254,8 +280,12 @@ const Privacy = () => {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-foreground mb-4">Contact Us</h2>
                 <p className="text-muted-foreground mb-4">
-                  If you have questions about this Privacy Policy, please visit our{' '}
-                  <a href="/contact" className="text-link hover:underline">Contact page</a>.
+                  If you have questions about this Privacy Policy, or want to use any of your rights, write to{' '}
+                  <a href={`mailto:${COMPANY.email}`} className="text-link hover:underline">{COMPANY.email}</a>
+                  {' '}or visit our <a href="/contact" className="text-link hover:underline">Contact page</a>.
+                </p>
+                <p className="text-muted-foreground mb-4">
+                  {COMPANY.legalName}, {COMPANY.address}, {COMPANY.country}.
                 </p>
               </section>
             </div>

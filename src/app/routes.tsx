@@ -41,6 +41,7 @@ const WorldCup2025GameDay = lazy(() => lazyRetry(() => import("@/pages/WorldCup2
 const LiveGameViewer = lazy(() => lazyRetry(() => import("@/pages/live-game/LiveGameViewer")));
 const Privacy = lazy(() => lazyRetry(() => import("@/pages/Privacy")));
 const Terms = lazy(() => lazyRetry(() => import("@/pages/Terms")));
+const RefundPolicy = lazy(() => lazyRetry(() => import("@/pages/RefundPolicy")));
 const Contact = lazy(() => lazyRetry(() => import("@/pages/Contact")));
 const Reminders = lazy(() => lazyRetry(() => import("@/pages/Reminders")));
 const Credits = lazy(() => lazyRetry(() => import("@/pages/Credits")));
@@ -325,6 +326,7 @@ export function AppRoutes() {
         {/* Legal & Info */}
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/credits" element={<Credits />} />

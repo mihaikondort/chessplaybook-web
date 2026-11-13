@@ -1,13 +1,16 @@
 /**
  * Contact Page
  *
- * The contact form (#43), with the address as the alternative, and the FAQ.
+ * The contact form (#43), with the address as the alternative, the company behind the site
+ * (Paddle's review checks it is named, PREMIUM_OFFER_ANALYSIS section 7), and the FAQ.
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import SeoHead from '@/components/SeoHead';
 import { logGA4Event } from '@/services/analytics';
 import ContactForm from '@/components/support/ContactForm';
+import { Link } from 'react-router-dom';
+import { COMPANY } from '@/config/company';
 
 const Contact = () => {
   return (
@@ -18,7 +21,7 @@ const Contact = () => {
           "@type": "FAQPage",
           "mainEntity": [
             { "@type": "Question", "name": "Where does the game data come from?", "acceptedAnswer": { "@type": "Answer", "text": "All chess games are sourced from publicly available PGN (Portable Game Notation) files containing historical games from World Chess Champions." } },
-            { "@type": "Question", "name": "Is Chess Playbook free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes! Chess Playbook is completely free. We believe chess knowledge should be accessible to everyone." } },
+            { "@type": "Question", "name": "Is Chess Playbook free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Most of it is. Puzzles, training plans, champion games, news and play are free. Premium has no daily limits on the game report, position explanations or Champion Challenge." } },
             { "@type": "Question", "name": "Can I download the games?", "acceptedAnswer": { "@type": "Answer", "text": "Currently, games can be viewed online. We're considering adding download functionality in the future." } },
             { "@type": "Question", "name": "Will you add more champions or games?", "acceptedAnswer": { "@type": "Answer", "text": "We regularly update our database with new games and may add more historical content over time." } }
           ]
@@ -54,6 +57,20 @@ const Contact = () => {
                 </CardContent>
               </Card>
 
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-foreground text-2xl">Who runs Chess Playbook</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-1 text-muted-foreground">
+                  <p className="text-foreground font-semibold">{COMPANY.legalName}</p>
+                  <p>Registration number (CUI): {COMPANY.registrationNumber}</p>
+                  <p>{COMPANY.address}, {COMPANY.country}</p>
+                  <p>
+                    <a href={`mailto:${COMPANY.email}`} className="text-link hover:underline">{COMPANY.email}</a>
+                  </p>
+                </CardContent>
+              </Card>
+
               <Card className="bg-background border-border">
                 <CardHeader>
                   <CardTitle className="text-foreground text-2xl">Frequently Asked Questions</CardTitle>
@@ -70,7 +87,8 @@ const Contact = () => {
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">Is Chess Playbook free to use?</h4>
                     <p className="text-muted-foreground">
-                      Yes! Chess Playbook is completely free. We believe chess knowledge should be accessible to everyone.
+                      Most of it is. Puzzles, training plans, champion games, news and play are free. Premium has no
+                      daily limits on the game report, position explanations or Champion Challenge. Its refunds are in our <Link to="/refund-policy" className="text-link hover:underline">Refund Policy</Link>.
                     </p>
                   </div>
 

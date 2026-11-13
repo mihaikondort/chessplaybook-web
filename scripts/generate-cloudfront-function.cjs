@@ -38,6 +38,12 @@ const ROOT = path.join(__dirname, '..');
 const ROUTES_FILE = path.join(ROOT, 'src/app/routes.tsx');
 const FUNCTION_FILE = path.join(ROOT, 'deploy/cloudfront-canonical-function.js');
 /*
+ * The prerender manifest, written by generate-route-html.cjs earlier in `npm run build`. The SHELL list (routes
+ * with no prerendered file, which the function serves /index.html as a 200 so the CSP is added) is derived from
+ * it, so this script needs a build first.
+ */
+const MANIFEST = path.join(ROOT, 'dist/_routes/manifest.tsv');
+/*
  * WHAT IS PUBLISHED (2026-11-13). CloudFront counts comments toward the 10 KB limit, and the commented source had
  * reached 10,229 bytes, so one more route would not have fit. The source keeps its comments (they record why each
  * rule exists); the published copy is the same code with comments removed, as staging's has always been. The size
@@ -172,8 +178,29 @@ function collectRoutePaths() {
 }
 
 let patternCount = 0;
+let shellCount = 0;
 
-function buildTable(routePaths) {
+/** The function's own segment matching: ':' matches any non-empty segment, literals compare lowercased. */
+function patternMatches(pattern, routePath) {
+  const a = pattern.split('/');
+  const b = routePath.split('/');
+  if (a.length !== b.length) return false;
+  return a.every((seg, i) => b[i] !== '' && (seg === ':' || seg === b[i].toLowerCase()));
+}
+
+function prerenderedPaths() {
+  if (!fs.existsSync(MANIFEST)) {
+    console.error(`${path.relative(ROOT, MANIFEST)} is missing: run npm run build (the SHELL list is derived from it).`);
+    process.exit(1);
+  }
+  return fs
+    .readFileSync(MANIFEST, 'utf-8')
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => line.split('\t')[1]);
+}
+
+function buildTable(routePaths, prerendered) {
   const encoded = routePaths
     .map((p) => p.replace(/^\//, '').replace(/:[A-Za-z0-9_]+/g, ':'))
     // '/' encodes to the empty string, which split(' ') cannot carry. The
@@ -183,12 +210,18 @@ function buildTable(routePaths) {
 
   const unique = [...new Set(encoded)];
   patternCount = unique.length;
-  return `${BEGIN}\nvar ROUTES = '${unique.join(' ')}'.split(' ');\n${END}`;
+  // A pattern no prerendered file matches: the function serves it /index.html as a 200, so the CSP is added.
+  const shell = unique.filter((pattern) => !prerendered.some((p) => patternMatches(pattern, p)));
+  shellCount = shell.length;
+  return (
+    `${BEGIN}\nvar ROUTES = '${unique.join(' ')}'.split(' ');\n` +
+    `var SHELL = '${shell.join(' ')}'.split(' ');\n${END}`
+  );
 }
 
 function main() {
   const check = process.argv.includes('--check');
-  const table = buildTable(collectRoutePaths());
+  const table = buildTable(collectRoutePaths(), prerenderedPaths());
   const current = fs.readFileSync(FUNCTION_FILE, 'utf-8');
 
   const beginAt = current.indexOf(BEGIN);
@@ -235,7 +268,7 @@ function main() {
     if (next !== current) {
       console.error(
         'CloudFront function route table is STALE — it no longer matches ' +
-          'src/app/routes.tsx.\n' +
+          'src/app/routes.tsx and the prerender manifest.\n' +
           'A route missing from that table returns a hard 404 in production.',
       );
     }
@@ -251,7 +284,7 @@ function main() {
     fs.writeFileSync(FUNCTION_FILE, next);
     console.log(
       `CloudFront route table regenerated: ${patternCount} patterns ` +
-        '(plus the root, special-cased in the function).',
+        `(plus the root, special-cased in the function), ${shellCount} with no prerendered file.`,
     );
   }
   if (publishedStale) {

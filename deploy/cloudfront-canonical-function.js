@@ -26,6 +26,18 @@
  *   - a path matching a route passes through, prerendered or not;
  *   - anything else gets a generated 404.
  *
+ * AND A ROUTE WITH NO PRERENDERED FILE IS SERVED /index.html BY THIS FUNCTION
+ * (2026-11-13), not by the error path. Through the 403 -> /index.html custom
+ * error response the page reached the browser with NO Content-Security-Policy:
+ * CloudFront does not run the viewer-response function (ChessPlaybook-CSP) on
+ * an error response, so /profile, /login, /signup, /player/:username and the
+ * rest went out with HSTS (the response-headers policy) and nothing else
+ * (measured on production, "X-Cache: Error from cloudfront"). Rewriting the
+ * request makes S3 answer 200 with the same object, so the CSP is added. The
+ * SHELL list is those route patterns no prerendered file matches. A
+ * prerendered pattern with an unknown parameter (/champions/nobody/games)
+ * still takes the error path: it is not a real page.
+ *
  * THE ROUTE TABLE IS GENERATED from src/app/routes.tsx by
  * scripts/generate-cloudfront-function.cjs, re-checked by `npm run build`. Do
  * not edit it by hand: a route missing from it is a hard 404 on a working
@@ -33,7 +45,8 @@
  */
 
 // --- BEGIN GENERATED ROUTE TABLE (scripts/generate-cloudfront-function.cjs) ---
-var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva openings play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
+var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva openings play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress refund-policy reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
+var SHELL = 'auth/callback candidates-2026/: champion-challenge/: champions/:/best-games/: champions/:/games/: forgot-password game-history live-game/:/: login player/: profile reset-password signup verify-email world-championship-2026/: world-cup-2025/:'.split(' ');
 // --- END GENERATED ROUTE TABLE ---
 
 /*
@@ -87,12 +100,16 @@ var NOT_FOUND_HTML =
  */
 function canonicalRoute(uri) {
   if (uri === '/') return '/';
+  return matchTable(ROUTES, uri);
+}
 
+/* The canonical form of uri if a pattern in table matches it, else null. */
+function matchTable(table, uri) {
   var parts = uri.split('/'); // leading '' because uri starts with '/'
   var depth = parts.length - 1;
 
-  for (var i = 0; i < ROUTES.length; i++) {
-    var pattern = ROUTES[i].split('/');
+  for (var i = 0; i < table.length; i++) {
+    var pattern = table[i].split('/');
     if (pattern.length !== depth) continue;
 
     var ok = true;
@@ -193,6 +210,11 @@ function handler(event) {
   }
 
   if (host === 'www.chessplaybook.com' && canonicalUri === uri) {
+    // A page with no file of its own: the SPA shell, fetched as a 200 so the
+    // CSP function runs (see the header). A redirect is judged first.
+    if (uri !== '/' && !looksLikeFile(uri) && matchTable(SHELL, uri) !== null) {
+      request.uri = '/index.html';
+    }
     return request;
   }
 

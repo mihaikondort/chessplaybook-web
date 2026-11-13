@@ -158,7 +158,7 @@ const LASTMOD = {
   articleWch2026Geneva: '2026-11-11',
   articleSindarovGukesh: '2026-07-27',
   articleVaishaliJu: '2026-07-27',
-  legal: '2026-11-12',
+  legal: '2026-11-13',
 };
 
 /*
@@ -337,6 +337,13 @@ function generateSitemap() {
 
   urls.push(createUrlEntry(
     DOMAIN + '/terms',
+    LASTMOD.legal,
+    CHANGEFREQ.legal,
+    PRIORITIES.legal
+  ));
+
+  urls.push(createUrlEntry(
+    DOMAIN + '/refund-policy',
     LASTMOD.legal,
     CHANGEFREQ.legal,
     PRIORITIES.legal
