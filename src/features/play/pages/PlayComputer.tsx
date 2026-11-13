@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { Color, Key } from '@lichess-org/chessground/types';
 import { parseSan } from 'chessops/san';
 import { makeUci } from 'chessops/util';
@@ -24,6 +24,7 @@ import { PuzzleAnalysisCard } from '@/features/puzzles/components/PuzzleAnalysis
 import { ChessClock } from '@/features/online/components/ChessClock';
 import { soundService } from '@/services/SoundService';
 import { useComputerGame } from '../hooks/useComputerGame';
+import { readPositionDeepLink } from '@/lib/positionDeepLink';
 import { DIFFICULTY_LEVELS } from '../services/StockfishOpponent';
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -68,11 +69,11 @@ function EngineLevelPicker({ value, onChange }: { value: number; onChange: (leve
   );
 }
 
-function buildHistory(moves: string[]): HistoryEntry[] {
-  let position = positionFromFen(STARTING_FEN);
+function buildHistory(moves: string[], startFen = STARTING_FEN): HistoryEntry[] {
+  let position = positionFromFen(startFen);
   if (!position) return [];
   const history: HistoryEntry[] = [{
-    fen: STARTING_FEN,
+    fen: startFen,
     turnColor: position.turnColor,
     isCheck: position.isCheck,
   }];
@@ -95,9 +96,18 @@ function buildHistory(moves: string[]): HistoryEntry[] {
 
 export function PlayComputer() {
   const navigate = useNavigate();
+  const location = useLocation();
+  /*
+    A POSITION TO PLAY ON FROM (opening trainer E3b, F7): `?fen=...&orientation=...`, as /analysis takes it. The
+    trainer opens it in a new tab after a move outside the book. Without it, /play is unchanged.
+  */
+  const fromPosition = useMemo(() => readPositionDeepLink(location.search).value, [location.search]);
+  const startFen = fromPosition?.fen ?? STARTING_FEN;
+  const startTurn: Color = positionFromFen(startFen)?.turnColor ?? 'white';
   const [gameState, actions] = useComputerGame();
   const { timeout } = actions;
-  const [selectedColor, setSelectedColor] = useState<Color>('white');
+  const [selectedColor, setSelectedColor] = useState<Color>(fromPosition?.orientation ?? 'white');
+  useEffect(() => { if (fromPosition) setSelectedColor(fromPosition.orientation); }, [fromPosition]);
   const [activeColor, setActiveColor] = useState<Color>('white');
   const [selectedDifficulty, setSelectedDifficulty] = useState(4);
   const [selectedTimeControl, setSelectedTimeControl] = useState<(typeof TIME_CONTROLS)[number]>(TIME_CONTROLS[0]);
@@ -130,7 +140,8 @@ export function PlayComputer() {
     return () => setChromeHidden(false);
   }, [focusMode, setChromeHidden]);
   const { currentTheme, changeTheme } = useBoardTheme();
-  const history = useMemo(() => buildHistory(gameState.sanMoves), [gameState.sanMoves]);
+  const [gameStartFen, setGameStartFen] = useState(startFen);
+  const history = useMemo(() => buildHistory(gameState.sanMoves, gameStartFen), [gameState.sanMoves, gameStartFen]);
   const latestPly = history.length - 1;
   const currentPly = viewPly ?? latestPly;
   const historyEntry = viewPly === null ? null : history[currentPly];
@@ -170,11 +181,13 @@ export function PlayComputer() {
       previousPlyRef.current = ply;
       return;
     }
-    const mover = ply % 2 === 1 ? 'white' : 'black';
+    // The side that just moved: from a position Black may move first.
+    const firstMover = positionFromFen(gameStartFen)?.turnColor ?? 'white';
+    const mover = ply % 2 === 1 ? firstMover : (firstMover === 'white' ? 'black' : 'white');
     const add = activeTimeControl.increment * 1000;
     (mover === 'white' ? setWhiteMs : setBlackMs)(current => current === null ? null : current + add);
     previousPlyRef.current = ply;
-  }, [activeTimeControl.increment, gameState.sanMoves.length]);
+  }, [activeTimeControl.increment, gameState.sanMoves.length, gameStartFen]);
 
   const startGame = (color = selectedColor, level = selectedDifficulty) => {
     setSelectedColor(color);
@@ -187,7 +200,8 @@ export function PlayComputer() {
     previousPlyRef.current = 0;
     setViewPly(null);
     setReviewPosition(null);
-    actions.startGame(color, level);
+    setGameStartFen(startFen);
+    actions.startGame(color, level, fromPosition ? startFen : undefined);
   };
 
   const challengeFriend = () => navigate('/play-online?setup=friend');
@@ -201,7 +215,9 @@ export function PlayComputer() {
     if (next) setReviewPosition({ position: next, lastMove: [orig, dest] });
   };
 
-  const boardFen = reviewPosition?.position.fen ?? historyEntry?.fen ?? gameState.fen;
+  // Before a game the board shows where it will start: the position link's, else the initial position.
+  const boardFen = reviewPosition?.position.fen ?? historyEntry?.fen ?? (gameState.position ? gameState.fen : startFen);
+  const boardOrientation: Color = fromPosition && gameState.gameStatus === 'idle' ? selectedColor : gameState.playerColor;
   const boardTurn = reviewPosition?.position.turnColor ?? historyEntry?.turnColor ?? gameState.turnColor;
   const boardCheck = reviewPosition?.position.isCheck ?? historyEntry?.isCheck ?? gameState.isCheck;
   const boardLastMove = reviewPosition?.lastMove ?? historyEntry?.lastMove ?? gameState.lastMove;
@@ -258,7 +274,7 @@ export function PlayComputer() {
         onModeChange={setWorkspaceMode}
         board={
           <div data-skeleton-card="board" className="w-full" role="group" aria-label="Chess board, playing against the computer">
-            <ChessBoard fen={boardFen} orientation={gameState.playerColor} dests={canMove ? gameState.dests : reviewPosition?.position.dests} turnColor={boardTurn} movableColor={canMove ? gameState.movableColor : isEnded ? boardTurn : undefined} lastMove={boardLastMove} check={boardCheck ? boardTurn : undefined} onMove={canMove ? actions.onMove : reviewMove} themeId={currentTheme.id} dragDistance={7} autoDragDistance={false} />
+            <ChessBoard fen={boardFen} orientation={boardOrientation} dests={canMove ? gameState.dests : reviewPosition?.position.dests} turnColor={boardTurn} movableColor={canMove ? gameState.movableColor : isEnded ? boardTurn : undefined} lastMove={boardLastMove} check={boardCheck ? boardTurn : undefined} onMove={canMove ? actions.onMove : reviewMove} themeId={currentTheme.id} dragDistance={7} autoDragDistance={false} />
           </div>
         }
         toolbar={
@@ -284,7 +300,7 @@ export function PlayComputer() {
                 {gameState.gameStatus === 'idle' ? (
                   <div className="mt-auto flex flex-col" style={{ gap: 'calc(var(--card-air) * 2)' }}>
                     <button type="button" onClick={() => startGame()} disabled={!gameState.isEngineReady} className="card-btn card-btn-primary w-full disabled:opacity-50">
-                      {gameState.isEngineReady ? 'New game' : 'Loading engine…'}
+                      {!gameState.isEngineReady ? 'Loading engine…' : fromPosition ? 'Play from this position' : 'New game'}
                     </button>
                     {otherWays}
                   </div>
@@ -297,7 +313,7 @@ export function PlayComputer() {
                     </span>
                     <div className="flex min-h-0 flex-1 flex-col">
                       <WorkspaceList label="Moves">
-                        <GameMoveList moves={gameState.sanMoves} currentMoveIndex={currentPly - 1} onMoveClick={jumpToMove} scrolls={false} className="text-[0.92em]" />
+                        <GameMoveList moves={gameState.sanMoves} startFen={gameStartFen === STARTING_FEN ? undefined : gameStartFen} currentMoveIndex={currentPly - 1} onMoveClick={jumpToMove} scrolls={false} className="text-[0.92em]" />
                       </WorkspaceList>
                     </div>
                     {gameState.gameResult && (
@@ -312,7 +328,7 @@ export function PlayComputer() {
                     )}
                     {isEnded && (
                       <>
-                        <button type="button" onClick={() => startGame()} className="card-btn card-btn-primary w-full">New game</button>
+                        <button type="button" onClick={() => startGame()} className="card-btn card-btn-primary w-full">{fromPosition ? 'Play this position again' : 'New game'}</button>
                         {otherWays}
                       </>
                     )}
@@ -384,6 +400,13 @@ export function PlayComputer() {
                   Go to
                 </span>
                 <div className="card-body" style={{ gap: 0 }}>
+                  {/* From a position link, the way back to an ordinary game (E3b). */}
+                  {fromPosition && gameState.gameStatus !== 'playing' && (
+                    <button type="button" onClick={() => { actions.reset(); navigate('/play'); }} className="card-row w-full py-[0.16em] text-left hover:text-foreground">
+                      <span>Start from the beginning</span>
+                      <ChevronRight className="ml-auto shrink-0" />
+                    </button>
+                  )}
                   <button type="button" onClick={() => navigate('/play-online')} className="card-row w-full py-[0.16em] text-left hover:text-foreground">
                     <span>Play online</span>
                     <ChevronRight className="ml-auto shrink-0" />

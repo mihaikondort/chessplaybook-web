@@ -295,15 +295,21 @@ type GA4Event =
   // Focus mode is DESKTOP ONLY by construction (`onToggleFocusMode` is
   // undefined below the lg breakpoint), so a zero here is a statement about
   // desktop visitors and must not be read as "nobody uses it" site-wide.
-  | { name: 'focus_mode_toggled'; params: { enabled: boolean; surface: 'puzzles' | 'play_online' | 'play_computer' | 'analysis' | 'champion_challenge' | 'champion_game' | 'live_game' } }
+  | { name: 'focus_mode_toggled'; params: { enabled: boolean; surface: 'puzzles' | 'play_online' | 'play_computer' | 'analysis' | 'champion_challenge' | 'champion_game' | 'live_game' | 'opening_trainer' } }
   // The theme picker moved onto /puzzles on 2026-08-10 and has never reported
   // anything either. Worth knowing which themes are actually chosen before any
   // more are drawn, and whether the default is ever changed at all.
   | { name: 'site_theme_changed'; params: { theme: 'light' | 'dark'; surface: 'nav' | 'menu' } }
-  | { name: 'board_theme_changed'; params: { theme_id: string; surface: 'puzzles' | 'play_online' | 'play_computer' | 'analysis' | 'champion_challenge' | 'champion_game' | 'live_game' } }
+  | { name: 'board_theme_changed'; params: { theme_id: string; surface: 'puzzles' | 'play_online' | 'play_computer' | 'analysis' | 'champion_challenge' | 'champion_game' | 'live_game' | 'opening_trainer' } }
   | { name: 'online_full_analysis_opened'; params: { source: 'compact' } }
   | { name: 'computer_full_analysis_opened'; params: { source: 'compact' } }
   | { name: 'champion_full_analysis_opened'; params: { source: 'compact' } }
+  | { name: 'opening_full_analysis_opened'; params: { source: 'compact' } }
+  // Opening trainer (plan F1, F13): a training session started (a Resume too), and a line
+  // played to its end, `trained` when every move was right first time. The return measure
+  // itself is server-side (feature_uses + opening_sessions); these segment it in GA4.
+  | { name: 'opening_session_started'; params: { repertoire: string; scope: 'main' | 'secondary' | 'both'; resumed: boolean; from_position: boolean } }
+  | { name: 'opening_line_finished'; params: { repertoire: string; trained: boolean } }
   | { name: 'live_full_analysis_opened'; params: { source: 'compact' } }
   | { name: 'review_full_analysis_opened'; params: { source: 'compact' } }
   // PZ-043. Its OWN name, deliberately: `analysis_enabled` means the visitor
@@ -367,6 +373,8 @@ type GA4Event =
   | { name: 'plan_calendar_exported'; params: { format: 'ics'; plan_items: number; has_times: boolean } }
   /* The World Championship match in a visitor's calendar: one game to Google, or every game as .ics. */
   | { name: 'match_calendar_added'; params: { method: 'google' | 'ics'; game: number | 'all'; surface: 'hub' | 'game' | 'article' } }
+  /* A free-plan daily limit met (#46 funnel stage 7; FUNNEL_EVENT_CONTRACT names it `limit_reached`). */
+  | { name: 'limit_reached'; params: { feature: 'game_report' | 'explain_position' | 'challenge_session' | 'opening_session' } }
   /*
     The DENOMINATOR for the move. `plan_setup_opened` counts intent to build one
     and `from` says what prompted it — the standing card, the one offer, or a

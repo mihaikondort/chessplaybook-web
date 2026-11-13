@@ -21,7 +21,13 @@ const OTHER_FEN = '8/8/8/4k3/4K3/8/8/8 w - - 0 1';
 
 vi.mock('@/services/BackendAPIClient', () => ({
   backendAPIClient: { get: vi.fn(), post: vi.fn() },
+  APIHTTPError: class APIHTTPError extends Error {
+    constructor(readonly status: number, readonly statusText: string, message: string, readonly serverError?: string, readonly body?: unknown) {
+      super(message);
+    }
+  },
 }));
+vi.mock('@/services/analytics', () => ({ logGA4Event: vi.fn() }));
 vi.mock('@/services/AnalysisService', () => ({
   analysisService: {
     isAnalysisEnabled: vi.fn(() => true),
@@ -30,7 +36,8 @@ vi.mock('@/services/AnalysisService', () => ({
   },
 }));
 
-import { backendAPIClient } from '@/services/BackendAPIClient';
+import { backendAPIClient, APIHTTPError } from '@/services/BackendAPIClient';
+import { logGA4Event } from '@/services/analytics';
 import { analysisService } from '@/services/AnalysisService';
 
 const get = backendAPIClient.get as unknown as ReturnType<typeof vi.fn>;
@@ -130,6 +137,24 @@ describe('useExplainPosition outcome', () => {
     });
 
     expect(outcome).toEqual({ ok: false, reason: 'request_failed' });
+  });
+
+  it('a daily limit at the cache check stops before the search and the post, and says when', async () => {
+    get.mockRejectedValue(new APIHTTPError(402, 'Payment Required', 'HTTP 402', 'daily_limit', {
+      success: false, error: 'daily_limit', feature: 'explain_position', limit: 3, resetsAt: '2026-11-20T22:00:00Z',
+    }));
+    const { result } = renderHook(() => useExplainPosition());
+
+    let outcome;
+    await act(async () => {
+      outcome = await result.current.explain(FEN);
+    });
+
+    expect(outcome).toEqual({ ok: false, reason: 'daily_limit' });
+    expect(searchData).not.toHaveBeenCalled();
+    expect(post).not.toHaveBeenCalled();
+    expect(result.current.error).toMatch(/^You've used today's 3 free explanations[.] You can explain more positions (tomorrow|at .+|tomorrow at .+)[.]$/);
+    expect(logGA4Event).toHaveBeenCalledWith({ name: 'limit_reached', params: { feature: 'explain_position' } });
   });
 
   it('reports an empty FEN without touching the network', async () => {

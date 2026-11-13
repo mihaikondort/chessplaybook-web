@@ -79,6 +79,49 @@ export function captureFirstTouch(now = new Date()): void {
   write(FIRST_TOUCH_KEY, JSON.stringify(readFirstTouch(window.location, document.referrer, now)));
 }
 
+/*
+  THE VISIT WAITS FOR A PERSON (2026-11-13). Most early visits came from crawlers
+  that run scripts: one deep page each, no referrer, through the night, and they present an
+  ordinary browser's user agent, so the server's crawler filter lets them in. They load a
+  page and never touch it. So nothing is sent until the page sees a real input: a pointer
+  press (a click or a tap, which also starts every touch scroll), a key, or a mouse wheel.
+  `scroll` is NOT one: a script can scroll a page. The first touch is still READ at load
+  (above), so the landing page and a paid click are kept whatever happens first.
+  The cost, accepted by the owner: a visitor who reads without touching anything is not
+  counted. GA4 still sees them.
+*/
+const INTERACTION_EVENTS = ['pointerdown', 'keydown', 'wheel'] as const;
+let interacted = false;
+
+/** Whether this page has seen a real input yet. */
+export function hasInteracted(): boolean {
+  return interacted;
+}
+
+/** Run `callback` once, on the page's first real input (at once if there has been one). */
+export function onFirstInteraction(callback: () => void, target: Pick<Window, 'addEventListener' | 'removeEventListener'> = window): () => void {
+  if (interacted) {
+    callback();
+    return () => {};
+  }
+  const handler = (event: Event) => {
+    if (!event.isTrusted) return;
+    interacted = true;
+    stop();
+    callback();
+  };
+  const stop = () => {
+    for (const name of INTERACTION_EVENTS) target.removeEventListener(name, handler, true);
+  };
+  for (const name of INTERACTION_EVENTS) target.addEventListener(name, handler, { capture: true, passive: true });
+  return stop;
+}
+
+/** For tests. */
+export function resetInteractionForTests(): void {
+  interacted = false;
+}
+
 let inFlight = false;
 
 /** Record today's visit (and the first touch, until the server has it). At most once a day. */

@@ -33,7 +33,7 @@
  */
 
 // --- BEGIN GENERATED ROUTE TABLE (scripts/generate-cloudfront-function.cjs) ---
-var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
+var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva openings play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
 // --- END GENERATED ROUTE TABLE ---
 
 /*
@@ -48,7 +48,7 @@ var NOT_FOUND_HTML =
   '<meta name="viewport" content="width=device-width,initial-scale=1">' +
   '<meta name="robots" content="noindex,follow">' +
   '<meta name="theme-color" content="#0d1421">' +
-  '<title>Page not found &mdash; Chess Playbook</title><style>' +
+  '<title>Page not found | Chess Playbook</title><style>' +
   'html,body{margin:0;height:100%}' +
   'body{background:hsl(218 42% 9%);color:hsl(42 78% 95%);' +
   'font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;' +
@@ -134,9 +134,9 @@ function handler(event) {
   var request = event.request;
   var uri = request.uri;
   var host = request.headers.host ? request.headers.host.value : 'www.chessplaybook.com';
-  var proto = request.headers['cloudfront-forwarded-proto']
-    ? request.headers['cloudfront-forwarded-proto'].value
-    : 'https';
+  // No protocol check (removed 2026-11-13): the distribution's viewer protocol policy is redirect-to-https, so
+  // CloudFront answers http itself before this function runs (measured: "X-Cache: Redirect from cloudfront", the
+  // path's case untouched), and the forwarded-proto header this read was never given to the function.
 
   var canonicalUri = uri;
 
@@ -192,7 +192,7 @@ function handler(event) {
     canonicalUri = routed;
   }
 
-  if (proto === 'https' && host === 'www.chessplaybook.com' && canonicalUri === uri) {
+  if (host === 'www.chessplaybook.com' && canonicalUri === uri) {
     return request;
   }
 

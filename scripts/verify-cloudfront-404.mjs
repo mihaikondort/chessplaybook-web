@@ -29,7 +29,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const FUNCTION_FILE = path.join(ROOT, 'deploy/cloudfront-canonical-function.js');
+const FUNCTION_FILE = path.join(ROOT, 'deploy/cloudfront-canonical-function.published.js'); // what is published (2026-11-13)
 const MANIFEST = path.join(ROOT, 'dist/_routes/manifest.tsv');
 
 const counterfactual = process.argv.includes('--counterfactual');

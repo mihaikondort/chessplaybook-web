@@ -35,7 +35,7 @@ export interface PuzzleAppearanceCardProps {
   currentThemeId: string;
   onThemeChange: (themeId: string) => void;
   /** Analytics owner when this shared control is reused outside Puzzles. */
-  analyticsSurface?: 'puzzles' | 'play_online' | 'play_computer' | 'analysis' | 'champion_challenge' | 'champion_game' | 'live_game';
+  analyticsSurface?: 'puzzles' | 'play_online' | 'play_computer' | 'analysis' | 'champion_challenge' | 'champion_game' | 'live_game' | 'opening_trainer';
   /**
    * PZ-043 D2. Absent on viewports where the mode does nothing — the control is
    * not rendered rather than rendered disabled, because a disabled control

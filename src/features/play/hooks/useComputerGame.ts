@@ -31,7 +31,8 @@ export interface ComputerGameState {
 }
 
 export interface ComputerGameActions {
-  startGame: (playerColor: Color, difficulty: number) => void;
+  /** `startFen`: a position to start from (opening trainer E3b); the initial position when absent. */
+  startGame: (playerColor: Color, difficulty: number, startFen?: string) => void;
   onMove: (orig: Key, dest: Key) => void;
   resign: () => void;
   timeout: (loser: Color) => void;
@@ -169,14 +170,14 @@ export function useComputerGame(): [ComputerGameState, ComputerGameActions] {
   }, [store, engineMove, handleGameOver, playMoveSound]);
 
   // Start a new game
-  const startGame = useCallback((playerColor: Color, diff: number) => {
+  const startGame = useCallback((playerColor: Color, diff: number, startFen?: string) => {
     const engine = engineRef.current;
     if (!engine) return;
 
     engine.setLevel(diff);
     setDifficulty(diff);
 
-    const pos = initialPosition();
+    const pos = (startFen ? positionFromFen(startFen) : null) ?? initialPosition();
     positionRef.current = pos;
     setPosition(pos);
     setLastMove(undefined);
@@ -186,8 +187,8 @@ export function useComputerGame(): [ComputerGameState, ComputerGameActions] {
 
     store.startGame(playerColor);
 
-    // If player is black, engine moves first
-    if (playerColor === 'black') {
+    // The engine moves first when it is its turn (Black from the start; either side from a position).
+    if (pos.turnColor !== playerColor) {
       engineMove(pos);
     }
   }, [store, engineMove]);

@@ -18,6 +18,8 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { backendAPIClient } from '@/services/BackendAPIClient';
+import { APIHTTPError } from '@/services/BackendAPIClient';
+import { dailyLimitMessage, readDailyLimit, reportDailyLimit } from '@/services/freePlanLimit';
 import { analysisService } from '@/services/AnalysisService';
 import type { StructuredExplanation } from '@/types/positionExplanation';
 
@@ -37,7 +39,7 @@ export interface PositionExplanation {
  */
 export type ExplainOutcome =
   | { ok: true; cached: boolean }
-  | { ok: false; reason: 'no_fen' | 'analysis_not_ready' | 'empty_response' | 'request_failed' };
+  | { ok: false; reason: 'no_fen' | 'analysis_not_ready' | 'empty_response' | 'request_failed' | 'daily_limit' };
 
 export interface UseExplainPositionResult {
   explanation: PositionExplanation | null;
@@ -109,6 +111,8 @@ export function useExplainPosition(
         }>(cacheCheckUrl, { identified: true });
         if (r.cached && r.result) cachedFromServer = r.result;
       } catch (cacheErr) {
+        // The free plan's daily limit is an answer, not a broken cache-check: do not search.
+        if (cacheErr instanceof APIHTTPError && readDailyLimit(cacheErr.status, cacheErr.body)) throw cacheErr;
         console.warn('[useExplainPosition] cache-check failed, falling back:', cacheErr);
       }
 
@@ -154,6 +158,12 @@ export function useExplainPosition(
         return { ok: false, reason: 'empty_response' };
       }
     } catch (err) {
+      const limit = err instanceof APIHTTPError ? readDailyLimit(err.status, err.body) : null;
+      if (limit) {
+        reportDailyLimit(limit);
+        setError(dailyLimitMessage(limit));
+        return { ok: false, reason: 'daily_limit' };
+      }
       const e = err as Error;
       if (e.message === 'ANALYSIS_NOT_READY') {
         setError('The chess engine isn\'t ready yet. Please try again in a moment.');

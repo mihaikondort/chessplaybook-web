@@ -108,7 +108,7 @@ export interface PuzzleAnalysisCardProps {
   linkFen?: string;
   orientation: 'white' | 'black';
   /** Feature semantics for inactive copy, accessibility text, and analytics. */
-  surface?: 'puzzles' | 'play_online' | 'play_computer' | 'champion_game' | 'live_game' | 'analysis';
+  surface?: 'puzzles' | 'play_online' | 'play_computer' | 'champion_game' | 'live_game' | 'analysis' | 'opening_trainer';
 }
 
 /**
@@ -199,9 +199,11 @@ export function PuzzleAnalysisCard({
 }: PuzzleAnalysisCardProps) {
   const href = buildPositionHref('/analysis', linkFen ?? fen, orientation);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const inactiveLabel = surface !== 'puzzles'
-    ? 'Available once the game is over'
-    : 'Available once the puzzle is over';
+  const inactiveLabel = surface === 'opening_trainer'
+    ? 'Available at the end of the line'
+    : surface !== 'puzzles'
+      ? 'Available once the game is over'
+      : 'Available once the puzzle is over';
 
   /*
     ONE SUBSCRIPTION FOR THE LIFE OF THE CARD, and it is separate from the
@@ -344,6 +346,8 @@ export function PuzzleAnalysisCard({
       logGA4Event({ name: 'live_full_analysis_opened', params: { source: 'compact' } });
     } else if (surface === 'analysis') {
       logGA4Event({ name: 'review_full_analysis_opened', params: { source: 'compact' } });
+    } else if (surface === 'opening_trainer') {
+      logGA4Event({ name: 'opening_full_analysis_opened', params: { source: 'compact' } });
     } else {
       logGA4Event({ name: 'puzzle_full_analysis_opened', params: { source: 'compact' } });
     }

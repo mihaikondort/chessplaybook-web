@@ -83,7 +83,7 @@ export interface SessionSummary {
 
 /** Distinguishes "your move was rejected" from "the request failed". */
 export class ChallengeApiError extends Error {
-  constructor(message: string, readonly status: number) {
+  constructor(message: string, readonly status: number, readonly body?: unknown) {
     super(message);
     this.name = 'ChallengeApiError';
   }
@@ -126,6 +126,7 @@ async function request<T>(
     throw new ChallengeApiError(
       body?.error || `Request failed (${response.status})`,
       response.status,
+      body,
     );
   }
   return body.data as T;

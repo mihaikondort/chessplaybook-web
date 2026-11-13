@@ -1,7 +1,7 @@
 import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { NavThemeButton, MenuThemeChoice } from '@/components/ThemeToggle';
-import { Users, ChevronLeft, Radio, Swords, Newspaper, BarChart3, Menu, X, Crown, Lightbulb, MessageSquare } from 'lucide-react';
+import { Users, ChevronLeft, Radio, Swords, Newspaper, BarChart3, Menu, X, Crown, BookOpen, MessageSquare } from 'lucide-react';
 import { contactHref } from '@/components/support/ReportProblemLink';
 import { logGA4Event } from '@/services/analytics';
 import { MdPsychology } from 'react-icons/md';
@@ -123,21 +123,19 @@ export const Navigation = ({ hidden = false }: { hidden?: boolean }) => {
   // while the Challenge sat last. Live keeps its live/tournament-day dot, which
   // is what draws the eye back to it when there is actually something on.
   const navLinks = [
-    // Explain leads, matching the homepage card order: it is the site's
-    // differentiator. It was missing
-    // from the nav entirely until 2026-08-02 — every other homepage card
-    // destination had an entry, so on any page other than the homepage it was
-    // reachable only from the footer.
-    { to: '/explain', icon: Lightbulb, label: 'Explain' },
+    // Owner, 2026-11-13 (the opening trainer's release, plan F2): Openings leads and Explain leaves the nav, which
+    // keeps eight items (an eighth item more needed ~960px, measured; the row starts at 840). Explain stays on the
+    // homepage cards and in the footer.
+    { to: '/openings', icon: BookOpen, label: 'Openings' },
+    { to: '/puzzles', icon: MdPsychology, label: 'Puzzles' },
+    { to: '/play-online', icon: Swords, label: 'Play' },
+    { to: liveTarget ?? '/live-events', icon: Radio, label: 'Live', isLive: isEventLive, isTournamentDay },
     ...(CHAMPION_CHALLENGE_LIVE
       ? [{ to: '/champion-challenge', icon: Crown, label: 'Challenge' }]
       : []),
-    { to: '/play-online', icon: Swords, label: 'Play' },
-    { to: '/puzzles', icon: MdPsychology, label: 'Puzzles' },
-    { to: '/analysis', icon: BarChart3, label: 'Analysis' },
     { to: '/champions', icon: Users, label: 'Champions' },
+    { to: '/analysis', icon: BarChart3, label: 'Analysis' },
     { to: '/news', icon: Newspaper, label: 'News' },
-    { to: liveTarget ?? '/live-events', icon: Radio, label: 'Live', isLive: isEventLive, isTournamentDay },
   ];
 
   /*

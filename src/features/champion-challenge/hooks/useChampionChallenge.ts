@@ -7,6 +7,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { dailyLimitMessage, readDailyLimit, reportDailyLimit } from '@/services/freePlanLimit';
 import {
   startSession, resumeSession, submitMove, fetchSummary,
   ChallengeApiError,
@@ -130,6 +131,13 @@ export function useChampionChallenge(
 
     load().catch((err: unknown) => {
       if (cancelled) return;
+      const limit = err instanceof ChallengeApiError ? readDailyLimit(err.status, err.body) : null;
+      if (limit) {
+        reportDailyLimit(limit);
+        setError(dailyLimitMessage(limit));
+        setLoading(false);
+        return;
+      }
       setError(
         err instanceof ChallengeApiError
           ? err.message

@@ -105,6 +105,7 @@ const LASTMOD = {
     Sharing `core` would have meant one of the two dates was always wrong.
   */
   puzzles: '2026-08-16',
+  openings: '2026-11-13', // the opening trainer released (plan F2)
   /*
     THE SAME KEY WENT STALE THE SAME WAY, and this is the second time.
 
@@ -396,6 +397,7 @@ function generateSitemap() {
   urls.push(createUrlEntry(DOMAIN + '/play', LASTMOD.play, 'monthly', PRIORITIES.educational));
   urls.push(createUrlEntry(DOMAIN + '/play-online', LASTMOD.play, 'monthly', PRIORITIES.educational));
   urls.push(createUrlEntry(DOMAIN + '/puzzles', LASTMOD.puzzles, 'weekly', PRIORITIES.educational));
+  urls.push(createUrlEntry(DOMAIN + '/openings', LASTMOD.openings, 'weekly', PRIORITIES.educational));
 
   // Leaderboard
   urls.push(createUrlEntry(

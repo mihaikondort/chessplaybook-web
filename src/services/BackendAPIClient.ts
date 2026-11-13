@@ -57,13 +57,16 @@ export class APIHTTPError extends Error {
   readonly status: number;
   readonly statusText: string;
   readonly serverError?: string;
+  /** The parsed error body, for answers that carry more than a message (a 402 daily limit). */
+  readonly body?: unknown;
 
-  constructor(status: number, statusText: string, message: string, serverError?: string) {
+  constructor(status: number, statusText: string, message: string, serverError?: string, body?: unknown) {
     super(message);
     this.name = 'APIHTTPError';
     this.status = status;
     this.statusText = statusText;
     this.serverError = serverError;
+    this.body = body;
   }
 }
 
@@ -213,6 +216,7 @@ class BackendAPIClient {
           response.status, response.statusText,
           error.message || `HTTP ${response.status}: ${response.statusText}`,
           error.error,
+          error,
         );
       }
 
@@ -253,6 +257,7 @@ class BackendAPIClient {
           response.status, response.statusText,
           error.message || `HTTP ${response.status}: ${response.statusText}`,
           error.error,
+          error,
         );
       }
 
@@ -291,6 +296,7 @@ class BackendAPIClient {
           response.status, response.statusText,
           error.message || `HTTP ${response.status}: ${response.statusText}`,
           error.error,
+          error,
         );
       }
 

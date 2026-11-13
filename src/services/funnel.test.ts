@@ -7,7 +7,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const headers = vi.hoisted(() => ({ value: { 'X-Anonymous-Id': 'anon-1' } as Record<string, string> }));
 vi.mock('@/features/auth/utils/getAuthToken', () => ({ getRequestHeaders: async () => headers.value }));
 
-import { readFirstTouch, bucharestDay, captureFirstTouch, recordVisit } from './funnel';
+import {
+  readFirstTouch, bucharestDay, captureFirstTouch, recordVisit,
+  onFirstInteraction, hasInteracted, resetInteractionForTests,
+} from './funnel';
 
 const at = new Date('2026-11-12T10:00:00Z');
 const loc = (pathAndQuery: string) => {
@@ -90,5 +93,49 @@ describe('recordVisit', () => {
     window.history.replaceState(null, '', '/puzzles');
     captureFirstTouch(at);
     expect(JSON.parse(localStorage.getItem('cp_first_touch')!).landingPath).toBe('/explain');
+  });
+});
+
+/* A fake window: jsdom can only dispatch untrusted events, and the gate ignores those. */
+function fakeTarget() {
+  const handlers = new Map<string, (event: Event) => void>();
+  return {
+    addEventListener: (name: string, handler: (event: Event) => void) => { handlers.set(name, handler); },
+    removeEventListener: (name: string) => { handlers.delete(name); },
+    fire: (name: string, isTrusted = true) => handlers.get(name)?.({ isTrusted } as Event),
+    listening: () => [...handlers.keys()].sort(),
+  };
+}
+
+describe('onFirstInteraction', () => {
+  beforeEach(() => resetInteractionForTests());
+
+  it('waits for a real input, ignores script-made events, and runs once', () => {
+    const target = fakeTarget();
+    const callback = vi.fn();
+    onFirstInteraction(callback, target as unknown as Window);
+    expect(target.listening()).toEqual(['keydown', 'pointerdown', 'wheel']);
+    target.fire('pointerdown', false);
+    expect(callback).not.toHaveBeenCalled();
+    expect(hasInteracted()).toBe(false);
+    target.fire('wheel');
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(hasInteracted()).toBe(true);
+    expect(target.listening()).toEqual([]);
+  });
+
+  it('does not listen for scroll, which a script can cause', () => {
+    const target = fakeTarget();
+    onFirstInteraction(vi.fn(), target as unknown as Window);
+    expect(target.listening()).not.toContain('scroll');
+  });
+
+  it('runs at once when the page has already been used', () => {
+    const first = fakeTarget();
+    onFirstInteraction(vi.fn(), first as unknown as Window);
+    first.fire('keydown');
+    const callback = vi.fn();
+    onFirstInteraction(callback, fakeTarget() as unknown as Window);
+    expect(callback).toHaveBeenCalledTimes(1);
   });
 });

@@ -37,6 +37,30 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const ROUTES_FILE = path.join(ROOT, 'src/app/routes.tsx');
 const FUNCTION_FILE = path.join(ROOT, 'deploy/cloudfront-canonical-function.js');
+/*
+ * WHAT IS PUBLISHED (2026-11-13). CloudFront counts comments toward the 10 KB limit, and the commented source had
+ * reached 10,229 bytes, so one more route would not have fit. The source keeps its comments (they record why each
+ * rule exists); the published copy is the same code with comments removed, as staging's has always been. The size
+ * limit, the 404 verifier and the deploy's live check all read the published copy, because that is what runs.
+ */
+const PUBLISHED_FILE = path.join(ROOT, 'deploy/cloudfront-canonical-function.published.js');
+const PUBLISHED_HEADER = '// GENERATED from deploy/cloudfront-canonical-function.js by scripts/generate-cloudfront-function.cjs. Publish THIS file. Do not edit.\n';
+
+/** Block comments and whole-line `//` comments out (never a `//` inside a line: URLs live in strings). */
+function stripComments(s) {
+  return s
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .filter((line) => !/^\s*\/\//.test(line))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim() + '\n';
+}
+
+function publishedText(source) {
+  return PUBLISHED_HEADER + stripComments(source);
+}
 
 const BEGIN = '// --- BEGIN GENERATED ROUTE TABLE (scripts/generate-cloudfront-function.cjs) ---';
 const END = '// --- END GENERATED ROUTE TABLE ---';
@@ -188,21 +212,22 @@ function main() {
    * `aws cloudfront update-function` answering FunctionSizeLimitExceeded. The
    * build is the right place to learn that, not the deploy.
    */
-  const size = Buffer.byteLength(next, 'utf-8');
+  const published = publishedText(next);
+  const size = Buffer.byteLength(published, 'utf-8');
   if (size > 10240) {
     console.error(
-      `${path.relative(ROOT, FUNCTION_FILE)} is ${size} bytes — over the 10240-byte ` +
-        'CloudFront Functions limit, so it cannot be published.\n' +
-        'Comments count toward it. Shorten prose, not the route table.',
+      `${path.relative(ROOT, PUBLISHED_FILE)} is ${size} bytes — over the 10240-byte ` +
+        'CloudFront Functions limit, so it cannot be published.',
     );
     process.exit(1);
   }
+  const publishedStale = !fs.existsSync(PUBLISHED_FILE) || fs.readFileSync(PUBLISHED_FILE, 'utf-8') !== published;
 
   const staging = stagingFunctions(next);
   const staleStaging = staging.filter((f) => !fs.existsSync(f.file) || fs.readFileSync(f.file, 'utf-8') !== f.text);
 
-  if (next === current && staleStaging.length === 0) {
-    if (!check) console.log(`CloudFront route table already up to date (${size} bytes).`);
+  if (next === current && !publishedStale && staleStaging.length === 0) {
+    if (!check) console.log(`CloudFront route table already up to date (published copy ${size} bytes).`);
     return;
   }
 
@@ -214,6 +239,7 @@ function main() {
           'A route missing from that table returns a hard 404 in production.',
       );
     }
+    if (publishedStale) console.error(`${path.relative(ROOT, PUBLISHED_FILE)} is STALE — it no longer matches its source.`);
     for (const f of staleStaging) {
       console.error(`${path.relative(ROOT, f.file)} is STALE — it no longer matches production's function.`);
     }
@@ -225,9 +251,12 @@ function main() {
     fs.writeFileSync(FUNCTION_FILE, next);
     console.log(
       `CloudFront route table regenerated: ${patternCount} patterns ` +
-        '(plus the root, special-cased in the function), ' +
-        `function is ${size} bytes (limit 10240).`,
+        '(plus the root, special-cased in the function).',
     );
+  }
+  if (publishedStale) {
+    fs.writeFileSync(PUBLISHED_FILE, published);
+    console.log(`${path.relative(ROOT, PUBLISHED_FILE)} regenerated: ${size} bytes (limit 10240).`);
   }
   for (const f of staleStaging) {
     fs.writeFileSync(f.file, f.text);
@@ -262,7 +291,6 @@ function substitute(text, pairs, label) {
 }
 
 function stagingFunctions(canonical) {
-  const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
 
   const stagingCanonical = STAGING_HEADER + substitute(
     stripComments(canonical),

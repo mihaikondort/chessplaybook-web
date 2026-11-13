@@ -93,6 +93,8 @@ const PuzzlesV3 = lazy(() => lazyRetry(() => import("@/features/puzzles/componen
   DEV-gated, so it is tree-shaken from the production build. Verified on the
   built artefact: `/dev/puzzles-layout` 404s there while `/puzzles` renders.
 */
+// Opening trainer: at `/openings` since its release (plan F2, 2026-11-13); it was `/dev/openings`, dev-only.
+const OpeningTrainer = lazy(() => import("@/features/openings/pages/OpeningTrainer"));
 const TrainerLayoutSkeleton = import.meta.env.DEV
   ? lazy(() => import("@/features/puzzles/components/TrainerLayoutSkeleton"))
   : null;
@@ -248,6 +250,8 @@ export function AppRoutes() {
         {import.meta.env.DEV && TrainerLayoutSkeleton && (
           <Route path="/dev/puzzles-layout" element={<TrainerLayoutSkeleton />} />
         )}
+        {/* Opening trainer: the ninth Workspace page (plan D2, released at F2). */}
+        <Route path="/openings" element={<OpeningTrainer />} />
         </Route>
 
         {/* FOCUSED: auth. One short task each, no footer, as before. */}

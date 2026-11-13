@@ -174,6 +174,19 @@ export const CARD_TYPES = {
   viewerInfo: { rows: 7, reserve: 0, content: 6.4, gaps: 1, spacers: 0, nested: 0 },
   /** Go to: previous game, next game, the list. */
   viewerGoTo: { rows: 4, reserve: 0, content: 6.4, gaps: 1, spacers: 0, nested: 0 },
+
+  /*
+    The opening trainer (plan D10, 2026-11-10). The moves card is the viewer's
+    moves card in structure (a title, a `WorkspaceList` taking the remaining
+    height, one button under it: Next or Back to the junction), so `content` is
+    `viewerMoves`'s 3.4. On the generic `list` type (8 rows) its type was the
+    outlier at every viewport, being half the height of the explanation card
+    beside it: 10.0px at 390x844, 10.8 at 1366x768, 14.0 at 1920x947 against
+    16.7, 14.8 and 18.0 on the repertoire card above it, which is the same height
+    on the `text` type (4 rows). Four rows here gives the two the same type.
+  */
+  /** The opening trainer's moves: title, the book moves (scroll), Next. */
+  openingMoves: { rows: 4, reserve: 0, content: 3.4, gaps: 1, spacers: 0, nested: 0 },
 } as const satisfies Record<string, CardTypeSpec>;
 
 export type CardType = keyof typeof CARD_TYPES;

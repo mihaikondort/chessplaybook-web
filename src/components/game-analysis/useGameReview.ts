@@ -11,6 +11,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { backendAPIClient, APIHTTPError } from '@/services/BackendAPIClient';
 import { logEvent } from '@/services/analytics';
+import { dailyLimitMessage, readDailyLimit, reportDailyLimit } from '@/services/freePlanLimit';
 import { analysisService } from '@/services/AnalysisService';
 import { analyzeFullGame, type FullGameAnalysis } from '@/services/GameAnalysisService';
 import type { ChessGame } from '@/types/chess';
@@ -222,6 +223,16 @@ export function useGameReview({
           };
         }
       } catch (cacheErr) {
+        // The free plan's daily limit: stop here, before the browser analyses the whole game.
+        if (cacheErr instanceof APIHTTPError) {
+          const limit = readDailyLimit(cacheErr.status, cacheErr.body);
+          if (limit) {
+            reportDailyLimit(limit);
+            setReportError(dailyLimitMessage(limit));
+            setReportButtonState('initial');
+            return;
+          }
+        }
         console.warn('[GameAnalysisWrapper] game-summary cache-check failed:', cacheErr);
       }
 
@@ -317,6 +328,16 @@ export function useGameReview({
           policyData = (summaryResp.policyData as typeof policyData) ?? null;
         }
       } catch (summaryErr) {
+        // Refused at the end (a second tab took the last report meanwhile): say so, show nothing.
+        if (summaryErr instanceof APIHTTPError) {
+          const limit = readDailyLimit(summaryErr.status, summaryErr.body);
+          if (limit) {
+            reportDailyLimit(limit);
+            setReportError(dailyLimitMessage(limit));
+            setReportButtonState('initial');
+            return;
+          }
+        }
         console.error('[GameAnalysisWrapper] Game summary failed:', summaryErr);
         // Non-fatal — fall through with policyData=null so the report
         // still renders with classifications (just no brilliant tagging).
@@ -429,6 +450,10 @@ export function useGameReview({
             cachedResult = cacheCheckResponse.result;
           }
         } catch (cacheCheckErr) {
+          // The free plan's daily limit: not a broken cache-check, so do not search anyway.
+          if (cacheCheckErr instanceof APIHTTPError && readDailyLimit(cacheCheckErr.status, cacheCheckErr.body)) {
+            throw cacheCheckErr;
+          }
           console.warn(
             '[GameAnalysisWrapper] cache-check failed, falling back to fresh analysis:',
             cacheCheckErr,
@@ -552,7 +577,11 @@ export function useGameReview({
       console.error('[GameAnalysisWrapper] Position explanation failed:', err);
       const message = err instanceof Error ? err.message : 'Unknown error';
 
-      if (err instanceof APIHTTPError) {
+      const limit = err instanceof APIHTTPError ? readDailyLimit(err.status, err.body) : null;
+      if (limit) {
+        reportDailyLimit(limit);
+        setExplanationError(dailyLimitMessage(limit));
+      } else if (err instanceof APIHTTPError) {
         logEvent('explain_position', 'failed', `http_${err.status}`);
         if (err.status === 429) {
           setExplanationError('Too many requests — please wait a moment and try again.');

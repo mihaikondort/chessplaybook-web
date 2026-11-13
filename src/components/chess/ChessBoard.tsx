@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useMemo } from 'react';
+import { useRef, useEffect, useCallback, useMemo, useState } from 'react';
 import { Chessground } from '@lichess-org/chessground';
 import type { Api } from '@lichess-org/chessground/api';
 import type { Config } from '@lichess-org/chessground/config';
@@ -149,6 +149,20 @@ export function ChessBoard({
   const theme = themeId ? getBoardTheme(themeId) : currentTheme;
   const boardThemeStyle = useMemo(() => buildThemeStyle(theme), [theme]);
 
+  /*
+    A BOARD CREATED VIEW-ONLY CANNOT BE MADE MOVABLE BY ITS PROPS. Chessground attaches its mouse and touch listeners
+    when it is created, and only when it is not view-only; turning `viewOnly` off later changes the flag and attaches
+    nothing, and `redrawAll()` re-binds the board's mousedown but not the document's move and up. So the first time a
+    board that was created view-only becomes movable, it is created again, once (`bound`). A board that mounts
+    movable never takes this path, so flipping `viewOnly` back and forth (Champion Challenge after each answer) does
+    not recreate it. Found by the owner, 2026-11-10: the opening trainer's board, kept by React when Learn switches to
+    Train, could not be dragged.
+  */
+  const [bound, setBound] = useState(!viewOnly);
+  useEffect(() => {
+    if (!viewOnly && !bound) setBound(true);
+  }, [viewOnly, bound]);
+
   // Initialize chessground
   useEffect(() => {
     if (!boardRef.current) return;
@@ -204,7 +218,10 @@ export function ChessBoard({
       apiRef.current?.destroy();
       apiRef.current = null;
     };
-  }, []); // Only initialize once
+    // Once, and once more when a board created view-only first becomes movable (above). The update effect below
+    // applies the current props either way.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bound]);
 
   // Store latest onMove in a ref to avoid stale closures
   const onMoveRef = useRef(onMove);
@@ -231,6 +248,13 @@ export function ChessBoard({
         },
       },
       viewOnly,
+      /*
+        Dragging and selecting follow `viewOnly` on every update, not only at mount. They were set once, in the
+        initial config, so a board that mounted view-only and became movable later (the opening trainer's board, kept
+        by React when Learn switches to Train) could never be dragged. Found by the owner, 2026-11-10.
+      */
+      draggable: { enabled: !viewOnly },
+      selectable: { enabled: !viewOnly },
     });
   }, [fen, orientation, turnColor, check, lastMove, dests, movableColor, viewOnly]);
 

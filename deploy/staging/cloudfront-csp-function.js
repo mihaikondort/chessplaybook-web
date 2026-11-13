@@ -5,12 +5,8 @@ function handler(event) {
   var headers = response.headers;
   var uri = request.uri;
 
-  // Only add the full CSP (with 200+ Google country domains) to HTML documents.
-  // Static assets (JS, CSS, images, fonts, WASM) don't interpret CSP — sending
-  // the 4KB header on every one of the 30+ requests per page is pure waste.
   var isAsset = uri.match(/\.(js|css|png|jpg|jpeg|webp|ico|woff2?|ttf|wasm|json|xml|svg|map)$/i);
   if (isAsset) {
-    // Minimal security headers for static assets (no CSP needed)
     headers["x-content-type-options"] = { value: "nosniff" };
     headers["strict-transport-security"] = { value: "max-age=31536000; includeSubDomains; preload" };
     return response;

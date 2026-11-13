@@ -30,10 +30,11 @@ export function readPositionDeepLink(search: string): PositionDeepLinkResult {
 }
 
 export function buildPositionHref(
-  pathname: '/analysis' | '/explain',
+  pathname: '/analysis' | '/explain' | '/play',
   fen: string,
   orientation: BoardOrientation,
+  source: 'puzzle' | 'opening' = 'puzzle',
 ): string {
-  const params = new URLSearchParams({ fen, orientation, source: 'puzzle' });
+  const params = new URLSearchParams({ fen, orientation, source });
   return `${pathname}?${params.toString()}`;
 }

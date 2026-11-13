@@ -5,7 +5,7 @@ import { AppRoutes } from "@/app/routes";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { trackPageView as trackMetaPixelPageView } from "@/services/metaPixel";
 import { usePresenceHeartbeat } from "@/hooks/usePresenceHeartbeat";
-import { captureFirstTouch, recordVisit } from "@/services/funnel";
+import { captureFirstTouch, hasInteracted, onFirstInteraction, recordVisit } from "@/services/funnel";
 import { isPrerendering, onPrerenderActivated } from "@/services/prerender";
 
 // ---------------------------------------------------------------------------
@@ -74,13 +74,17 @@ function PresenceHeartbeat() {
  */
 function FunnelVisit() {
   useEffect(() => {
-    const start = () => { captureFirstTouch(); void recordVisit(); };
-    const onVisible = () => { if (document.visibilityState === 'visible' && !isPrerendering()) void recordVisit(); };
+    // The visit itself waits for the page's first real input (see onFirstInteraction).
+    let stopWaiting: (() => void) | undefined;
+    const start = () => { captureFirstTouch(); stopWaiting = onFirstInteraction(() => void recordVisit()); };
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && !isPrerendering() && hasInteracted()) void recordVisit();
+    };
     document.addEventListener('visibilitychange', onVisible);
     let stop: (() => void) | undefined;
     if (isPrerendering()) stop = onPrerenderActivated(start);
     else start();
-    return () => { document.removeEventListener('visibilitychange', onVisible); stop?.(); };
+    return () => { document.removeEventListener('visibilitychange', onVisible); stop?.(); stopWaiting?.(); };
   }, []);
   return null;
 }

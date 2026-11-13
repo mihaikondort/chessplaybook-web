@@ -1,14 +1,12 @@
 // GENERATED from production by scripts/generate-cloudfront-function.cjs. Do not edit.
-// --- BEGIN GENERATED ROUTE TABLE (scripts/generate-cloudfront-function.cjs) ---
-var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
-// --- END GENERATED ROUTE TABLE ---
+var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva openings play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
 
 var NOT_FOUND_HTML =
   '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
   '<meta name="viewport" content="width=device-width,initial-scale=1">' +
   '<meta name="robots" content="noindex,follow">' +
   '<meta name="theme-color" content="#0d1421">' +
-  '<title>Page not found &mdash; Chess Playbook</title><style>' +
+  '<title>Page not found | Chess Playbook</title><style>' +
   'html,body{margin:0;height:100%}' +
   'body{background:hsl(218 42% 9%);color:hsl(42 78% 95%);' +
   'font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;' +
@@ -63,24 +61,15 @@ function handler(event) {
   var request = event.request;
   var uri = request.uri;
   var host = request.headers.host ? request.headers.host.value : 'staging.chessplaybook.com';
-  var proto = request.headers['cloudfront-forwarded-proto']
-    ? request.headers['cloudfront-forwarded-proto'].value
-    : 'https';
 
   var canonicalUri = uri;
 
-  // Strip /index.html anywhere, not just at the root. The original only
-  // matched the exact string '/index.html', so /explain/index.html,
-  // /champions/index.html and /news/index.html each served the SPA shell at
-  // 200 with the homepage's title and canonical — crawlable duplicates of the
-  // homepage sitting under every route.
   if (canonicalUri === '/index.html') {
     canonicalUri = '/';
   } else if (canonicalUri.length > 11 && canonicalUri.slice(-11) === '/index.html') {
     canonicalUri = canonicalUri.slice(0, -11);
   }
 
-  // Lowercase champion paths only — asset paths elsewhere are case-sensitive.
   if (canonicalUri.substring(0, 11).toLowerCase() === '/champions/') {
     canonicalUri = canonicalUri.toLowerCase();
   }
@@ -100,11 +89,6 @@ function handler(event) {
           'content-type': { value: 'text/html; charset=utf-8' },
           'cache-control': { value: 'max-age=60' },
           'x-robots-tag': { value: 'noindex' },
-          // Its own CSP: CloudFront skips the viewer-RESPONSE function when a
-          // request function generates the response, so ChessPlaybook-CSP never
-          // sees this page (measured on production — it shipped with HSTS and
-          // the frame/type headers, and no CSP). Deliberately stricter than the
-          // site policy: this page has no scripts, forms or external resources.
           'content-security-policy': {
             value:
               "default-src 'none'; style-src 'unsafe-inline'; " +
@@ -117,7 +101,7 @@ function handler(event) {
     canonicalUri = routed;
   }
 
-  if (proto === 'https' && host === 'staging.chessplaybook.com' && canonicalUri === uri) {
+  if (host === 'staging.chessplaybook.com' && canonicalUri === uri) {
     return request;
   }
 
