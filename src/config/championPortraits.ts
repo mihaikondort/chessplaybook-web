@@ -67,3 +67,13 @@ export const PORTRAIT_CREDITS: PortraitCredit[] = [
 export const PLAYER_PORTRAIT_CREDITS: PortraitCredit[] = [
   { champion: 'Sindarov', year: 2026, author: 'ChessKelly', licence: 'CC BY 4.0', licenceUrl: 'https://creativecommons.org/licenses/by/4.0', source: 'https://commons.wikimedia.org/wiki/File:Javokhir_Sindarov_at_the_Naroditsky_Memorial_Rapid_and_Blitz_2026.jpg' },
 ];
+
+/**
+ * THE DESIGN V2 HOMEPAGE'S PORTRAITS (visual redesign plan C7): `assets/images/champions/portraits-v2/`, made from
+ * the same photos as `portraits-v1` (credited above) except where listed here. Shown on /credits while the v2
+ * homepage is on. Anand's v1 photo holds the 2008 trophy in front of him (owner: not for the homepage), so the
+ * homepage uses a 2016 one.
+ */
+export const HOME_PORTRAIT_OVERRIDES: PortraitCredit[] = [
+  { champion: 'Anand', year: 2016, author: 'Wolfgang Jekel', licence: 'CC BY 2.0', licenceUrl: 'https://creativecommons.org/licenses/by/2.0', source: 'https://commons.wikimedia.org/wiki/File:Viswanathan_Anand_(2016)_(cropped).jpeg' },
+];

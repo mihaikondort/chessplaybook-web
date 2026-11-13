@@ -3,29 +3,18 @@
  * and Paddle's customer portal. Renders nothing unless the API has checkout settings, so it is
  * invisible in production until launch and live on staging (sandbox).
  *
- * Buying needs an account (owner), which this page already guarantees. The Premium page proper
- * comes with the visual direction; this card is how checkout is tested and how a Premium player
- * manages the subscription.
+ * Buying needs an account (owner), which this page already guarantees. The offer itself is on the
+ * Premium page (/premium); this card is where a Premium player manages the subscription. Both load
+ * through usePremiumOffer.
  */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import env from '@/config/env';
 import { getAuthHeader } from '@/features/auth/utils/getAuthToken';
 import { useAuth } from '@/features/auth/AuthContext';
-import {
-  fetchCheckoutSettings, formatMinor, loadPaddle, onCheckoutCompleted, openCheckout, previewPlans,
-  type CheckoutSettings, type Plans, type PremiumState,
-} from './paddleCheckout';
-
-async function fetchPremium(): Promise<PremiumState | null> {
-  try {
-    const response = await fetch(`${env.apiBaseUrl}/api/premium`, { headers: await getAuthHeader() });
-    return response.ok ? await response.json() as PremiumState : null;
-  } catch {
-    return null;
-  }
-}
+import { formatMinor } from './paddleCheckout';
+import { fetchPremium, usePremiumOffer } from './usePremiumOffer';
 
 function day(sqliteUtc: string | null): string | null {
   if (!sqliteUtc) return null;
@@ -35,53 +24,11 @@ function day(sqliteUtc: string | null): string | null {
 
 export function PremiumCard() {
   const { user } = useAuth();
-  const [settings, setSettings] = useState<CheckoutSettings | null>(null);
-  const [state, setState] = useState<PremiumState | null>(null);
-  const [plans, setPlans] = useState<Plans | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const { settings, plans, state, setState, message, setMessage, buy } = usePremiumOffer();
   const [busy, setBusy] = useState(false);
   const [confirmRefund, setConfirmRefund] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const found = await fetchCheckoutSettings();
-      if (cancelled || !found) return;
-      setSettings(found);
-      setState(await fetchPremium());
-      try {
-        const paddle = await loadPaddle(found);
-        const preview = await previewPlans(paddle, found);
-        if (!cancelled) setPlans(preview);
-      } catch {
-        if (!cancelled) setMessage('Prices could not be loaded. Please try again later.');
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
-
-  /* After a purchase, Paddle tells our server by webhook; wait for it, up to a minute. */
-  useEffect(() => onCheckoutCompleted(() => {
-    setMessage('Thank you. Your Premium is being set up…');
-    let tries = 0;
-    const poll = async () => {
-      const next = await fetchPremium();
-      if (next?.premium) { setState(next); setMessage(null); return; }
-      if (++tries < 30) window.setTimeout(poll, 2000);
-      else setMessage('Your payment went through. Premium can take a few minutes to appear; reload this page soon.');
-    };
-    void poll();
-  }), []);
-
   if (!settings || !user) return null;
-
-  const buy = async (priceId: string) => {
-    try {
-      openCheckout(await loadPaddle(settings), priceId, { sub: user.userId, email: user.email });
-    } catch {
-      setMessage('Checkout could not be opened. Please try again later.');
-    }
-  };
 
   const manage = async () => {
     setBusy(true);

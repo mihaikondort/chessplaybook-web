@@ -42,6 +42,7 @@ const LiveGameViewer = lazy(() => lazyRetry(() => import("@/pages/live-game/Live
 const Privacy = lazy(() => lazyRetry(() => import("@/pages/Privacy")));
 const Terms = lazy(() => lazyRetry(() => import("@/pages/Terms")));
 const RefundPolicy = lazy(() => lazyRetry(() => import("@/pages/RefundPolicy")));
+const Premium = lazy(() => lazyRetry(() => import("@/pages/Premium")));
 const Contact = lazy(() => lazyRetry(() => import("@/pages/Contact")));
 const Reminders = lazy(() => lazyRetry(() => import("@/pages/Reminders")));
 const Credits = lazy(() => lazyRetry(() => import("@/pages/Credits")));
@@ -69,6 +70,10 @@ const WorkspaceFixture = import.meta.env.DEV
 // Layout redesign B2: both colour themes side by side, same dev-only treatment.
 const ThemePreview = import.meta.env.DEV
   ? lazy(() => import("@/design/preview/ThemePreview"))
+  : null;
+// Visual redesign experiment: the homepage in design v2, same dev-only treatment.
+const HomeV2Preview = import.meta.env.DEV
+  ? lazy(() => import("@/design/preview/v2/HomeV2Preview"))
   : null;
 /*
   THE REBUILT PUZZLES PAGE, which `/puzzles` serves as of 2026-08-16.
@@ -294,6 +299,9 @@ export function AppRoutes() {
         {import.meta.env.DEV && ThemePreview && (
           <Route path="/dev/theme-preview" element={<ThemePreview />} />
         )}
+        {import.meta.env.DEV && HomeV2Preview && (
+          <Route path="/dev/home-v2" element={<HomeV2Preview />} />
+        )}
 
         {/* Home */}
         <Route path="/" element={<Index />} />
@@ -327,6 +335,7 @@ export function AppRoutes() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/premium" element={<Premium />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/credits" element={<Credits />} />

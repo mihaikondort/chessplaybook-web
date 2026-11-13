@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/stamp-sw.cjs && node scripts/inline-critical-css.cjs && node scripts/check-board-theme-prepaint.cjs && node scripts/preload-route-chunks.cjs && node scripts/generate-sitemap.cjs && node scripts/generate-route-html.cjs && node scripts/check-indexability.cjs && node scripts/generate-cloudfront-function.cjs --check && node scripts/verify-cloudfront-404.mjs && node scripts/check-analytics-id.cjs",
+    "build": "vite build && node scripts/stamp-sw.cjs && node scripts/inline-critical-css.cjs && node scripts/check-board-theme-prepaint.cjs && node scripts/preload-route-chunks.cjs && node scripts/generate-sitemap.cjs && node scripts/generate-route-html.cjs && node scripts/check-indexability.cjs && node scripts/generate-cloudfront-function.cjs --check && node scripts/verify-cloudfront-404.mjs && node scripts/check-analytics-id.cjs && node scripts/check-no-preview-assets.cjs",
     "build:dev": "vite build --mode development",
     "sitemap": "node scripts/generate-sitemap.cjs",
     "check:indexability": "node scripts/check-indexability.cjs",

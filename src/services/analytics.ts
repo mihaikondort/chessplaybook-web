@@ -126,6 +126,11 @@ type GA4Event =
   // nav and footer, so it would be a constant. Do not add one back unless the
   // homepage grows a second clickable section.
   | { name: 'home_choice_click'; params: { to: string; position: number } }
+  // The redesigned homepage's sections BELOW the chooser (visual redesign plan C4; owner D1: every new link
+  // measured). A separate event, so `home_choice_click` keeps measuring exactly the six cards and its series
+  // stays comparable; `section` is a GA4 custom dimension (registered 2026-11-13). `position` is the link's
+  // 0-based index within its section, or -1 for the section's "see all" link.
+  | { name: 'home_section_click'; params: { section: 'journey' | 'featured' | 'strip' | 'news'; to: string; position: number } }
   // `explain_onward_click` and `feature_strip_click` were removed on 2026-08-02
   // together with `FeatureStrip`, their only emitter. They measured whether that
   // strip routed mismatched intent or cannibalised each page's own CTA — a
@@ -374,7 +379,11 @@ type GA4Event =
   /* The World Championship match in a visitor's calendar: one game to Google, or every game as .ics. */
   | { name: 'match_calendar_added'; params: { method: 'google' | 'ics'; game: number | 'all'; surface: 'hub' | 'game' | 'article' } }
   /* A free-plan daily limit met (#46 funnel stage 7; FUNNEL_EVENT_CONTRACT names it `limit_reached`). */
-  | { name: 'limit_reached'; params: { feature: 'game_report' | 'explain_position' | 'challenge_session' | 'opening_session' } }
+  | { name: 'limit_reached'; params: { feature: 'game_report' | 'explain_position' | 'challenge_session' | 'opening_session' | 'opening_variation' } }
+  /* The way to Premium from the daily-limit dialog, and which feature ran out. */
+  | { name: 'premium_link_clicked'; params: { from: 'limit_dialog'; feature: 'game_report' | 'explain_position' | 'challenge_session' | 'opening_session' | 'opening_variation' } }
+  /* A plan's buy button on the Premium page; `signed_in` false means it led to sign-in first. */
+  | { name: 'premium_buy_clicked'; params: { plan: 'yearly' | 'monthly' | 'one_year'; signed_in: boolean } }
   /*
     The DENOMINATOR for the move. `plan_setup_opened` counts intent to build one
     and `from` says what prompted it — the standing card, the one offer, or a

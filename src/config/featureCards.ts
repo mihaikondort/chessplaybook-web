@@ -72,7 +72,7 @@ export const featureCards: FeatureCard[] = [
     icon: Lightbulb,
     title: 'Explain a Position',
     shortTitle: 'Explain',
-    description: 'See why a famous position works — in plain English, not engine numbers.',
+    description: 'See why a famous position works, in plain English, not engine numbers.',
     cta: 'See why',
     href: '/explain',
     gradient: 'from-feature-explain/20 to-feature-explain/5',

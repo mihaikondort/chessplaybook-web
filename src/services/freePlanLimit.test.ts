@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
 
 vi.mock('@/services/analytics', () => ({ logGA4Event: vi.fn() }));
-import { dailyLimitMessage, readDailyLimit, whenBack } from './freePlanLimit';
+import {
+  DAILY_LIMIT_EVENT, FREE_PLAN_ALLOWANCE, dailyLimitMessage, dailyLimitTitle, readDailyLimit, reportDailyLimit, whenBack,
+} from './freePlanLimit';
 
 const body = { success: false, error: 'daily_limit', feature: 'game_report', limit: 1, resetsAt: '2026-11-20T22:00:00Z' };
 
@@ -34,6 +37,33 @@ describe('the message', () => {
       const text = dailyLimitMessage({ feature, limit: 3, resetsAt: '2026-11-20T22:00:00Z' });
       expect(text).toMatch(/^You've (used|played) today's /);
       expect(text).not.toContain('—');
+    }
+  });
+});
+
+describe('the allowances', () => {
+  it("are the server's own numbers", () => {
+    const src = readFileSync('backend/src/services/funnel/freePlanLimits.ts', 'utf8');
+    const block = src.slice(src.indexOf('export const FREE_PLAN_LIMITS'), src.indexOf('} as const'));
+    for (const [feature, n] of Object.entries(FREE_PLAN_ALLOWANCE)) {
+      expect(block).toMatch(new RegExp(`\\b${feature}: ${n},`));
+    }
+  });
+});
+
+describe('reporting a limit', () => {
+  it('opens the dialog through one window event, and every title is plain', () => {
+    const seen: unknown[] = [];
+    const listener = (e: Event) => seen.push((e as CustomEvent).detail);
+    window.addEventListener(DAILY_LIMIT_EVENT, listener);
+    const limit = { feature: 'opening_session' as const, limit: 1, resetsAt: '2026-11-20T22:00:00Z' };
+    reportDailyLimit(limit);
+    window.removeEventListener(DAILY_LIMIT_EVENT, listener);
+    expect(seen).toEqual([limit]);
+    for (const feature of ['game_report', 'explain_position', 'challenge_session', 'opening_session'] as const) {
+      const title = dailyLimitTitle({ feature, limit: 3, resetsAt: '' });
+      expect(title).toMatch(/^That's today's /);
+      expect(title).not.toContain('—');
     }
   });
 });

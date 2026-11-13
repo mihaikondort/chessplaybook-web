@@ -389,6 +389,8 @@ function generate() {
     if (route.ogImage) {
       html = setMeta(html, 'property', 'og:image', route.ogImage);
       html = setMeta(html, 'name', 'twitter:image', route.ogImage);
+      html = setMeta(html, 'property', 'og:image:alt', route.ogTitle || route.title);
+      html = setMeta(html, 'name', 'twitter:image:alt', route.ogTitle || route.title);
     }
 
     // Article schema, built from the same fields <SeoHead> derives it from.

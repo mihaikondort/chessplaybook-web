@@ -1541,3 +1541,208 @@
 @media (min-height: 947px)  { :root { --nav-air: calc(12.580px + 0.9038svh); } }
 @media (min-height: 1307px) { :root { --nav-air: calc(16.620px + 0.5948svh); } }
 
+
+/*
+  DESIGN V2 (experiment, branch feat/visual-redesign; VISUAL_REDESIGN_ANALYSIS.md).
+  Every rule below is inert unless `data-design="v2"` is on <html>, which only the
+  DEV preview (/dev/home-v2) and its "every page" switch set. Dark theme only.
+*/
+:root[data-design="v2"]:not([data-theme="light"]) [data-nav-desktop] [data-active="true"] {
+  background: transparent;
+  color: hsl(var(--link));
+  box-shadow: inset 0 -2px 0 hsl(var(--primary));
+  border-radius: 0;
+}
+:root[data-design="v2"]:not([data-theme="light"]) [data-nav-row] [data-wordmark-accent] { color: hsl(var(--link)); }
+/* The two logos share one grid cell (Navigation.tsx); visibility, not display, so the theme moves no box. */
+.nav-logo-v2 { visibility: hidden; }
+:root[data-design="v2"]:not([data-theme="light"]) .nav-logo-v1 { visibility: hidden; }
+:root[data-design="v2"]:not([data-theme="light"]) .nav-logo-v2 { visibility: visible; }
+:root[data-design="v2"]:not([data-theme="light"]) .nav-account-slot button,
+:root[data-design="v2"]:not([data-theme="light"]) .nav-account-slot a {
+  border-radius: 9999px;
+}
+
+.v2-card {
+  background-color: hsl(var(--card));
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px hsl(var(--hairline));
+}
+[data-card-style="lift"] .v2-card {
+  background-color: hsl(var(--card-lift));
+  box-shadow: inset 0 0 0 1px hsl(var(--hairline)), inset 0 1px 0 var(--surface-card-highlight), 0 8px 24px var(--surface-card-shadow);
+}
+.v2-card-editorial {
+  background-color: hsl(var(--card));
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px hsl(var(--hairline-warm));
+}
+.v2-btn-gold {
+  background-image: linear-gradient(to bottom, hsl(var(--gold-top)), hsl(var(--gold-bottom)));
+  color: hsl(var(--primary-foreground));
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 0 hsl(var(--btn-sheen) / 0.35), 0 4px 16px var(--surface-card-shadow);
+}
+.v2-btn-gold:hover { filter: brightness(1.06); }
+.v2-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; border-radius: 9999px; flex-shrink: 0;
+  color: hsl(var(--link));
+  box-shadow: inset 0 0 0 1px hsl(var(--hairline-warm));
+  transition: background-color 160ms, transform 160ms;
+}
+.group:hover .v2-arrow, .group:focus-visible .v2-arrow { background-color: hsl(var(--primary) / 0.12); transform: translateX(2px); }
+@media (prefers-reduced-motion: no-preference) {
+  .v2-kenburns { animation: v2-kenburns 26s ease-in-out infinite alternate; }
+  .v2-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: v2-draw 1.6s ease-out 0.3s forwards; }
+  .v2-pulse { animation: v2-pulse 2.4s ease-in-out infinite; }
+}
+@keyframes v2-kenburns { from { transform: scale(1); } to { transform: scale(1.07) translateX(-1.5%); } }
+@keyframes v2-draw { to { stroke-dashoffset: 0; } }
+@keyframes v2-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.8; } }
+.v2-portrait img { transition: transform 400ms cubic-bezier(0.2, 0, 0, 1), filter 400ms; filter: brightness(0.92); }
+.v2-portrait:hover img, .v2-portrait:focus-visible img { transform: scale(1.05); filter: brightness(1.05); }
+
+/* Design v2, round 2: the stage (full-bleed photo behind the headline AND the cards), light, grain, glass, gold. */
+/* LAYOUT IS THE SAME IN BOTH THEMES (owner, 2026-11-13; redesign plan B5). The page width is scoped
+   to v2 only, not to v2-dark, so switching theme moves no box (`verify-theme-tokens`). Only colours
+   differ by theme. */
+:root[data-design="v2"] :is([data-nav-container], [data-footer-container]) { max-width: 1680px; }
+@media (min-width: 1024px) {
+  :root[data-design="v2"] :is([data-nav-container], [data-footer-container]) { padding-left: 3.5vw; padding-right: 3.5vw; }
+}
+.v2-stage-img { filter: saturate(1.08) contrast(1.12) brightness(0.8); }
+@media (min-width: 768px) {
+  /* Faded at its left (toward the headline) and at its foot: the photo ends above the stage's bottom (HomeStage). */
+  .v2-stage-img { filter: saturate(1.08) contrast(1.05) brightness(0.92); }
+  .v2-stage-imgwrap {
+    -webkit-mask-image: linear-gradient(to right, transparent, rgb(0 0 0 / 0.35) 4%, rgb(0 0 0 / 0.75) 8%, #000 13%), linear-gradient(to left, transparent, rgb(0 0 0 / 0.12) 6%, rgb(0 0 0 / 0.4) 12%, rgb(0 0 0 / 0.75) 19%, #000 27%), linear-gradient(to bottom, #000 72%, transparent);
+    -webkit-mask-composite: source-in, source-in;
+    mask-image: linear-gradient(to right, transparent, rgb(0 0 0 / 0.35) 4%, rgb(0 0 0 / 0.75) 8%, #000 13%), linear-gradient(to left, transparent, rgb(0 0 0 / 0.12) 6%, rgb(0 0 0 / 0.4) 12%, rgb(0 0 0 / 0.75) 19%, #000 27%), linear-gradient(to bottom, #000 72%, transparent);
+    mask-composite: intersect;
+  }
+}
+.v2-stage-shade {
+  background:
+    linear-gradient(to bottom, hsl(var(--background) / 0.3), transparent 10%),
+    linear-gradient(to bottom, transparent 42%, hsl(var(--background) / 0.78) 72%, hsl(var(--background)) 100%),
+    linear-gradient(90deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.9) 20%, hsl(var(--background) / 0.45) 34%, transparent 48%);
+}
+@media (max-width: 767px) {
+  .v2-stage-shade {
+    background:
+      linear-gradient(to bottom, hsl(var(--background) / 0.3) 0%, hsl(var(--background) / 0.15) 18%, hsl(var(--background) / 0.8) 40%, hsl(var(--background)) 56%);
+  }
+}
+.v2-stage-light {
+  background:
+    radial-gradient(ellipse 34% 46% at var(--fx, 68%) var(--fy, 34%), hsl(var(--gold-top) / 0.26), transparent 70%),
+    radial-gradient(ellipse 60% 30% at 55% 78%, hsl(var(--gold-bottom) / 0.10), transparent 70%);
+  mix-blend-mode: screen;
+}
+.v2-stage-vignette { background: radial-gradient(ellipse 95% 85% at 60% 40%, transparent 62%, hsl(var(--background) / 0.5) 100%); }
+.v2-grain {
+  opacity: 0.07; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.v2-gold-text {
+  background-image: linear-gradient(to bottom, hsl(var(--gold-top)), hsl(var(--primary)));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.v2-card-glass {
+  background-image: linear-gradient(to bottom, hsl(var(--card) / 0.62), hsl(var(--card) / 0.82));
+  -webkit-backdrop-filter: blur(12px) saturate(1.15); backdrop-filter: blur(12px) saturate(1.15);
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px hsl(var(--hairline-warm) / 0.5), inset 0 1px 0 hsl(var(--foreground) / 0.06), 0 12px 32px hsl(var(--background) / 0.55);
+  transition: box-shadow 200ms, transform 160ms;
+}
+.v2-card-glass:hover, .v2-card-glass:focus-visible {
+  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.6), inset 0 1px 0 hsl(var(--foreground) / 0.08), 0 14px 36px hsl(var(--background) / 0.6), 0 0 28px hsl(var(--primary) / 0.12);
+}
+/* The site's focus ring is a box-shadow, which the rule above replaces, so a keyboard user lost it
+   (Fable S4). An outline in the ring's colour sits outside every box-shadow (redesign plan B2).
+   `:root` raises it over the card's own `focus:outline-none`, a utility that comes later. */
+:root .v2-card-glass:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+/* The Journey card's call to action and its two stats (JourneyCard): in one row, each block as wide as its
+   content and the spacing even, only when the card's left half is wide enough for all three (needs ~400px with
+   12px gaps, measured); narrower, the button takes a row of its own and the two stats, as wide as their content,
+   share the row below, spaced evenly. */
+.v2-journey-left { container-type: inline-size; }
+.v2-journey-sep-wide { display: none; }
+@container (min-width: 410px) {
+  .v2-journey-row { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; }
+  .v2-journey-stats { display: contents; }
+  .v2-journey-sep-wide { display: block; }
+}
+/* RouteHeading's hero: "Play, Solve and" reads "Play, Solve," on a phone (owner), a comma that is not in the text. */
+@media (max-width: 767px) { .v2-phone-comma::after { content: ","; } }
+.v2-gold-icon { filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.35)); }
+.v2-gold-icon[fill="none"] * { stroke: url(#v2-gold-grad) hsl(var(--gold-top)); }
+/* The colour after url() is used when the gradient cannot be resolved, so a gold icon is never drawn empty (owner saw the cup vanish). */
+.v2-gold-icon[fill="currentColor"] *:not([fill="none"]) { fill: url(#v2-gold-grad-bb) hsl(var(--gold-top)); }
+.v2-gold-icon[fill="currentColor"] { stroke-width: 0; }
+.v2-glow-panel {
+  background:
+    radial-gradient(110% 90% at 88% 0%, hsl(var(--gold-bottom) / 0.12), transparent 55%),
+    hsl(var(--card));
+}
+.v2-line-glow { filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.65)); }
+.v2-dot-glow { filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.8)); }
+.v2-ring-warm { border-radius: 12px; box-shadow: inset 0 0 0 1px hsl(var(--hairline-warm)); }
+/* A photo that dissolves into whatever is behind it, rightward: masked to transparent, never painted over
+   with the card's colour, so it works in both themes (the featured champion card). */
+.v2-photo-fade-right {
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 38%, rgb(0 0 0 / 0.55) 62%, rgb(0 0 0 / 0.18) 82%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, #000 38%, rgb(0 0 0 / 0.55) 62%, rgb(0 0 0 / 0.18) 82%, transparent 100%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .v2-fade-in { animation: v2-fade-in 900ms ease-out both; }
+}
+@keyframes v2-fade-in { from { opacity: 0; } to { opacity: 1; } }
+/* News thumbnails in the page's warm, toned palette (the only full-colour images left); colour returns on hover. */
+.v2-warm-thumb { filter: sepia(0.55) saturate(0.85) contrast(1.05) brightness(0.9); transition: filter 300ms; }
+.group:hover .v2-warm-thumb, .group:focus-visible .v2-warm-thumb { filter: none; }
+/* The featured card's text arrives as the outgoing photo has faded (700ms), so name and face never disagree. */
+.v2-fade-in-late { opacity: 0; animation: v2-fade-in 500ms ease-out 450ms both; }
+@media (prefers-reduced-motion: reduce) { .v2-fade-in-late { opacity: 1; animation: none; } }
+/* The chooser cards' arrow: larger and heavier than the section links' (owner, 2026-11-13). */
+.v2-arrow-lg { width: 2.25rem; height: 2.25rem; box-shadow: inset 0 0 0 1.5px hsl(var(--hairline-warm)); }
+@media (min-width: 768px) { .v2-arrow-lg { width: 2.75rem; height: 2.75rem; } }
+/* Read by the preview's rotations: 0 stops them. */
+:root { --v2-motion: 1; }
+@media (prefers-reduced-motion: reduce) { :root { --v2-motion: 0; } }
+/* No rotation on touch screens (owner D4): no hover there to pause it, and a tap can land on a card that just
+   changed. Read by the homepage's ticker (src/features/home/homeMotion.ts); the dots go too, nothing rotates. */
+:root { --v2-rotate: 1; }
+@media (hover: none) { :root { --v2-rotate: 0; } .v2-rotation-dots { display: none; } }
+/* The hero shown whole: feathered on every edge (more on the text side), so it melts into the page. */
+.v2-stage-whole {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 94%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 80%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 94%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 80%, transparent);
+  mask-composite: intersect;
+}
+@media (min-width: 768px) {
+  .v2-stage-whole {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 30%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 8%, #000 82%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 30%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 8%, #000 82%, transparent);
+  }
+}
+/* Toned at rest, the photo as taken on hover or keyboard focus (the co-founder's idea, our real photos). */
+.v2-color-reveal { opacity: 0; transition: opacity 600ms ease, transform 400ms cubic-bezier(0.2, 0, 0, 1); }
+.group:hover .v2-color-reveal, .group:focus-visible .v2-color-reveal { opacity: 1; }
+/* The Journey chart's loop: 5.6s a cycle, the line drawn over the first half (slower than the old 1.6s
+   one-off), held, faded, then again. Percentages match LOOP in HomeV2Preview.tsx. Static under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .v2-loop-line { stroke-dasharray: 1; animation: v2-loop-line 5.6s linear infinite; }
+  .v2-loop-area { animation: v2-loop-area 5.6s infinite; }
+  .v2-loop-dot { animation-duration: 5.6s; animation-iteration-count: infinite; animation-timing-function: linear; }
+}
+@keyframes v2-loop-line {
+  0% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: linear; }
+  50% { stroke-dashoffset: 0; opacity: 1; }
+  82% { stroke-dashoffset: 0; opacity: 1; }
+  92% { stroke-dashoffset: 0; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes v2-loop-area { 0% { opacity: 0; } 50%, 82% { opacity: 1; } 92%, 100% { opacity: 0; } }

@@ -18,19 +18,31 @@ import {
   DEFAULT_PREFERENCE,
   THEME_STORAGE_KEY,
   themeColor,
+  themeColorFor,
 } from './themeCore';
+import { DESIGN_V2_LIVE, HOME_V2_LIVE } from '../designFlags';
 
 export const APP_THEME_PREPAINT_MARKER = '<!-- app-theme-prepaint -->';
 
-export function appThemeHead(choiceEnabled: boolean): string {
-  const dark = themeColor('dark');
+export function appThemeHead(choiceEnabled: boolean, homeV2: boolean = HOME_V2_LIVE, designV2: boolean = DESIGN_V2_LIVE): string {
+  const dark = themeColorFor('dark', designV2);
   const light = themeColor('light');
+  /*
+    The homepage rule (themeCore.ts `isAlwaysDarkPath`, redesign plan C3), emitted only while the v2 homepage is
+    on: `/` draws dark, with design v2 even when its own switch is off, and the frame colour follows. With the
+    homepage switch off these strings are empty and the script is exactly today's.
+  */
+  const homeDark = JSON.stringify(themeColorFor('dark', true));
+  const homeTest = homeV2 ? "var h=location.pathname==='/';" : '';
+  const homeTheme = homeV2 ? "if(h)t='dark';" : '';
+  const homeDesign = homeV2 && !designV2 ? "if(h)r.setAttribute('data-design','v2');" : '';
+  const homeColor = homeV2 && !designV2 ? `if(h)c=${homeDark};` : '';
 
   if (!choiceEnabled) {
     return `<meta name="theme-color" content="${dark}" />
     <script>
     (function(){
-      var r=document.documentElement;
+      var r=document.documentElement;${homeTest}${homeDesign}
       r.setAttribute('data-theme','dark');
       r.setAttribute('data-theme-preference','dark');
       r.style.colorScheme='dark';
@@ -47,12 +59,12 @@ export function appThemeHead(choiceEnabled: boolean): string {
       var p=null;try{p=localStorage.getItem(${key});}catch(e){}
       if(p!=='light'&&p!=='dark'&&p!=='system')p=${fallback};
       var d=false;try{d=matchMedia('(prefers-color-scheme: dark)').matches;}catch(e){}
-      var t=p==='system'?(d?'dark':'light'):p;
-      var r=document.documentElement;
+      var t=p==='system'?(d?'dark':'light'):p;${homeTest}${homeTheme}
+      var r=document.documentElement;${homeDesign}
       r.setAttribute('data-theme',t);
       r.setAttribute('data-theme-preference',p);
       r.style.colorScheme=t;
-      var c=t==='dark'?${JSON.stringify(dark)}:${JSON.stringify(light)};
+      var c=t==='dark'?${JSON.stringify(dark)}:${JSON.stringify(light)};${homeColor}
       var m=document.querySelectorAll('meta[name="theme-color"]');
       for(var i=0;i<m.length;i++)m[i].setAttribute('content',c);
     })();

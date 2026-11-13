@@ -1,6 +1,7 @@
 import { useContext, useMemo, useState, type ReactNode } from 'react';
 import { ChromeContext, type Chrome } from './chromeContext';
 import { Outlet } from 'react-router-dom';
+import { DailyLimitDialog } from '@/features/premium/DailyLimitDialog';
 import { Navigation } from '@/components/Navigation';
 import { useReminderClick } from '@/features/reminders/useReminderClick';
 
@@ -76,6 +77,8 @@ export function SiteShell({ children }: { children?: ReactNode }) {
         <Navigation hidden={chromeHidden} />
         {children ?? <Outlet />}
       </div>
+      {/* Outside the two-child grid: the dialog portals to the body and renders nothing until a limit is met. */}
+      <DailyLimitDialog />
     </ChromeContext.Provider>
   );
 }

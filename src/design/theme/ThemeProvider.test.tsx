@@ -2,6 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { ThemeProvider, useTheme } from './ThemeProvider';
 import { THEME_STORAGE_KEY } from './theme';
+/*
+  The switches pinned OFF, whatever src/design/designFlags.ts commits: these tests call the theme functions with
+  their default arguments and mean today's behaviour by them; every v2 case passes the switches explicitly. With
+  the committed value on (the staging commit, redesign plan D2), the defaults made `/` always dark and the
+  light-theme tests failed for a reason that is the feature, not a defect.
+*/
+vi.mock('@/design/designFlags', () => ({ DESIGN_V2_LIVE: false, HOME_V2_LIVE: false }));
 
 /* A controllable `prefers-color-scheme: dark`. */
 let systemDark = false;

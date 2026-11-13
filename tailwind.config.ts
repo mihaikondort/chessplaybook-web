@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
 import { layoutCustomProperties, navCustomProperties, navTokens, workspaceTheme } from "./src/design/tokens/layout.tokens";
 import { colorCustomProperties, darkTheme, lightTheme, tailwindColors } from "./src/design/tokens/color.tokens";
+import { designV2CustomProperties } from "./src/design/tokens/designV2.tokens";
 
 export default {
   /*
@@ -174,6 +175,10 @@ export default {
       addBase({ [`@media ${navTokens.landscapeQuery}`]: { ":root": navCustomProperties().landscape } });
       addBase({ ':root, [data-theme="dark"]': colorCustomProperties(darkTheme) });
       addBase({ '[data-theme="light"]': colorCustomProperties(lightTheme) });
+      // Design v2 (visual redesign): inert unless `<html>` carries `data-design="v2"`
+      // (src/design/designFlags.ts, or the DEV preview). Also inside a nested
+      // `[data-theme="dark"]` section on a light page, as the dark roles are (plan B2).
+      addBase({ ':root[data-design="v2"]:not([data-theme="light"]), :root[data-design="v2"] [data-theme="dark"]': designV2CustomProperties() });
     }),
   ],
 } satisfies Config;

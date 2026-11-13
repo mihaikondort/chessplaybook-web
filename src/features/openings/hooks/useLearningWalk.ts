@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { fetchPosition, type PositionMove, type PositionView } from '../services/openingsApi';
+import { fetchPosition, OpeningsApiError, type PositionMove, type PositionView } from '../services/openingsApi';
+import { readDailyLimit, reportDailyLimit } from '@/services/freePlanLimit';
 
 /**
  * Learning mode's walk through one repertoire (opening trainer D3, D5).
@@ -80,7 +81,17 @@ export function useLearningWalk(repertoireId: string) {
         setLoaded((n) => n + 1);
       })
       .catch((e) => {
-        if (!ctrl.signal.aborted) setError(e instanceof Error ? e.message : 'Could not load this position.');
+        if (ctrl.signal.aborted) return;
+        // The free plan's one variation a day: the dialog says so, and the walk steps back to where the player was.
+        const limit = e instanceof OpeningsApiError ? readDailyLimit(e.status, e.body) : null;
+        if (limit) {
+          reportDailyLimit(limit);
+          const back = Math.max(0, viewed.length - 1);
+          setLine((l) => l.slice(0, back));
+          setViewPly(back);
+          return;
+        }
+        setError(e instanceof Error ? e.message : 'Could not load this position.');
       });
     return () => ctrl.abort();
     // `viewed` is derived from `viewedKey`, which names it exactly.

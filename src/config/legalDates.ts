@@ -11,7 +11,7 @@
  */
 export const LEGAL_LAST_UPDATED = {
   privacy: '2026-11-13',
-  terms: '2026-11-13',
+  terms: '2026-11-14',
   refund: '2026-11-13',
 } as const;
 

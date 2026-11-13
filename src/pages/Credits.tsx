@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import SeoHead from '@/components/SeoHead';
-import { PLAYER_PORTRAIT_CREDITS, PORTRAIT_CREDITS } from '@/config/championPortraits';
+import { HOME_PORTRAIT_OVERRIDES, PLAYER_PORTRAIT_CREDITS, PORTRAIT_CREDITS } from '@/config/championPortraits';
+import { HOME_V2_LIVE } from '@/design/designFlags';
 
 const Credits = () => {
   return (
@@ -298,8 +299,16 @@ const Credits = () => {
                     We cropped each photo, removed the background and turned it black and white.
                     Portraits made from a CC BY-SA photo are shared under the same licence.
                   </p>
+                  {/* The design v2 homepage's portraits (redesign plan C7): the changes stated, and the one
+                      different photo credited, while that homepage is on. */}
+                  {HOME_V2_LIVE && (
+                    <p className="text-muted-foreground">
+                      On the homepage we crop the same photos as rectangles, put them on a dark backdrop and tone them
+                      sepia. The homepage photo of Viswanathan Anand is a different one, from 2016.
+                    </p>
+                  )}
                   <ul className="space-y-2 text-sm">
-                    {[...PORTRAIT_CREDITS, ...PLAYER_PORTRAIT_CREDITS].map((credit) => (
+                    {[...PORTRAIT_CREDITS, ...PLAYER_PORTRAIT_CREDITS, ...(HOME_V2_LIVE ? HOME_PORTRAIT_OVERRIDES.map((c) => ({ ...c, champion: `${c.champion} (homepage)` })) : [])].map((credit) => (
                       <li key={credit.champion} className="flex flex-wrap gap-x-2 gap-y-0.5 text-muted-foreground">
                         <span className="font-semibold text-foreground">
                           {credit.champion}{credit.year ? `, ${credit.year}` : ''}
@@ -321,6 +330,21 @@ const Credits = () => {
                   </ul>
                 </CardContent>
               </Card>
+
+              {/* The design v2 homepage's photo (redesign plan C7), while that homepage is on. */}
+              {HOME_V2_LIVE && (
+                <Card id="homepage-image">
+                  <CardHeader>
+                    <CardTitle>Homepage Image</CardTitle>
+                    <CardDescription>Made for Chess Playbook</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      The homepage picture is an AI image that our co-founder made with ChatGPT.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Technology Stack */}
               <Card>

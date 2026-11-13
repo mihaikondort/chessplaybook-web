@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 import routeMeta from '@/config/route-meta.json';
+import shareImage from '@/config/share-image.json';
 
 /**
  * Single-source-of-truth <head> for a static route.
@@ -31,7 +32,9 @@ import routeMeta from '@/config/route-meta.json';
 export type RouteMetaKey = keyof typeof routeMeta;
 
 const DOMAIN = 'https://www.chessplaybook.com';
-const DEFAULT_OG_IMAGE = `${DOMAIN}/assets/facebook_cover.jpg`;
+// The link-preview image: every one is a 1200x630 JPEG (WhatsApp shows a large picture only near 1.91:1, and is
+// unreliable with WebP); `shareImages.test.ts` holds every image route-meta names to that.
+const DEFAULT_OG_IMAGE = shareImage.url;
 
 interface SeoHeadProps {
   /** Route key, matching a top-level key in route-meta.json (no leading slash). */
@@ -67,6 +70,7 @@ export function SeoHead({ routeKey, children }: SeoHeadProps) {
   // '' is the homepage, whose canonical keeps its trailing slash.
   const canonical = routeKey === '' ? `${DOMAIN}/` : `${DOMAIN}/${routeKey}`;
   const ogImage = meta.ogImage || DEFAULT_OG_IMAGE;
+  const ogImageAlt = meta.ogImage ? meta.ogTitle || meta.title : shareImage.alt;
 
   return (
     <Helmet>
@@ -80,12 +84,17 @@ export function SeoHead({ routeKey, children }: SeoHeadProps) {
       <meta property="og:type" content="website" />
       <meta property="og:url" content={canonical} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:width" content={String(shareImage.width)} />
+      <meta property="og:image:height" content={String(shareImage.height)} />
+      <meta property="og:image:type" content={shareImage.type} />
+      <meta property="og:image:alt" content={ogImageAlt} />
       <meta property="og:site_name" content="Chess Playbook" />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={meta.ogTitle || meta.title} />
       <meta name="twitter:description" content={meta.ogDescription || meta.description} />
       <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image:alt" content={ogImageAlt} />
 
       {/*
         Article schema is DERIVED from the fields above rather than written out

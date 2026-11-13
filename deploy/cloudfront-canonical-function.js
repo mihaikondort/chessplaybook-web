@@ -45,7 +45,7 @@
  */
 
 // --- BEGIN GENERATED ROUTE TABLE (scripts/generate-cloudfront-function.cjs) ---
-var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva openings play play-online player/: privacy profile puzzles puzzles/plan puzzles/progress refund-policy reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
+var ROUTES = 'analysis auth/callback candidates-2026 candidates-2026/: champion-challenge champion-challenge/: champions champions/:/best-games champions/:/best-games/: champions/:/games champions/:/games/: champions/list contact credits explain forgot-password game-history leaderboard live-events live-game/:/: login news news/candidates-2026 news/candidates-2026-conclusion news/candidates-2026-round-1 news/candidates-2026-round-3 news/candidates-2026-women news/sindarov-gukesh-head-to-head news/vaishali-ju-wenjun-title-match news/world-championship-2026-geneva openings play play-online player/: premium privacy profile puzzles puzzles/plan puzzles/progress refund-policy reminders reset-password signup terms verify-email world-championship-2026 world-championship-2026/: world-championship-cycle world-cup-2025 world-cup-2025/:'.split(' ');
 var SHELL = 'auth/callback candidates-2026/: champion-challenge/: champions/:/best-games/: champions/:/games/: forgot-password game-history live-game/:/: login player/: profile reset-password signup verify-email world-championship-2026/: world-cup-2025/:'.split(' ');
 // --- END GENERATED ROUTE TABLE ---
 
@@ -60,18 +60,18 @@ var NOT_FOUND_HTML =
   '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
   '<meta name="viewport" content="width=device-width,initial-scale=1">' +
   '<meta name="robots" content="noindex,follow">' +
-  '<meta name="theme-color" content="#0d1421">' +
+  '<meta name="theme-color" content="#080f17">' +
   '<title>Page not found | Chess Playbook</title><style>' +
   'html,body{margin:0;height:100%}' +
-  'body{background:hsl(218 42% 9%);color:hsl(42 78% 95%);' +
+  'body{background:hsl(212 48% 6%);color:hsl(36 55% 94%);' +
   'font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;' +
   'display:flex;align-items:center;justify-content:center;padding:24px}' +
   'main{max-width:32rem;text-align:center}' +
-  '.n{font-size:3rem;font-weight:700;color:hsl(42 72% 60%);margin:0}' +
+  '.n{font-size:3rem;font-weight:700;color:hsl(36 78% 62%);margin:0}' +
   'h1{font-size:1.5rem;margin:.5rem 0 1rem}' +
-  'p.m{color:hsl(42 20% 70%);margin:0 0 1.75rem}' +
+  'p.m{color:hsl(30 8% 72%);margin:0 0 1.75rem}' +
   'a{display:inline-block;padding:.6rem 1.25rem;border-radius:.375rem;' +
-  'background:hsl(42 72% 60%);color:hsl(218 42% 9%);font-weight:600;' +
+  'background:hsl(36 78% 62%);color:hsl(212 48% 6%);font-weight:600;' +
   'text-decoration:none}' +
   '</style></head><body><main>' +
   '<p class="n">404</p><h1>This page does not exist</h1>' +

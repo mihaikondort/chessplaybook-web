@@ -7,6 +7,7 @@ import { trackPageView as trackMetaPixelPageView } from "@/services/metaPixel";
 import { usePresenceHeartbeat } from "@/hooks/usePresenceHeartbeat";
 import { captureFirstTouch, hasInteracted, onFirstInteraction, recordVisit } from "@/services/funnel";
 import { isPrerendering, onPrerenderActivated } from "@/services/prerender";
+import { ThemeRouteSync } from '@/design/theme/ThemeProvider';
 
 // ---------------------------------------------------------------------------
 // Analytics: deferred loading
@@ -54,6 +55,8 @@ const App = () => {
           <PresenceHeartbeat />
           <FunnelVisit />
           <MetaPixelRouteListener />
+          {/* The theme follows the page too: the v2 homepage is always dark (redesign plan C3). */}
+          <ThemeRouteSync />
           <AppRoutes />
         </BrowserRouter>
       </Providers>

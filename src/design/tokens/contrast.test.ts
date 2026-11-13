@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { COLOR_ROLES, darkTheme, lightTheme, type ColorRole, type ColorTheme } from './color.tokens';
 import { contrast, hslToRgb, over } from './contrast';
+import { darkV2Extras, darkV2Roles } from './designV2.tokens';
 
 /*
   THE CONTRAST GUARD (layout redesign B6). WCAG 2.2 AA for every pair of
@@ -70,22 +71,40 @@ for (const s of ['background', 'card'] as ColorRole[]) {
 add('border-quiet against the page', role('border-quiet'), role('background'), NON_TEXT);
 
 /*
+  DESIGN V2 (visual redesign plan A4). Checked as a third theme: today's dark roles with
+  `darkV2Roles` over them, exactly what the CSS emits under `data-design="v2"`. Its own
+  properties (`darkV2Extras`) are checked where v2 draws them: the gold button's label on
+  both stops of its gradient, the hairlines against the page and the card.
+*/
+const darkV2Theme: ColorTheme = { ...darkTheme, roles: { ...darkTheme.roles, ...darkV2Roles } };
+const extra = (k: string) => () => hslToRgb(darkV2Extras[k]);
+const v2Checks: Check[] = [
+  { label: 'primary-foreground on gold-top (button gradient)', fg: role('primary-foreground'), bg: extra('gold-top'), min: TEXT },
+  { label: 'primary-foreground on gold-bottom (button gradient)', fg: role('primary-foreground'), bg: extra('gold-bottom'), min: TEXT },
+  { label: 'hairline against the page', fg: extra('hairline'), bg: role('background'), min: NON_TEXT },
+  { label: 'hairline-warm against the page', fg: extra('hairline-warm'), bg: role('background'), min: NON_TEXT },
+  { label: 'hairline-warm against a card', fg: extra('hairline-warm'), bg: role('card'), min: NON_TEXT },
+];
+
+/*
   ACCEPTED EXCEPTIONS, each with its reason. A failing pair not listed here
   fails the test; a listed pair that starts passing also fails it, so this
   list cannot go stale.
 */
 const EXCEPTIONS: Record<string, string> = {
+  'dark v2: hairline against the page':
+    'Owner D2 (2026-11-13): the flat cards are accepted at the measured separation after looking at the phone chooser and /puzzles. The card is identified by its content, not by its edge.',
   'light: primary as a boundary on background':
     'A filled gold button is identified by its label (8.1:1), not its edge; WCAG 1.4.11 needs the edge only when it is what identifies the control. Light theme, not yet exposed (F3).',
   'light: primary as a boundary on card':
     'Same as on the background.',
 };
 
-describe('WCAG contrast for every role pair, in both themes', () => {
+describe('WCAG contrast for every role pair, in every theme (dark, light, dark v2)', () => {
   const failures: string[] = [];
   const excepted: string[] = [];
-  for (const [name, theme] of [['dark', darkTheme], ['light', lightTheme]] as const) {
-    for (const c of checks) {
+  for (const [name, theme, list] of [['dark', darkTheme, checks], ['light', lightTheme, checks], ['dark v2', darkV2Theme, [...checks, ...v2Checks]]] as const) {
+    for (const c of list) {
       const ratio = contrast(c.fg(theme), c.bg(theme));
       const key = `${name}: ${c.label}`;
       if (ratio >= c.min) continue;

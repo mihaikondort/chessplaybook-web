@@ -7,11 +7,11 @@ const path = require('path');
 const Beasties = require('beasties');
 
 /*
-  THE LIGHT THEME'S COLOURS BEFORE FIRST PAINT (2026-11-13). The pre-paint script sets
-  `data-theme="light"` on <html> before the first frame, but Beasties judges rules against the
-  static document, where no `data-theme` exists, so it dropped the `[data-theme=light]` token
-  block: a visitor who chose light saw the DARK page until the stylesheet arrived, a visible flash
-  on a slow phone. Proven on a built dist with stylesheets held
+  THE LIGHT THEME'S COLOURS BEFORE FIRST PAINT (2026-11-13; redesign plan 8b P7). The pre-paint
+  script sets `data-theme="light"` on <html> before the first frame, but Beasties judges rules
+  against the static document, where no `data-theme` exists, so it dropped the `[data-theme=light]`
+  token block: a visitor who chose light saw today's DARK page until the stylesheet arrived, a
+  visible flash on a slow phone. Proven on a built dist with stylesheets held
   (scripts/verify-first-paint-design.mjs). Exactly that selector, nothing else that mentions light.
 */
 const LIGHT_THEME_BLOCK = /^\[data-theme=["']?light["']?\]$/;
@@ -27,7 +27,14 @@ async function run() {
     compress: true,
     pruneSource: false,
     reduceInlineStyles: true,
-    allowRules: [LIGHT_THEME_BLOCK],
+    /*
+      DESIGN V2'S TOKENS BEFORE FIRST PAINT (visual redesign plan B1). Beasties keeps a rule only
+      when its selector matches inside its container, so an attribute-qualified `:root` never
+      does: with DESIGN_V2_LIVE on, the first paint showed today's colours until the stylesheet
+      arrived. The v2 root block is kept explicitly; it is inert when `<html>` has no
+      `data-design` (switch off).
+    */
+    allowRules: [/^:root\[data-design=/, LIGHT_THEME_BLOCK],
     logLevel: 'info',
   });
 

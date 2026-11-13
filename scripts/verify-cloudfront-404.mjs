@@ -305,7 +305,7 @@ for (const url of UNKNOWN) {
   );
   check(
     '404 does not carry the homepage title',
-    !/Play, Solve and Understand Chess/i.test(html),
+    !/Play, Solve,? (and )?Understand Chess/i.test(html),
     '',
   );
 }

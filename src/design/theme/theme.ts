@@ -19,12 +19,13 @@
 import {
   THEME_STORAGE_KEY,
   parsePreference,
-  themeColor,
+  themeColorFor,
   type ResolvedTheme,
   type ThemePreference,
 } from './themeCore';
 
 export * from './themeCore';
+import { DESIGN_V2_LIVE } from '../designFlags';
 
 /** Storage can throw (blocked site data, some private modes); a throw is no choice. */
 export function readStoredPreference(storage: Pick<Storage, 'getItem'> | undefined = safeLocalStorage()): ThemePreference | null {
@@ -61,10 +62,10 @@ function safeLocalStorage(): Storage | undefined {
  * who picked light on a dark system would otherwise get dark browser chrome
  * over a light page (B0 amendment).
  */
-export function applyTheme(root: HTMLElement, preference: ThemePreference, resolved: ResolvedTheme): void {
+export function applyTheme(root: HTMLElement, preference: ThemePreference, resolved: ResolvedTheme, designV2: boolean = DESIGN_V2_LIVE): void {
   root.setAttribute('data-theme', resolved);
   root.setAttribute('data-theme-preference', preference);
   root.style.colorScheme = resolved;
-  const color = themeColor(resolved);
+  const color = themeColorFor(resolved, designV2);
   root.ownerDocument.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', color));
 }

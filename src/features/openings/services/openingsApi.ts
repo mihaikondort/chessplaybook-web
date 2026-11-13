@@ -68,17 +68,19 @@ export class OpeningsApiError extends Error {
   }
 }
 
-async function getJson<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(url, { signal });
+async function getJson<T>(url: string, signal?: AbortSignal, headers?: Record<string, string>): Promise<T> {
+  const res = await fetch(url, { signal, headers });
   const body = await res.json().catch(() => null);
-  if (!res.ok || !body?.success) throw new OpeningsApiError(body?.error ?? `Request failed (${res.status})`, res.status);
+  if (!res.ok || !body?.success) throw new OpeningsApiError(body?.error ?? `Request failed (${res.status})`, res.status, body);
   return body as T;
 }
 
 export async function fetchPosition(repertoire: string, line: string[], signal?: AbortSignal): Promise<PositionView> {
   const q = new URLSearchParams({ repertoire });
   if (line.length) q.set('line', line.join(','));
-  return (await getJson<{ data: PositionView }>(`${BASE}/position?${q}`, signal)).data;
+  // Who is asking: learning mode's one variation a day on the free plan is counted per player (2026-11-14).
+  const headers = await (await import('@/features/auth/utils/getAuthToken')).getRequestHeaders();
+  return (await getJson<{ data: PositionView }>(`${BASE}/position?${q}`, signal, headers)).data;
 }
 
 /** One book move in the training export (E1), unpacked from its compact array. */

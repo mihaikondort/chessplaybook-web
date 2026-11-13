@@ -7,6 +7,7 @@ import { logGA4Event } from '@/services/analytics';
 import { MdPsychology } from 'react-icons/md';
 import { MATCH_LAST_DAY, MATCH_PATH, calendarState, gamePath, genevaDate } from '@/features/world-championship/match';
 import { lazy, Suspense, useState, useEffect, useRef, type CSSProperties } from 'react';
+import { DESIGN_V2_LIVE } from '@/design/designFlags';
 
 // Lazy-load auth (perf: defers 125KB aws-amplify vendor chunk from initial load)
 const UserDropdown = lazy(() => import('@/features/auth/components/UserDropdown').then(m => ({ default: m.UserDropdown })));
@@ -171,7 +172,7 @@ export const Navigation = ({ hidden = false }: { hidden?: boolean }) => {
         Fixed at `max-w-7xl` with the site's own insets. A page that wants a
         different content width changes its own body, never this.
       */}
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div data-nav-container className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         {/*
           THE HEADER SCALES WITH THE SCREEN (owner, 2026-08-15: *"the size of it
           needs to be adapted to the resolution, can't be as big as on bigger
@@ -197,7 +198,22 @@ export const Navigation = ({ hidden = false }: { hidden?: boolean }) => {
               truncates instead of forcing the row to overflow. */}
           <div className="flex items-center gap-4 min-w-0">
             <Link to="/" className="flex items-center gap-2 shrink-0 text-foreground hover:text-link transition-colors">
-              <img src="/chess-queen-icon-32.png" alt="Chess Playbook" className="w-8 h-8 rounded-lg" width={32} height={32} />
+              {(DESIGN_V2_LIVE || import.meta.env.DEV) ? (
+                /* Design v2: the same queen, cut out of our icon at its full resolution (43x91, owner
+                   2026-11-13: no vector of it exists; sharp at 2x, very slightly soft at 3x). BOTH LOGOS
+                   SHARE ONE GRID CELL and only their visibility changes with the theme, so switching
+                   theme moves no box (owner: layout the same in both themes; verify-theme-tokens).
+                   Rendered only when v2 can show: Chrome requests a hidden lazy image anyway, so with the
+                   switch off production keeps today's single image and never fetches this one. Both carry
+                   the alt text: a visibility-hidden image leaves the accessibility tree, so whichever is
+                   shown names the link (the wordmark is hidden at 1024-1279px). */
+                <span className="nav-logo-stack grid shrink-0">
+                  <img src="/chess-queen-icon-32.png" alt="Chess Playbook" className="nav-logo-v1 w-8 h-8 rounded-lg [grid-area:1/1]" width={32} height={32} />
+                  <img src="/chess-queen-icon-gold.png" alt="Chess Playbook" className="nav-logo-v2 w-8 h-8 object-contain [grid-area:1/1]" width={32} height={32} loading="lazy" />
+                </span>
+              ) : (
+                <img src="/chess-queen-icon-32.png" alt="Chess Playbook" className="nav-logo-v1 w-8 h-8 rounded-lg" width={32} height={32} />
+              )}
               {/* Hidden in the 1024–1279 band only. That is where the desktop
                   nav (7 items + dropdown) is revealed but the row is still
                   narrow, and the wordmark was the thing pushing it over — it
@@ -205,7 +221,7 @@ export const Navigation = ({ hidden = false }: { hidden?: boolean }) => {
                   Below 1024 the hamburger leaves plenty of room, and from 1280
                   the full row fits, so the wordmark shows in both. */}
               <span data-nav-wordmark className="font-playfair font-bold text-lg whitespace-nowrap hidden md:inline">
-                Chess Playbook
+                Chess <span data-wordmark-accent>Playbook</span>
               </span>
             </Link>
 
@@ -260,6 +276,7 @@ export const Navigation = ({ hidden = false }: { hidden?: boolean }) => {
                   <Button
                     variant={isActive ? 'default' : 'ghost'}
                     size="sm"
+                    data-active={isActive ? 'true' : undefined}
                     className={`gap-2 relative ${
                       !isActive && link.isTournamentDay
                         ? link.isLive

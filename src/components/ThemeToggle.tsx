@@ -17,21 +17,33 @@ import { logGA4Event } from '@/services/analytics';
  * in words, because an icon alone is a guess.
  */
 function useSiteTheme() {
-  const { resolved, setPreference, choiceEnabled } = useTheme();
+  const { resolved, setPreference, choiceEnabled, themeFixed } = useTheme();
   const next: 'light' | 'dark' = resolved === 'dark' ? 'light' : 'dark';
   const choose = (theme: 'light' | 'dark', surface: 'nav' | 'menu') => {
     if (theme === resolved) return;
     setPreference(theme);
     logGA4Event({ name: 'site_theme_changed', params: { theme, surface } });
   };
-  return { resolved, next, choose, choiceEnabled };
+  return { resolved, next, choose, choiceEnabled, themeFixed };
 }
 
 /** The nav row's button: a direct child of `[data-nav-desktop]`, so the row's own rules size it. */
 export function NavThemeButton() {
-  const { next, choose, choiceEnabled } = useSiteTheme();
+  const { next, choose, choiceEnabled, themeFixed } = useSiteTheme();
   if (!choiceEnabled) return null;
   const label = next === 'light' ? 'Switch to light theme' : 'Switch to dark theme';
+  /*
+    On a page whose theme is fixed (the v2 homepage, always dark: owner, 2026-11-13) the control would do nothing,
+    so it is hidden there. Hidden IN PLACE: invisible, out of the tab order and the accessibility tree, but still
+    holding its box, because the nav row must be the same on every page (#55); removing it would respace the row.
+  */
+  if (themeFixed) {
+    return (
+      <Button variant="ghost" size="sm" className="invisible" tabIndex={-1} aria-hidden="true" {...{ inert: '' }}>
+        {next === 'light' ? <Sun aria-hidden /> : <Moon aria-hidden />}
+      </Button>
+    );
+  }
   return (
     <Button variant="ghost" size="sm" aria-label={label} title={label} onClick={() => choose(next, 'nav')}>
       {next === 'light' ? <Sun aria-hidden /> : <Moon aria-hidden />}
@@ -41,8 +53,9 @@ export function NavThemeButton() {
 
 /** The hamburger menu's row: both choices named, the current one pressed. */
 export function MenuThemeChoice() {
-  const { resolved, choose, choiceEnabled } = useSiteTheme();
-  if (!choiceEnabled) return null;
+  const { resolved, choose, choiceEnabled, themeFixed } = useSiteTheme();
+  // Not offered where the page's theme is fixed (the v2 homepage); the menu is not the fixed nav row.
+  if (!choiceEnabled || themeFixed) return null;
   const option = (theme: 'dark' | 'light', Icon: typeof Sun, text: string) => (
     <button
       type="button"

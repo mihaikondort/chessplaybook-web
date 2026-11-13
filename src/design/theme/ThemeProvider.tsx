@@ -18,14 +18,18 @@
  * light.
  */
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
+import { DESIGN_V2_LIVE, HOME_V2_LIVE } from '../designFlags';
 import {
   DEFAULT_PREFERENCE,
   THEME_CHOICE_LIVE,
   THEME_STORAGE_KEY,
   applyTheme,
+  designV2ForPath,
+  isAlwaysDarkPath,
   parsePreference,
   readStoredPreference,
-  resolveTheme,
+  resolveThemeForPath,
   writeStoredPreference,
   type ResolvedTheme,
   type ThemePreference,
@@ -37,6 +41,10 @@ interface ThemeContextValue {
   /** False until F3 in production: then `setPreference` does nothing. */
   choiceEnabled: boolean;
   setPreference: (preference: ThemePreference) => void;
+  /** The page's theme is fixed, whatever the preference (the v2 homepage, always dark): the theme control hides. */
+  themeFixed: boolean;
+  /** Set by ThemeRouteSync, inside the router: the path the page shows. */
+  setPath: (path: string) => void;
 }
 
 const SYSTEM_DARK = '(prefers-color-scheme: dark)';
@@ -54,6 +62,8 @@ const ThemeContext = createContext<ThemeContextValue>({
   resolved: 'dark',
   choiceEnabled: false,
   setPreference: () => {},
+  themeFixed: false,
+  setPath: () => {},
 });
 
 export function ThemeProvider({
@@ -68,13 +78,26 @@ export function ThemeProvider({
     choiceEnabled ? readStoredPreference() ?? DEFAULT_PREFERENCE : 'dark',
   );
   const [systemDark, setSystemDark] = useState(systemPrefersDark);
+  // The path, for the homepage rule (themeCore.ts `isAlwaysDarkPath`); ThemeRouteSync keeps it current on in-app
+  // navigation. It starts from the address bar, as the pre-paint script does.
+  const [path, setPath] = useState(() => (typeof window === 'undefined' ? '' : window.location.pathname));
 
-  const resolved = choiceEnabled ? resolveTheme(preference, systemDark) : 'dark';
+  const resolved = choiceEnabled ? resolveThemeForPath(path, preference, systemDark) : 'dark';
+  const designV2 = designV2ForPath(path);
+  const themeFixed = isAlwaysDarkPath(path);
 
   // Before paint, so a change never shows one frame of the old theme.
   useLayoutEffect(() => {
-    applyTheme(document.documentElement, choiceEnabled ? preference : 'dark', resolved);
-  }, [choiceEnabled, preference, resolved]);
+    applyTheme(document.documentElement, choiceEnabled ? preference : 'dark', resolved, designV2);
+  }, [choiceEnabled, preference, resolved, designV2]);
+
+  // The v2 homepage draws design v2 even while the design switch is off (C3), and only there: set and cleared
+  // with the path. Untouched otherwise, so the DEV preview switch and the build's attribute stay in charge.
+  useLayoutEffect(() => {
+    if (!HOME_V2_LIVE || DESIGN_V2_LIVE) return;
+    const root = document.documentElement;
+    if (designV2) root.setAttribute('data-design', 'v2'); else root.removeAttribute('data-design');
+  }, [designV2]);
 
   // The OS scheme matters only while the preference is `system`.
   useEffect(() => {
@@ -112,8 +135,8 @@ export function ThemeProvider({
   );
 
   const value = useMemo(
-    () => ({ preference: choiceEnabled ? preference : 'dark' as const, resolved, choiceEnabled, setPreference }),
-    [choiceEnabled, preference, resolved, setPreference],
+    () => ({ preference: choiceEnabled ? preference : 'dark' as const, resolved, choiceEnabled, setPreference, themeFixed, setPath }),
+    [choiceEnabled, preference, resolved, setPreference, themeFixed],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
@@ -121,4 +144,15 @@ export function ThemeProvider({
 
 export function useTheme(): ThemeContextValue {
   return useContext(ThemeContext);
+}
+
+/**
+ * Tells ThemeProvider which page is showing (it sits outside the router). A layout effect, so on navigation
+ * into or out of the homepage the theme changes in the same frame as the page. Renders nothing.
+ */
+export function ThemeRouteSync() {
+  const { pathname } = useLocation();
+  const { setPath } = useTheme();
+  useLayoutEffect(() => { setPath(pathname); }, [pathname, setPath]);
+  return null;
 }

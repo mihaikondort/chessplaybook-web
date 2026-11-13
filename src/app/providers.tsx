@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import shareImage from '@/config/share-image.json';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider, Helmet } from "react-helmet-async";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -99,10 +100,15 @@ function SeoDefaults() {
       />
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://www.chessplaybook.com" />
-      <meta property="og:image" content="https://www.chessplaybook.com/assets/facebook_cover.jpg" />
+      <meta property="og:image" content={shareImage.url} />
+      <meta property="og:image:width" content={String(shareImage.width)} />
+      <meta property="og:image:height" content={String(shareImage.height)} />
+      <meta property="og:image:type" content={shareImage.type} />
+      <meta property="og:image:alt" content={shareImage.alt} />
       <meta property="og:site_name" content="Chess Playbook" />
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:image" content="https://www.chessplaybook.com/assets/facebook_cover.jpg" />
+      <meta name="twitter:image" content={shareImage.url} />
+      <meta name="twitter:image:alt" content={shareImage.alt} />
     </Helmet>
   );
 }

@@ -1,12 +1,13 @@
 {
   "": {
     "title": "Chess Playbook — Play, Solve and Understand Chess",
-    "description": "Play chess online or the computer, train on puzzles matched to your level with a weekly plan, and understand any position in plain English.",
+    "description": "Learn chess openings move by move, train on puzzles matched to your level, play online or the computer, and understand any position in plain English.",
     "ogTitle": "Chess Playbook — Play, Solve and Understand Chess",
-    "ogDescription": "Play, solve puzzles, challenge a World Champion's position, and understand any position in plain English. Free, no account required.",
-    "keywords": "chess, play chess online, chess puzzles, chess position explained, chess analysis, chess training, world chess champions, learn chess",
+    "ogDescription": "Learn openings, solve puzzles, play, challenge a World Champion's position, and understand any position in plain English. Free, no account required.",
+    "keywords": "chess, chess openings, opening trainer, play chess online, chess puzzles, chess position explained, chess analysis, chess training, world chess champions, learn chess",
     "heading": "Play, Solve and Understand Chess",
-    "body": "Pick where to start — explain a position, solve a puzzle, play a game, or study the champions."
+    "headingAccentWords": 2,
+    "body": "Pick where to start: learn an opening, solve a puzzle, play a game, explain a position, or study the champions."
   },
   "analysis": {
     "title": "Free Chess Game Analysis with Stockfish | Chess Playbook",
@@ -31,7 +32,7 @@
     "description": "Follow Gukesh vs Sindarov live: the score, today's game on a live board, and every game of the 2026 World Championship in Geneva, 24 Nov to 11 Dec.",
     "ogTitle": "Gukesh vs Sindarov: the World Championship 2026, live",
     "ogDescription": "The score, the live board and every game of the 2026 World Championship match in Geneva.",
-    "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/geneva-jet-deau.webp",
+    "ogImage": "https://www.chessplaybook.com/assets/share/geneva-jet-deau.jpg",
     "keywords": "world chess championship 2026 live, Gukesh vs Sindarov live, Gukesh Sindarov score, world championship 2026 games, Gukesh Sindarov game 1",
     "heading": "Gukesh vs Sindarov",
     "body": "The 2026 World Chess Championship in Geneva: Gukesh Dommaraju against Javokhir Sindarov, fourteen classical games from 24 November to 11 December, first to 7.5 points. The match score, each game on a live board, and the schedule."
@@ -144,7 +145,7 @@
     "description": "How the 2026 Candidates was won: Sindarov’s record 10/14 unbeaten run, Vaishali’s win as the lowest-rated player, and the tournaments that got away.",
     "ogTitle": "Candidates 2026 Conclusions: Sindarov's Record, Vaishali's Upset",
     "ogDescription": "A record score, an unbeaten champion, and the lowest-rated player in the women’s field taking the whole thing. The full story of Paphos.",
-    "ogImage": "https://www.chessplaybook.com/assets/news/candidates-2026-conclusion/sindarov-champion.webp",
+    "ogImage": "https://www.chessplaybook.com/assets/share/sindarov-champion.jpg",
     "keywords": "Candidates 2026, Sindarov, Vaishali, Paphos, chess tournament results",
     "heading": "Candidates 2026 Conclusions",
     "body": "Sindarov's record 10/14 unbeaten run in the Open, and Vaishali winning the Women's section as the lowest-rated player in the field. How both Candidates tournaments were won.",
@@ -153,7 +154,7 @@
     "dateModified": "2026-07-25"
   },
   "news/candidates-2026-round-1": {
-    "ogImage": "https://www.chessplaybook.com/assets/news/candidates-2026-r1/caruana-nakamura.webp",
+    "ogImage": "https://www.chessplaybook.com/assets/share/caruana-nakamura.jpg",
     "title": "Candidates 2026 Round 1: Three Decisive Games",
     "description": "Caruana stuns Nakamura in an 83-move epic, Praggnanandhaa dismantles Giri, and Sindarov’s tactics down Esipenko. A sensational Round 1 in Paphos.",
     "ogTitle": "Candidates 2026 Round 1: Three Decisive Games Ignite the Race",
@@ -166,7 +167,7 @@
     "dateModified": "2026-03-29"
   },
   "news/candidates-2026-round-3": {
-    "ogImage": "https://www.chessplaybook.com/assets/news/candidates-2026-r3/sindarov.webp",
+    "ogImage": "https://www.chessplaybook.com/assets/share/sindarov-r3.jpg",
     "title": "Candidates 2026 Round 3: A Star Is Born | Chess Playbook",
     "description": "Sindarov demolishes Praggnanandhaa with a sacrifice in the QGD and Caruana crushes Wei Yi in 19 moves. The two co-leaders surge clear in Paphos.",
     "ogTitle": "Candidates 2026 Round 3: A Star Is Born",
@@ -196,7 +197,7 @@
     "description": "Sindarov is the world number 4. Gukesh, the champion he must beat, is ranked 26th and 91 points below his peak. Their head-to-head record, and what it hides.",
     "ogTitle": "Sindarov vs Gukesh: The Champion Is Ranked 26th",
     "ogDescription": "The challenger is ranked 4th. The champion is ranked 26th and just finished last, winless, at home. Every game they have played, and what the numbers actually say.",
-    "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/gukesh-tata-steel.webp",
+    "ogImage": "https://www.chessplaybook.com/assets/share/gukesh-tata-steel.jpg",
     "keywords": "Sindarov vs Gukesh, head to head, world chess championship 2026, Gukesh rating, Sindarov challenger",
     "heading": "Sindarov vs Gukesh: The Champion Is Ranked 26th",
     "body": "Javokhir Sindarov, world number 4, challenges World Champion Gukesh Dommaraju, ranked 26th. Both are twenty years old. In classical chess Sindarov leads two wins to none with one draw. The full head-to-head record and both players’ trajectories, examined.",
@@ -209,7 +210,7 @@
     "description": "Ju Wenjun has not lost a Women’s World Championship match in eight years. Vaishali has never beaten her in classical, and won the Candidates as the lowest seed.",
     "ogTitle": "Vaishali vs Ju Wenjun: The Reign and the Underdog",
     "ogDescription": "Eight years, five titles, and a challenger who has never beaten her in classical. The women’s title match is the exact mirror of the men’s.",
-    "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/vaishali-ju-wenjun.webp",
+    "ogImage": "https://www.chessplaybook.com/assets/share/vaishali-ju-wenjun.jpg",
     "keywords": "Vaishali vs Ju Wenjun, women’s world chess championship 2026, Ju Wenjun title defense, Vaishali challenger",
     "heading": "Vaishali vs Ju Wenjun: The Reign and the Underdog",
     "body": "Ju Wenjun, Women’s World Champion since 2018 with five title wins, faces Vaishali Rameshbabu, who won the 2026 Candidates as the lowest-rated player in the field. Their head-to-head record and both careers, previewed.",
@@ -222,7 +223,7 @@
     "description": "Gukesh vs Sindarov in Geneva: game 1 on 24 November at 15:00 CET, game 14 on 11 December. The day-by-day schedule, venue, time control, tiebreaks and prize fund.",
     "ogTitle": "Geneva, 24 November: The World Championship Schedule",
     "ogDescription": "Gukesh vs Sindarov, 14 classical games in Geneva from 24 November to 11 December. The youngest title match ever played.",
-    "ogImage": "https://www.chessplaybook.com/assets/news/title-matches-2026/geneva-jet-deau.webp",
+    "ogImage": "https://www.chessplaybook.com/assets/share/geneva-jet-deau.jpg",
     "keywords": "world chess championship 2026, Gukesh vs Sindarov schedule, Gukesh vs Sindarov dates, world championship 2026 venue, Geneva chess championship, when is the Gukesh Sindarov match",
     "heading": "World Chess Championship 2026: Geneva, 24 November – 11 December",
     "body": "Gukesh Dommaraju defends the World Chess Championship against Javokhir Sindarov at the Fondation Martin Bodmer in Cologny, Geneva. Fourteen classical games from 24 November to 11 December 2026, with tiebreaks on 12 December if it is 7-7. The day-by-day schedule, the time control, the tiebreak format and the prize fund.",
@@ -264,7 +265,7 @@
     "ogDescription": "Puzzles matched to your level, a plan built around the time you have, and a record of where you stand.",
     "keywords": "chess puzzles, chess tactics training, chess training plan, chess improvement, daily chess puzzle",
     "heading": "Chess Puzzle Trainer",
-    "body": "Solve puzzles matched to your level, run a bounded training session, or follow a plan built around the time you actually have — and track how you are doing in tactics, middlegames and endgames."
+    "body": "Solve puzzles matched to your level, run a bounded training session, or follow a plan built around the time you actually have, and track how you are doing in tactics, middlegames and endgames."
   },
   "puzzles/progress": {
     "title": "Your Training Record | Chess Playbook",
@@ -302,6 +303,15 @@
     "heading": "Refund Policy",
     "body": "A full refund of any Premium payment within 30 days, for any reason."
   },
+  "premium": {
+    "title": "Chess Playbook Premium: Train With No Daily Limits",
+    "description": "Chess Playbook Premium removes the daily limits on opening training, game reports, position explanations and Champion Challenge. Prices in your currency, with a full refund within 30 days.",
+    "ogTitle": "Chess Playbook Premium",
+    "ogDescription": "Train as much as you want, every day: no daily limits on opening training, game reports, explanations and Champion Challenge.",
+    "keywords": "chess playbook premium, chess training subscription, opening trainer, chess game report",
+    "heading": "Premium",
+    "body": "Train as much as you want, every day. Premium removes the free plan's daily limits on opening training, game reports, position explanations and Champion Challenge."
+  },
   "world-championship-cycle": {
     "title": "World Championship Cycle — How to Become World Champion",
     "description": "The complete FIDE World Championship cycle: how players qualify through the World Cup, Grand Swiss and Candidates to the title match.",
@@ -318,7 +328,7 @@
     "ogDescription": "Results, decisive games and qualifiers from the FIDE World Cup 2025 in Goa.",
     "keywords": "FIDE World Cup 2025, chess world cup results, Goa chess tournament",
     "heading": "FIDE World Cup 2025",
-    "body": "Results and coverage of the FIDE World Cup 2025 in Goa, India — the knockout that fed the 2026 Candidates."
+    "body": "Results and coverage of the FIDE World Cup 2025 in Goa, India: the knockout that fed the 2026 Candidates."
   },
   "openings": {
     "title": "Chess Opening Trainer | Chess Playbook",

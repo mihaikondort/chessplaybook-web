@@ -47,6 +47,7 @@ export const Footer = () => {
     {
       title: "About",
       links: [
+        { label: "Premium", to: "/premium" },
         { label: "Contact", to: "/contact" },
         { label: "Credits", to: "/credits" },
         { label: "Privacy Policy", to: "/privacy" },
@@ -58,7 +59,7 @@ export const Footer = () => {
 
   return (
     <footer data-site-footer className="border-t border-border/50 mt-auto">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div data-footer-container className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         {/* Footer grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 mb-10">
           {/* Brand column */}

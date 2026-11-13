@@ -1,10 +1,13 @@
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import fs from "fs";
 import { componentTagger } from "lovable-tagger";
 import { BOARD_THEME_PREPAINT_MARKER, boardThemePrePaintScript } from "./src/design/boardThemePrePaint";
 import { APP_THEME_PREPAINT_MARKER, appThemeHead } from "./src/design/theme/themePrePaint";
 import { THEME_CHOICE_LIVE } from "./src/design/theme/themeCore";
+import { DESIGN_V2_LIVE, HOME_V2_LIVE } from "./src/design/designFlags";
+import { heroSizes, heroSrcSet } from "./src/features/home/homeAssets";
 import { isProductionApiTarget } from "./src/config/devProxyGuard";
 
 /*
@@ -39,7 +42,27 @@ const appThemePrePaint: Plugin = {
     if (!html.includes(APP_THEME_PREPAINT_MARKER)) {
       throw new Error(`app-theme-prepaint: index.html has no ${APP_THEME_PREPAINT_MARKER} marker`);
     }
-    return html.replace(APP_THEME_PREPAINT_MARKER, appThemeHead(THEME_CHOICE_LIVE || !!ctx.server));
+    let withHead = html.replace(APP_THEME_PREPAINT_MARKER, appThemeHead(THEME_CHOICE_LIVE || !!ctx.server));
+    /*
+      THE HOMEPAGE HERO STARTS DURING HTML PARSE (redesign plan C6a). It is the LCP element of `/`, and without
+      this it is found only after React renders the stage. For `/` only, as `/puzzles` preloads its daily puzzle;
+      the same srcset and sizes as the <img>, so the browser picks the same file and fetches it once. Emitted only
+      while the v2 homepage is on.
+    */
+    if (HOME_V2_LIVE) {
+      const link = `<link rel="preload" as="image" imagesrcset="${heroSrcSet()}" imagesizes="${heroSizes()}" fetchpriority="high">`;
+      withHead = withHead.replace('</head>', `<script>if(location.pathname==='/'){document.head.insertAdjacentHTML('beforeend',${JSON.stringify(link)})}</script></head>`);
+    }
+    /*
+      DESIGN V2 IS AN ATTRIBUTE IN THE HTML, NOT A SCRIPT (redesign plan B1). Written into the
+      `<html>` tag at build time, so its rules apply before first paint, the critical-CSS step
+      (Beasties, which inlines only rules that match the static document) inlines them, and every
+      prerendered route inherits it. Light-theme visitors are untouched: each v2 rule is scoped
+      `:not([data-theme="light"])`, and the pre-paint script sets `data-theme` before paint.
+    */
+    if (!DESIGN_V2_LIVE) return withHead;
+    if (!/<html lang="en">/.test(withHead)) throw new Error('app-theme-prepaint: no <html lang="en"> tag to mark with data-design');
+    return withHead.replace('<html lang="en">', '<html lang="en" data-design="v2">');
   },
 };
 
@@ -102,6 +125,34 @@ const devApiWriteGuard: Plugin = {
   },
 };
 
+/*
+  THE VISUAL REDESIGN'S PREVIEW ASSETS, DEV ONLY (VISUAL_REDESIGN_IMPLEMENTATION_PLAN A1).
+  They live in `preview-assets/` at the repo root: not in `public/` (copied to `dist`, cached
+  immutable for a year) and not in `src/` (republished as GPL source on every deploy). The dev
+  server serves them at their old URL so the preview at /dev/home-v2 is unchanged. A build has no
+  dev server, so they cannot ship; `scripts/check-no-preview-assets.cjs` fails the build if any
+  reference to them is left.
+*/
+const PREVIEW_ASSETS_DIR = path.resolve(__dirname, 'preview-assets/home-preview');
+const PREVIEW_ASSET_TYPES: Record<string, string> = {
+  '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml',
+};
+const previewAssets: Plugin = {
+  name: 'preview-assets-dev-only',
+  apply: 'serve',
+  configureServer(server: ViteDevServer) {
+    server.middlewares.use('/assets/images/home-preview', (req, res, next) => {
+      const rel = decodeURIComponent((req.url ?? '').split('?')[0]);
+      const file = path.resolve(PREVIEW_ASSETS_DIR, '.' + rel);
+      const type = PREVIEW_ASSET_TYPES[path.extname(file).toLowerCase()];
+      if (!file.startsWith(PREVIEW_ASSETS_DIR + path.sep) || !type || !fs.existsSync(file)) return next();
+      res.setHeader('content-type', type);
+      res.setHeader('cache-control', 'no-cache');
+      fs.createReadStream(file).pipe(res);
+    });
+  },
+};
+
 export default defineConfig(({ mode, command }) => ({
   server: {
     host: "::",
@@ -130,7 +181,7 @@ export default defineConfig(({ mode, command }) => ({
         : {}),
     },
   },
-  plugins: [react(), devApiWriteGuard, boardThemePrePaint, appThemePrePaint, mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [react(), devApiWriteGuard, previewAssets, boardThemePrePaint, appThemePrePaint, mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
