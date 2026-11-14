@@ -117,7 +117,9 @@ const manifestKeys = fs.existsSync(MANIFEST)
 const prerendered = new Set(manifestKeys ?? []);
 
 function expectedUri(url) {
-  return url === '/' || prerendered.has(url) ? url : '/index.html';
+  // The homepage is served from its own prerendered object (P2, generate-route-html.cjs), not index.html.
+  if (url === '/') return '/home.html';
+  return prerendered.has(url) ? url : '/index.html';
 }
 
 for (const routePath of routePaths) {
@@ -164,10 +166,12 @@ for (const asset of ASSETS) {
   check(`asset ${asset} is not rewritten`, request?.uri === asset, `got ${request?.uri}`);
 }
 
-/* The root and a shell page's query string are left alone. */
+/* The root goes to its own prerendered object; a shell page's query string is left alone. */
 {
   const root = call('/');
-  check('root is not rewritten', root.request?.uri === '/', `got ${root.request?.uri}`);
+  check('root is served from its prerendered object', root.request?.uri === '/home.html', `got ${root.request?.uri}`);
+  const homeFile = call('/home.html');
+  check('/home.html asked for directly is a 404, not a duplicate homepage', homeFile.kind === '404', `got ${homeFile.kind}`);
   const qs = call('/player/someplayer', { querystring: { tab: { value: 'games' } } });
   check(
     'a shell page keeps its query string',

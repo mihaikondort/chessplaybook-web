@@ -452,6 +452,14 @@ function generate() {
     home = setJsonLdDescription(home, homeMeta.description);
     fs.writeFileSync(INDEX_PATH, home, 'utf-8');
     console.log('  Homepage meta applied to dist/index.html');
+
+    // P2 (2026-11-14): the homepage's own prerendered object, with the noscript <h1> and text every other route
+    // has. It cannot go into index.html, which is also the shell for every route without its own file (game,
+    // player and live pages): they would all carry the homepage's heading. The CloudFront canonical function
+    // serves '/' from /home.html; a request for /home.html itself is a 404 there (a .html URL is not a route).
+    const homePage = injectNoscript(home, `<h1>${text(homeMeta.heading)}</h1><p>${text(homeMeta.body)}</p>`);
+    fs.writeFileSync(path.join(DIST_DIR, 'home.html'), homePage, 'utf-8');
+    console.log('  Homepage prerendered to dist/home.html');
   }
 
   console.log(`Route HTML generated: ${routes.length} pages`);

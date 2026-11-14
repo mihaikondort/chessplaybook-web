@@ -215,6 +215,8 @@ function handler(event) {
     if (uri !== '/' && !looksLikeFile(uri) && matchTable(SHELL, uri) !== null) {
       request.uri = '/index.html';
     }
+    // The homepage has its own prerendered object (P2): index.html stays the plain shell for the routes above.
+    if (uri === '/') request.uri = '/home.html';
     return request;
   }
 

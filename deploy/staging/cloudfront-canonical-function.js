@@ -109,6 +109,7 @@ function handler(event) {
     if (uri !== '/' && !looksLikeFile(uri) && matchTable(SHELL, uri) !== null) {
       request.uri = '/index.html';
     }
+    if (uri === '/') request.uri = '/home.html';
     return request;
   }
 
