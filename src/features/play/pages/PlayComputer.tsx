@@ -298,7 +298,7 @@ export function PlayComputer() {
                 </span>
                 <span className="card-row text-[0.86em]">Level {level} · {timeControl.label}</span>
                 {gameState.gameStatus === 'idle' ? (
-                  <div className="mt-auto flex flex-col" style={{ gap: 'calc(var(--card-air) * 2)' }}>
+                  <div className="ws-push-end flex flex-col" style={{ gap: 'calc(var(--card-air) * 2)' }}>
                     <button type="button" onClick={() => startGame()} disabled={!gameState.isEngineReady} className="card-btn card-btn-primary w-full disabled:opacity-50">
                       {!gameState.isEngineReady ? 'Loading engine…' : fromPosition ? 'Play from this position' : 'New game'}
                     </button>

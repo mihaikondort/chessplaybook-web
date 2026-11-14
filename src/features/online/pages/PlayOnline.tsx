@@ -782,7 +782,7 @@ export function PlayOnline() {
       </button>
     </div>
   );
-  const spinner = <div className="mx-auto h-[2.2em] w-[2.2em] animate-spin rounded-full border-[0.25em] border-primary border-t-transparent" />;
+  const spinner = <div className="h-[2.2em] w-[2.2em] shrink-0 animate-spin rounded-full border-[0.25em] border-primary border-t-transparent" />;
 
   return (
     <main className="contents">
@@ -915,7 +915,7 @@ export function PlayOnline() {
                         <button type="button" onClick={() => actions.createChallenge({ initial: selectedPreset.initial, increment: selectedPreset.increment }, rated, challengeColor)} disabled={!isConnected} className="card-btn card-btn-primary w-full disabled:opacity-50">Create challenge link</button>
                       </div>
                     )}
-                    <div className="mt-auto flex flex-col" style={{ gap: 'calc(var(--card-air) * 2)' }}>
+                    <div className="ws-push-end flex flex-col" style={{ gap: 'calc(var(--card-air) * 2)' }}>
                       <button type="button" onClick={handleQuickPlay} disabled={!isConnected} className="card-btn card-btn-primary w-full hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
                         New game
                       </button>
@@ -926,19 +926,23 @@ export function PlayOnline() {
                 )}
 
                 {phase === 'seeking' && (
-                  <div className="my-auto flex flex-col items-center text-center" style={{ gap: 'calc(var(--card-air) * 2)' }}>
-                    {spinner}
-                    {/* The second line went on 2026-08-22 (issue #27): it told
-                        the reader the board was ready, which they can see, and
-                        that they could cancel, which the button below it says. */}
-                    <div className="font-semibold text-foreground">Searching for an opponent…</div>
+                  <div className="ws-centre flex flex-col items-center text-center" style={{ gap: 'calc(var(--card-air) * 2)' }}>
+                    {/* Spinner beside the line when stacked, above it in columns (#244: on a 375x667 phone the
+                        spinner's own row pushed Cancel search below the screen). */}
+                    <div className="ws-column-in-columns flex items-center justify-center" style={{ gap: 'calc(var(--card-air) * 2)' }}>
+                      {spinner}
+                      {/* The second line went on 2026-08-22 (issue #27): it told
+                          the reader the board was ready, which they can see, and
+                          that they could cancel, which the button below it says. */}
+                      <div className="font-semibold text-foreground">Searching for an opponent…</div>
+                    </div>
                     {seekUnmatched && <SeekFallback variant="sidebar" onPlayComputer={goPlayComputer} />}
                     <button type="button" onClick={actions.cancelSeek} className="card-btn px-[1em] text-[0.92em]">Cancel search</button>
                   </div>
                 )}
 
                 {phase === 'challenging' && (
-                  <div className="my-auto flex flex-col items-center text-center" style={{ gap: 'calc(var(--card-air) * 2)' }}>
+                  <div className="ws-centre flex flex-col items-center text-center" style={{ gap: 'calc(var(--card-air) * 2)' }}>
                     {spinner}
                     <div className="font-semibold text-foreground">Waiting for your friend…</div>
                     {challengeUrl && (

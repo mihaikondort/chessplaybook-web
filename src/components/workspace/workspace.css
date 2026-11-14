@@ -178,6 +178,16 @@
   .workspace-canvas > .workspace-lane[data-lane="activity"][data-has-foot] { grid-template-rows: minmax(0, 1fr) var(--toolbar); }
   .workspace-canvas > .workspace-lane[data-lane="activity"] > .workspace-foot { order: 0; }
 
+  /*
+    A card's actions at its foot, or its waiting state centred, IN COLUMNS ONLY (#244, 2026-11-14). Stacked on a
+    phone the activity lane's card starts below the board and is taller than what is left of the screen, so an
+    action pushed to its foot (New game) or a state centred in it (Searching, Cancel search) fell below the fold.
+    Stacked, they follow the card's own text.
+  */
+  .workspace-canvas .ws-push-end { margin-block-start: auto; }
+  .workspace-canvas .ws-centre { margin-block: auto; }
+  .workspace-canvas .ws-column-in-columns { flex-direction: column; }
+
   /* Focus mode (spec §3): one lane track fewer, the centre first. */
   .workspace-canvas[data-focus] {
     --context-on: 0;
