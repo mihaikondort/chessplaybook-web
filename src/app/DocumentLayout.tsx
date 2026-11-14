@@ -27,7 +27,7 @@ import { PageOutlet, PageRegion } from './PageRegion';
 export function DocumentLayout() {
   return (
     <PageRegion kind="document">
-      <PageOutlet />
+      <PageOutlet fillScreen />
       <Footer />
     </PageRegion>
   );

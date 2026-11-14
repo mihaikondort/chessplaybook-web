@@ -34,10 +34,15 @@ export function PageRegion({ kind, children }: { kind: PageKind; children: React
 /**
  * Shown while a route's chunk loads. Fills the page region, so the nav above
  * it stays put and the page does not jump.
+ *
+ * `fillScreen` (document pages): a document region has no fixed height, so `flex-1` alone left the
+ * placeholder as tall as its spinner and the footer drew right under the nav, then was pushed off screen when
+ * the page arrived: a layout shift of 0.90 on every mobile load of `/explain` (P6, measured). The placeholder
+ * now fills the screen below the nav, so the footer starts below the fold.
  */
-export function RouteFallback() {
+export function RouteFallback({ fillScreen = false }: { fillScreen?: boolean }) {
   return (
-    <div className="flex flex-1 items-center justify-center">
+    <div className={`flex flex-1 items-center justify-center${fillScreen ? ' min-h-[calc(100svh-var(--nav-block))]' : ''}`}>
       <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
     </div>
   );
@@ -49,9 +54,9 @@ export function RouteFallback() {
  * still loading keeps the nav AND the region carrying `data-kind`, so it can
  * neither take the chrome off screen nor unlock a Workspace shell (spec §1.1).
  */
-export function PageOutlet() {
+export function PageOutlet({ fillScreen = false }: { fillScreen?: boolean }) {
   return (
-    <Suspense fallback={<RouteFallback />}>
+    <Suspense fallback={<RouteFallback fillScreen={fillScreen} />}>
       <Outlet />
     </Suspense>
   );
